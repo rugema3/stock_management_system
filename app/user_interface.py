@@ -14,9 +14,11 @@ class UserInterface:
             print("2 for display")
             print("3 for checkout")
             print("4 for update price")
-            print("5 to stop the program.")
+            print("5 for total value")
+            print("6 to set currency")
+            print("7 to stop the program.")
             choice = input("Please enter your choice: ")
-            
+
             if choice == '1':
                 while True:
                     item_name = input("Please enter the item name or 'done' to quit: ")
@@ -29,10 +31,10 @@ class UserInterface:
                     quantity = int(input("Please enter the quantity: "))
                     item = StockItem(item_name, price, category, quantity)
                     self.stock_manager.add_item(item)
-                    
+
             elif choice == '2':
                 self.stock_manager.display_items()
-                
+
             elif choice == '3':
                 name = input("Please enter the name of the product: ")
                 name = name.lower()
@@ -45,7 +47,7 @@ class UserInterface:
                         print("Insufficient quantity in stock.")
                 else:
                     print("Item not found in stock.")
-                    
+
             elif choice == '4':
                 update_item_name = input("Enter the name of the item to update the price: ")
                 update_item_name = update_item_name.lower()
@@ -55,10 +57,17 @@ class UserInterface:
                     item.update_price(new_price)
                 else:
                     print("Item not found in stock.")
-                    
+
             elif choice == '5':
+                total_value = sum(item.price * item.quantity for item in self.stock_manager.items)
+                print(f"Total value of items in stock: {total_value} ")
+
+            elif choice == '6':
+                new_currency = input("Enter the new currency: ")
+                item.currency = new_currency
+
+            elif choice == '7':
                 break
 
             else:
                 print("Invalid choice. Please choose again.")
-
