@@ -4,7 +4,7 @@ import uuid
 
 class BaseModel:
     """Define BaseModel class."""
-    def __init__(self, *args, **kwargs):
+    def __init__(self, item_name, price, category, quantity=0):
         """Define class Constructor.
         Attributes:
         
@@ -15,10 +15,10 @@ class BaseModel:
         Category(str):  The category of the item.
         """
         self.item_id = str(uuid.uuid4())
-        self.item_name = ""
-        self.quantity = 0
-        self.price = 0.0
-        self.category = ""
+        self.item_name = item_name
+        self.quantity = quantity
+        self.price = price
+        self.category = category
 
 
     def display(self):

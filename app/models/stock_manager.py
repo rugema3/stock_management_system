@@ -14,4 +14,4 @@ class StockManager:
         for item in self.items:
             if item.item_name == name:
                 return item
-        return None
+        return f"The item is not available"

@@ -20,10 +20,12 @@ class UserInterface:
             if choice == '1':
                 while True:
                     item_name = input("Please enter the item name or 'done' to quit: ")
+                    item_name = item_name.lower()
                     if item_name.lower() == "done":
                         break
                     price = float(input("Please enter the price of the item: "))
                     category = input("Please enter the item category: ")
+                    category = category.lower()
                     quantity = int(input("Please enter the quantity: "))
                     item = StockItem(item_name, price, category, quantity)
                     self.stock_manager.add_item(item)
@@ -33,6 +35,7 @@ class UserInterface:
                 
             elif choice == '3':
                 name = input("Please enter the name of the product: ")
+                name = name.lower()
                 quantity = int(input("Please enter the quantity to be checked-out: "))
                 item = self.stock_manager.find_item_by_name(name)
                 if item:
@@ -45,6 +48,7 @@ class UserInterface:
                     
             elif choice == '4':
                 update_item_name = input("Enter the name of the item to update the price: ")
+                update_item_name = update_item_name.lower()
                 item = self.stock_manager.find_item_by_name(update_item_name)
                 if item:
                     new_price = float(input("Enter the new price: "))
