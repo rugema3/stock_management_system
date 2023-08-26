@@ -1,6 +1,7 @@
 from flask import Flask
 
-app = Flask(__name__)
-
-# Add any app configuration here
+def create_app():
+    app = Flask(__name__)
+    # ... other app configuration ...
+    return app
 
