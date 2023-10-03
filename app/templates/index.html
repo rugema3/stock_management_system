@@ -27,7 +27,7 @@
         {% for item in stock_items %}
         <li>
             Item Name: {{ item.item_name }}<br>
-            Price: {{ item.price }}<br>
+            Price: {{ item.price }} {{ item.currency }}<br>
             Quantity: {{ item.quantity }}<br>
             Category: {{ item.category }}<br>
             <a href="/checkout/{{ item.item_name }}">Checkout</a><br>

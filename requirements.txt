@@ -1,0 +1,6 @@
+# System requirements and dependencies.
+Flask
+requests
+SQLAlchemy
+uuid
+
