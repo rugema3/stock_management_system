@@ -22,19 +22,9 @@
         <button type="submit">Add Item</button>
     </form>
 
-    <h2>Items in Stock:</h2>
+    <h2>Navigation:</h2>
     <ul>
-        {% for item in stock_items %}
-        <li>
-            Item Name: {{ item.item_name }}<br>
-            Price: {{ item.price }} {{ item.currency }}<br>
-            Quantity: {{ item.quantity }}<br>
-            Category: {{ item.category }}<br>
-            <a href="/checkout/{{ item.item_name }}">Checkout</a><br>
-            <a href="/update_price/{{ item.item_name }}">Update Price</a>
-        </li>
-        {% endfor %}
+        <li><a href="/items">Display Items</a></li>
     </ul>
 </body>
 </html>
-

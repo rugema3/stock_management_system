@@ -43,6 +43,38 @@ def add_item():
 
     return render_template('index.html', stock_items=stock_items)
 
+
+@app.route('/items')
+def all_items():
+    """
+    Retrieves all stock items from the database.
+    And renders an HTML page to display them.
+
+    Returns:
+        str: Rendered HTML page displaying all stock items.
+    """
+    # Fetch all stock items from the database using the Database class
+    stock_items = db.get_all_items()
+
+    # Create a list to hold the items
+    items_list = []
+
+    for item in stock_items:
+        # Create a dictionary for each item
+        item_data = {
+            'item_name': item[1],
+            'price': item[2],
+            'category': item[3],
+            'quantity': item[4],
+        }
+
+        # Append the item dictionary to the list
+        items_list.append(item_data)
+
+    return render_template('items.html', stock_items=items_list)
+
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
 

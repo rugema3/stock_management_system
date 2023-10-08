@@ -1,0 +1,23 @@
+/* Add styles to the table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+/* Style table header */
+th {
+    background-color: #f2f2f2;
+}
+
+/* Style table rows */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Style table cells */
+td, th {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
