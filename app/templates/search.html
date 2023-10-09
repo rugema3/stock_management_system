@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Items</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+
+    <form action="/search" method="POST" onsubmit="return validateForm()">
+        <label for="search_query">Enter item name:</label>
+        <input type="text" id="search_query" name="search_query" placeholder="Enter item name" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if search_results %}
+    <h2>Search Results:</h2>
+    <table>
+        <tr>
+            <th>Item Name</th>
+            <th>Price</th>
+	    <th>Currency</th>
+            <th>Category</th>
+            <th>Quantity</th>
+	    <th>Created Date</th>
+	    <th>Total cost</th>
+        </tr>
+        {% for item in search_results %}
+        <tr>
+            <td>{{ item.item_name }}</td>
+            <td>{{ item.price }}</td>
+	    <td>{{ item.currency }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.quantity }}</td>
+	    <td>{{ item.created_at }}</td>
+	    <td>{{ item.total_cost }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No matching items found.</p>
+    {% endif %}
+
+    <a href="/">Back to Home</a>
+
+    <script>
+        function validateForm() {
+            var searchQuery = document.forms[0].elements.search_query.value;
+            if (searchQuery.trim() === '') {
+                alert('Please enter a search query.');
+                return false; // Prevent form submission
+            }
+            return true; // Allow form submission
+        }
+    </script>
+</body>
+</html>
+

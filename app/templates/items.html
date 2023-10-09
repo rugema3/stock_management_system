@@ -38,17 +38,25 @@
             <tr>
                 <th>Item Name</th>
                 <th>Category</th>
+                <th>Price</th>
                 <th>Quantity</th>
-                <th>Currency</th>
+		<th>Currency</th>
+		<th>Date Created</th>
+		<th>Total cost</th>
+	
             </tr>
         </thead>
         <tbody>
             {% for item in stock_items %}
             <tr>
                 <td>{{ item.item_name }}</td>
-                <td>{{ item.price }} {{ item.currency }}</td>
+		<td>{{ item.price }} </td>
+		<td>{{ item.currency }}</td>
                 <td>{{ item.category }}</td>
-                <td>{{ item.quantity }}</td>
+		<td>{{ item.quantity }}</td>
+		<td>{{ item.created_at }}</td>
+		<td>{{ item.total_cost }}</td>
+                
             </tr>
             {% endfor %}
         </tbody>

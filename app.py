@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from flask import Flask, render_template, request
 from app.models.stock_manager import StockManager
 from app.models.stock_item import StockItem
@@ -66,12 +67,55 @@ def all_items():
             'price': item[2],
             'category': item[3],
             'quantity': item[4],
+            'currency': item[5],
+            'created_at': item[6],
+            'total_cost': item[5] * item[3],
         }
 
         # Append the item dictionary to the list
         items_list.append(item_data)
 
     return render_template('items.html', stock_items=items_list)
+
+@app.route('/search', methods=['GET', 'POST'])
+def search_item():
+    """
+    Handle both form submission and displaying search results.
+
+    - For POST requests: Retrieve search query from the form, search for items
+      in the database, and display the results.
+    - For GET requests: Render the search page without results.
+
+    Returns:
+        str: Rendered HTML page displaying the search form and search results (if available).
+    """
+    if request.method == 'POST':
+        search_query = request.form['search_query']
+        # Perform the database search for the item based on search_query
+        search_results = db.search_item(search_query)
+
+        # Create a list to hold the details of matching items
+        items_list = []
+
+        for item in search_results:
+            # Create a dictionary for each matching item
+            item_data = {
+                'item_name': item[1],
+                'price': item[5],
+                'category': item[2],
+                'quantity': item[3],
+                'currency': item[4],
+                'created_at': item[6],
+                'total_cost': item[5] * item[3],
+            }
+
+            # Append the item dictionary to the list
+            items_list.append(item_data)
+
+        return render_template('search.html', search_results=items_list)
+    else:
+        # Handle GET request (initial page load)
+        return render_template('search.html', search_results=[])
 
 
 
