@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
+
+from app.models.user_manager import UserManager
 from flask import Flask, render_template, request
 from app.models.stock_manager import StockManager
 from app.models.stock_item import StockItem
 from app.models.database_manager import Database
 from decouple import config  
+import bcrypt
+from app.models.user import User 
 
-app = Flask(__name__, template_folder='app/templates')
+app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
 stock_manager = StockManager()
+#user_manager = UserManager()
 
 # Retrieve database configuration from environment variables
 db_config = {
@@ -18,6 +23,7 @@ db_config = {
 
 # Create a Database instance
 db = Database(db_config)
+user_manager = UserManager(db_config)
 
 @app.route('/')
 def index():
@@ -118,7 +124,29 @@ def search_item():
         return render_template('search.html', search_results=[])
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Retrieve the email and password from the form data
+        email = request.form['email']
+        password = request.form['password']
 
+        # Add print statements to check the values
+        print(f"Received email: {email}")
+        print(f"Received password: {password}")
+
+        # Create a user object with email and password
+        # user = User(email=email, password=password)
+
+        # Call the user_manager to register the user
+        registration_result = user_manager.register_user(email, password)
+
+        # Render the result in the HTML response
+        return registration_result
+    else:
+        return render_template('register.html')
+    
 if __name__ == "__main__":
+    app.debug = True
     app.run(host='0.0.0.0', port=5000)
 

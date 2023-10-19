@@ -2,6 +2,21 @@
 <html>
 <head>
     <title>Stock Management System</title>
+   <!--
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    -->
+    <style>
+.button {
+  background-color: #4CAF50; 
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+</style>
 </head>
 <body>
     <h1>Welcome to the Stock Management System</h1>
@@ -14,18 +29,27 @@
         <input type="number" id="price" name="price"><br><br>
 
         <label for="category">Category:</label>
-        <input type="text" id="category" name="category"><br><br>
+        <select id="category" name="category">
+		<option value="Cleaning">Cleaning</option>
+		<option value="Stationary">Stationary</option>
+		<option value="Meals and Water">Meals and Water</option>
+		<option value="Guest Entertainment">Guest Entertainment</option>
+		<option value="Kitchen Utensil">Kitchen Utensils</option>
+	</select><br><br>
 
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" name="quantity" value="0"><br><br>
 
-        <button type="submit">Add Item</button>
+        <button type="submit" style="background-color: #4CAF50; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px;">Add Item</button>
+
     </form>
 
     <h2>Navigation:</h2>
     <ul>
         <li><a href="/items">Display Items</a></li>
 	<li><a href="/search">Search Item</a></li>
+	<li><a href="/register">Register</a></li>
+	<li><a href="/login">Login</a></li>
     </ul>
 </body>
 </html>

@@ -24,6 +24,7 @@ class Database:
                 such as 'user', 'password', 'host', and 'database'.
         """
         self.db_connection = mysql.connector.connect(**db_config)
+        self.cursor = self.db_connection.cursor()
 
     def insert_item(self, item):
         """
@@ -104,3 +105,69 @@ class Database:
         self.db_connection.commit()
         cursor.close()
         return rows_affected > 0
+
+    def insert_user(self, user):
+        """
+        Insert a new user into the database.
+
+        Args:
+            user (User): The User object to be inserted into the database.
+        """
+        cursor = self.db_connection.cursor()
+        insert_query = """
+            INSERT INTO users(first_name, last_name, email, phone, department, role, username, password)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        cursor.execute(insert_query, (user.first_name, user.last_name, user.email, user.phone,
+                                      user.department, user.role, user.username, user.password))
+        self.db_connection.commit()
+        cursor.close()
+
+
+    def find_user_by_email(self, email):
+        """
+        Find a user in the database by their email address.
+
+        Args:
+            email (str): The email address of the user to search for.
+
+        Returns:
+            User: The User object if found, or None if not found.
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+        query = "SELECT * FROM users WHERE email = %s"
+        cursor.execute(query, (email,))
+        user_data = cursor.fetchone()
+        cursor.close()
+
+        if user_data:
+            # You can create a User object from user_data and return it
+            user = User(**user_data)
+            return user
+        else:
+            return None
+
+    def fetch_one(self, query, params=None):
+        """
+        Execute a SQL query and fetch a single row.
+
+        Args:
+            query (str): The SQL query to execute.
+            params (tuple): A tuple of parameters to be used with the query.
+
+        Returns:
+            dict: A dictionary representing a single row from the result.
+        """
+        try:
+            if params:
+                self.cursor.execute(query, params)
+            else:
+                self.cursor.execute(query)
+            result = self.cursor.fetchone()
+            self.db_connection.commit()  # Update this line
+            return result
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            self.db_connection.rollback()  # Update this line
+            return None
+
