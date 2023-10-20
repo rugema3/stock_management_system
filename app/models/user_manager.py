@@ -14,29 +14,27 @@ class UserManager:
         Initialize the UserManager with a database connection.
         """
         self.db = Database(db_config)
-
-    def register_user(self, email, password):
+    def register_user(self, user):
         """
-        Register a new user with email and password and store their information in the database.
+        Register a new user with the provided User object and store their information in the database.
 
         Args:
-            email (str): User's email address.
-            password (str): User's password (plaintext).
+            user (User): User object with attributes like email and password.
 
         Returns:
             str: A registration success message or an error message.
         """
         # Check if the user already exists
-        existing_user = self.db.fetch_one("SELECT * FROM users WHERE email = %s", (email,))
+        existing_user = self.db.fetch_one("SELECT * FROM users WHERE email = %s", (user.email,))
         if existing_user:
             return "Email already in use."
 
-        # Create a new user with the provided plaintext password
-        success = self.db.insert_user(User(email, password))
-
-        if success:
+        # Use the insert_user method to insert the new user into the database
+        try:
+            self.db.insert_user(user)
             return "Registration successful!"
-        else:
+        except Exception as e:
+            print(f"Error registering user: {str(e)}")
             return "Registration failed. Please try again later."
 
 
@@ -55,12 +53,17 @@ class UserManager:
         user_data = self.db.fetch_one("SELECT * FROM users WHERE email = %s", (email,))
 
         if user_data is not None:
-            if user_data.get('password', '') == password:
+            # The 'fetch_one' method likely returns a tuple, so you should access elements by index
+            db_password = user_data[5]  # Assuming that the password is at the 6th position (0-based index) in the tuple
+
+            if db_password == password:
                 return "Login successful!"
             else:
                 return "Incorrect password."
         else:
             return "Email not found."
+
+
 
     def close_database_connection(self):
         """

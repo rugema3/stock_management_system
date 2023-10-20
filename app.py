@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
 from app.models.user_manager import UserManager
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, session
 from app.models.stock_manager import StockManager
 from app.models.stock_item import StockItem
 from app.models.database_manager import Database
 from decouple import config  
 import bcrypt
 from app.models.user import User 
+from flask_session import Session
+from decorators.authentication_decorators import login_required
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
 stock_manager = StockManager()
@@ -21,17 +23,32 @@ db_config = {
     'database': config('DB_NAME'),
 }
 
+# Configure Flask-Session
+app.config['SESSION_TYPE'] = 'filesystem'  
+Session(app)
 # Create a Database instance
 db = Database(db_config)
 user_manager = UserManager(db_config)
 
 @app.route('/')
 def index():
-    # Fetch stock items from the database using the Database class
-    stock_items = db.get_all_items()
-    return render_template('index.html', stock_items=stock_items)
+    return redirect('/login')
 
-@app.route('/add_item', methods=['POST'])
+@app.route('/home')
+@login_required
+def home():
+    # Retrieve the user's email from the session
+    user_email = session.get('user_email')
+    if user_email:
+        # Fetch user-specific data or perform actions
+        # ...
+        return render_template('home.html', user_email=user_email)
+    else:
+        # If the user is not logged in, redirect to the login page
+        return redirect('/login')
+
+@app.route('/add_item', methods=['POST', 'GET'])
+@login_required
 def add_item():
     if request.method == 'POST':
         item_name = request.form['item_name']
@@ -48,10 +65,11 @@ def add_item():
     # Fetch the updated stock items from the database
     stock_items = db.get_all_items()
 
-    return render_template('index.html', stock_items=stock_items)
+    return render_template('add_item.html', stock_items=stock_items)
 
 
 @app.route('/items')
+@login_required
 def all_items():
     """
     Retrieves all stock items from the database.
@@ -84,6 +102,7 @@ def all_items():
     return render_template('items.html', stock_items=items_list)
 
 @app.route('/search', methods=['GET', 'POST'])
+@login_required
 def search_item():
     """
     Handle both form submission and displaying search results.
@@ -122,8 +141,6 @@ def search_item():
     else:
         # Handle GET request (initial page load)
         return render_template('search.html', search_results=[])
-
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -131,21 +148,38 @@ def register():
         email = request.form['email']
         password = request.form['password']
 
-        # Add print statements to check the values
-        print(f"Received email: {email}")
-        print(f"Received password: {password}")
-
-        # Create a user object with email and password
-        # user = User(email=email, password=password)
+        # Create a User object with email and password
+        user = User(email=email, password=password)
 
         # Call the user_manager to register the user
-        registration_result = user_manager.register_user(email, password)
+        registration_result = user_manager.register_user(user)
 
         # Render the result in the HTML response
         return registration_result
     else:
         return render_template('register.html')
-    
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        # You can call your UserManager's login_user method here
+        login_result = user_manager.login_user(email, password)
+
+        if login_result == "Login successful!":
+            # Store user information in the session
+            session['user_email'] = email
+            # Redirect to a dashboard or home page
+            return redirect('/home')
+        else:
+            return render_template('login.html', error=login_result)
+
+    # For GET requests, simply render the login page
+    return render_template('login.html')
+
 if __name__ == "__main__":
     app.debug = True
     app.run(host='0.0.0.0', port=5000)

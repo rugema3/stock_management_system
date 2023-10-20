@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stock Management System</title>
+    <title>Add Items</title>
    <!--
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     -->
@@ -19,7 +19,7 @@
 </style>
 </head>
 <body>
-    <h1>Welcome to the Stock Management System</h1>
+    <h1>Please add items in the stock</h1>
 
     <form action="/add_item" method="POST">
         <label for="item_name">Item Name:</label>
@@ -43,13 +43,6 @@
         <button type="submit" style="background-color: #4CAF50; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px;">Add Item</button>
 
     </form>
-
-    <h2>Navigation:</h2>
-    <ul>
-        <li><a href="/items">Display Items</a></li>
-	<li><a href="/search">Search Item</a></li>
-	<li><a href="/register">Register</a></li>
-	<li><a href="/login">Login</a></li>
-    </ul>
+    <a href="/">Back to Home</a>
 </body>
 </html>

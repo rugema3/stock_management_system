@@ -171,3 +171,19 @@ class Database:
             self.db_connection.rollback()  # Update this line
             return None
 
+
+    def insert_user(self, user):
+        """
+        Insert a new user into the database.
+
+        Args:
+            user (User): The User object to be inserted into the database.
+        """
+        insert_query = """
+            INSERT INTO users(email, password)
+            VALUES (%s, %s)
+         """
+        with self.db_connection.cursor() as cursor:
+            cursor.execute(insert_query, (user.email, user.password))
+        self.db_connection.commit()
+
