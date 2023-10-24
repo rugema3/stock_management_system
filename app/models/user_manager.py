@@ -54,7 +54,7 @@ class UserManager:
 
         if user_data is not None:
             # The 'fetch_one' method likely returns a tuple, so you should access elements by index
-            db_password = user_data[5]  # Assuming that the password is at the 6th position (0-based index) in the tuple
+            db_password = user_data[2]  # Assuming that the password is at the 6th position (0-based index) in the tuple
 
             if db_password == password:
                 return "Login successful!"

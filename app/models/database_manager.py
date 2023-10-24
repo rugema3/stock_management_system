@@ -34,8 +34,8 @@ class Database:
             item (StockItem): The StockItem object to be inserted into the database.
         """
         cursor = self.db_connection.cursor()
-        insert_query = "INSERT INTO stock_items(id, item_name, price, category, quantity) VALUES (%s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (item.item_id, item.item_name, item.price, item.category, item.quantity))
+        insert_query = "INSERT INTO stock_items(item_name, price, category, quantity) VALUES (%s, %s, %s, %s)"
+        cursor.execute(insert_query, (item.item_name, item.price, item.category, item.quantity))
         self.db_connection.commit()
         cursor.close()
 

@@ -91,9 +91,9 @@ def all_items():
             'price': item[2],
             'category': item[3],
             'quantity': item[4],
-            'currency': item[5],
-            'created_at': item[6],
-            'total_cost': item[5] * item[3],
+            'currency': item[6],
+            'created_at': item[5],
+            'total_cost': item[4] * item[2],
         }
 
         # Append the item dictionary to the list
@@ -126,12 +126,12 @@ def search_item():
             # Create a dictionary for each matching item
             item_data = {
                 'item_name': item[1],
-                'price': item[5],
-                'category': item[2],
-                'quantity': item[3],
-                'currency': item[4],
-                'created_at': item[6],
-                'total_cost': item[5] * item[3],
+                'price': item[2],
+                'category': item[3],
+                'quantity': item[4],
+                'currency': item[6],
+                'created_at': item[5],
+                'total_cost': item[2] * item[4],
             }
 
             # Append the item dictionary to the list
