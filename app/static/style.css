@@ -70,3 +70,15 @@ li a:hover:not(.active) {
   background-color: #555;
   color: white;
 }
+
+/* Apply spacing between form fields in all forms */
+form input, form label {
+    margin-bottom: 10px;
+}
+
+/* Position the "Logout" link at the top right corner */
+.logout-link {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

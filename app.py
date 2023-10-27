@@ -32,7 +32,7 @@ user_manager = UserManager(db_config)
 
 @app.route('/')
 def index():
-    return redirect('/login')
+    return redirect('/home')
 
 @app.route('/home')
 @login_required
@@ -40,8 +40,6 @@ def home():
     # Retrieve the user's email from the session
     user_email = session.get('user_email')
     if user_email:
-        # Fetch user-specific data or perform actions
-        # ...
         return render_template('home.html', user_email=user_email)
     else:
         # If the user is not logged in, redirect to the login page
@@ -147,9 +145,16 @@ def register():
         # Retrieve the email and password from the form data
         email = request.form['email']
         password = request.form['password']
+        department = request.form['department']
+        role = request.form['role']
+        # Print all form fields for debugging
+        print(f"Received email: {email}")
+        print(f"Received password: {password}")
+        print(f"Received department: {department}")
+        print(f"Received role: {role}")
 
         # Create a User object with email and password
-        user = User(email=email, password=password)
+        user = User(email=email, password=password, department=department, role=role)
 
         # Call the user_manager to register the user
         registration_result = user_manager.register_user(user)
@@ -179,6 +184,20 @@ def login():
 
     # For GET requests, simply render the login page
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    """
+    Logout route to clear the user's session and log them out.
+
+    Returns:
+        Redirect: Redirects the user to the login page.
+    """
+    # Clear the user's session
+    session.pop('user_email', None)
+    # Redirect to the login page or any other desired page
+    return render_template('logout.html')
+
 
 if __name__ == "__main__":
     app.debug = True

@@ -180,10 +180,9 @@ class Database:
             user (User): The User object to be inserted into the database.
         """
         insert_query = """
-            INSERT INTO users(email, password)
-            VALUES (%s, %s)
+            INSERT INTO users(email, password, department, role)
+            VALUES (%s, %s, %s, %s)
          """
         with self.db_connection.cursor() as cursor:
-            cursor.execute(insert_query, (user.email, user.password))
+            cursor.execute(insert_query, (user.email, user.password, user.department, user.role))
         self.db_connection.commit()
-

@@ -9,7 +9,14 @@
     -->
 </head>
 <body>
-    <h1>Welcome to the Stock Management System</h1>
+	<h1>Welcome {{ user_email}} to the Stock Management System</h1>
+    
+
+    <div class="logout-link">
+	    <p>{{ user_email }}</p>
+    <a href="/logout">Logout</a>
+    </div>
+
 
   
 
