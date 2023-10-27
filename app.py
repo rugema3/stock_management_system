@@ -198,6 +198,38 @@ def logout():
     # Redirect to the login page or any other desired page
     return render_template('logout.html')
 
+from flask import request, flash
+
+@app.route('/checkout', methods=['GET', 'POST'])
+@login_required
+def checkout():
+    """
+    Handle the checkout process for removing items from the stock.
+
+    Users can specify the item name and quantity to check out items from the stock.
+
+    Returns:
+        Response: Redirects the user back to the items page with a success or error message.
+    """
+    if request.method == 'POST':
+        # Get the item name and quantity from the user's input
+        item_name = request.form.get('item_name')
+        quantity = int(request.form.get('quantity'))
+
+        # Call the checkout_item method to remove the specified quantity of the item
+        success = db.checkout_item(item_name, quantity)
+
+        if success:
+            # Redirect back to the items page with a success message
+            flash(f'{quantity} units of {item_name} checked out successfully', 'success')
+        else:
+            # Redirect back to the items page with an error message
+            flash(f'Failed to check out {quantity} units of {item_name}', 'error')
+
+        return redirect('/items')
+    else:
+        return render_template('checkout.html')
+
 
 if __name__ == "__main__":
     app.debug = True
