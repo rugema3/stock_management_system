@@ -186,3 +186,13 @@ class Database:
         with self.db_connection.cursor() as cursor:
             cursor.execute(insert_query, (user.email, user.password, user.department, user.role))
         self.db_connection.commit()
+
+    def get_pending_items(self):
+        """Retrieve all the pending items from the db."""
+        cursor = self.db_connection.cursor()
+        search_query = "SELECT * FROM stock_items WHERE status = 'pending'"
+        cursor.execute(search_query)
+        matching_items = cursor.fetchall()
+        cursor.close()
+        return matching_items
+

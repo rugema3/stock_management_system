@@ -51,20 +51,20 @@ class UserManager:
         """
         # Retrieve the user's information from the database
         user_data = self.db.fetch_one("SELECT * FROM users WHERE email = %s", (email,))
+        print("User data:", user_data)
 
         if user_data is not None:
             # The 'fetch_one' method likely returns a tuple, so you should access elements by index
             db_password = user_data[2]  # Assuming that the password is at the 6th position (0-based index) in the tuple
+            role = user_data[4]
 
             if db_password == password:
-                return "Login successful!"
+                return "Login successful!", user_data  # Return both the success message and user data
             else:
                 return "Incorrect password."
         else:
             return "Email not found."
-
-
-
+        
     def close_database_connection(self):
         """
         Close the database connection when it's no longer needed.

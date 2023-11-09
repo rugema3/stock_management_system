@@ -10,6 +10,8 @@ import bcrypt
 from app.models.user import User 
 from flask_session import Session
 from decorators.authentication_decorators import login_required
+from decorators.admin_decorators import admin_required
+
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
 stock_manager = StockManager()
@@ -36,6 +38,7 @@ def index():
 
 @app.route('/home')
 @login_required
+#@admin_required
 def home():
     # Retrieve the user's email from the session
     user_email = session.get('user_email')
@@ -46,6 +49,7 @@ def home():
         return redirect('/login')
 
 @app.route('/add_item', methods=['POST', 'GET'])
+@admin_required
 @login_required
 def add_item():
     if request.method == 'POST':
@@ -164,7 +168,6 @@ def register():
     else:
         return render_template('register.html')
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -172,11 +175,12 @@ def login():
         password = request.form['password']
 
         # You can call your UserManager's login_user method here
-        login_result = user_manager.login_user(email, password)
+        login_result, user_data = user_manager.login_user(email, password)
 
         if login_result == "Login successful!":
             # Store user information in the session
             session['user_email'] = email
+            session['role'] = user_data[4] if user_data else None  
             # Redirect to a dashboard or home page
             return redirect('/home')
         else:
@@ -184,6 +188,7 @@ def login():
 
     # For GET requests, simply render the login page
     return render_template('login.html')
+
 
 @app.route('/logout')
 def logout():
