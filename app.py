@@ -11,9 +11,10 @@ from app.models.user import User
 from flask_session import Session
 from decorators.authentication_decorators import login_required
 from decorators.admin_decorators import admin_required
-
+from decorators.approver_decorators import approver_required
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
+
 stock_manager = StockManager()
 #user_manager = UserManager()
 
@@ -38,7 +39,6 @@ def index():
 
 @app.route('/home')
 @login_required
-#@admin_required
 def home():
     # Retrieve the user's email from the session
     user_email = session.get('user_email')
@@ -47,9 +47,32 @@ def home():
     else:
         # If the user is not logged in, redirect to the login page
         return redirect('/login')
+@app.route('/approver')
+@login_required
+@approver_required
+def approver_dashboard():
+    """A route that handles approver dashboard home page."""
+    # Retrieve the user's email from the session
+    user_email = session.get('user_email')
+    if user_email:
+        return render_template('approver_dashboard.html', user_email=user_email)
+    else:
+        # If the user is not logged in, redirect to the login page
+        return redirect('/login')
+
+@app.route('/admin')
+@login_required
+@admin_required
+def admin():
+    # Retrieve the user's email from the session
+    user_email = session.get('user_email')
+    if user_email:
+        return render_template('admin.html', user_email=user_email)
+    else:
+        # If the user is not logged in, redirect to the login page
+        return redirect('/login')
 
 @app.route('/add_item', methods=['POST', 'GET'])
-@admin_required
 @login_required
 def add_item():
     if request.method == 'POST':
@@ -144,6 +167,8 @@ def search_item():
         # Handle GET request (initial page load)
         return render_template('search.html', search_results=[])
 @app.route('/register', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def register():
     if request.method == 'POST':
         # Retrieve the email and password from the form data
@@ -182,7 +207,12 @@ def login():
             session['user_email'] = email
             session['role'] = user_data[4] if user_data else None  
             # Redirect to a dashboard or home page
-            return redirect('/home')
+            if session['role'] == 'admin':
+                return redirect('/admin')
+            elif session['role'] == 'user':
+                return redirect('/home')
+            elif session['role'] == 'approver':
+                return redirect('/approver')
         else:
             return render_template('login.html', error=login_result)
 
@@ -234,6 +264,65 @@ def checkout():
         return redirect('/items')
     else:
         return render_template('checkout.html')
+
+
+@app.route('/pending_items')
+@login_required
+@admin_required
+@approver_required
+def pending_items():
+    try:
+        # Fetch all items with a pending status from the database
+        pending_items = db.get_pending_items()
+
+        # Create a list to hold the items
+        items_list = []
+
+        for item in pending_items:
+            # Create a dictionary for each item
+            item_data = {
+                'item_name': item[1],
+                'price': item[2],
+                'category': item[3],
+                'quantity': item[4],
+                'currency': item[6],
+                'created_at': item[5],
+                'status': item[7],
+                'total_cost': item[4] * item[2],
+            }
+
+            # Append the item dictionary to the list
+            items_list.append(item_data)
+
+        return render_template('pending_items.html', pending_items=items_list)
+    
+    except Exception as e:
+        # Handle exceptions, you can log the error or show a flash message
+        flash(f"Error fetching pending items: {str(e)}", 'error')
+        return render_template('pending_items.html', pending_items=[])
+
+@app.route('/change_status/<int:item_id>/<status>', methods=['POST'])
+@login_required
+@admin_required
+def change_status(id, status):
+    try:
+        # Call a method to update the status in the database
+        db.update_item_status(id, status)
+        flash(f"Item status updated to {status}.", 'success')
+    except Exception as e:
+        # Handle exceptions, you can log the error or show a flash message
+        flash(f"Error updating item status: {str(e)}", 'error')
+
+    # Redirect back to the pending items page
+    return redirect(url_for('pending_items'))
+
+@app.route('/approve_items')
+@login_required
+@approver_required
+def approve_items():
+    # Logic for approving items
+    return render_template('approve_items.html')
+
 
 
 if __name__ == "__main__":
