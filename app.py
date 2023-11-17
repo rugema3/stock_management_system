@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from app.models.user_manager import UserManager
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for, flash
 from app.models.stock_manager import StockManager
 from app.models.stock_item import StockItem
 from app.models.database_manager import Database
@@ -269,45 +269,34 @@ def checkout():
 @app.route('/pending_items')
 @login_required
 @admin_required
-@approver_required
 def pending_items():
     try:
         # Fetch all items with a pending status from the database
         pending_items = db.get_pending_items()
 
-        # Create a list to hold the items
-        items_list = []
+        # Print or log the pending_items for debugging
+        print("Pending Items:", pending_items)
 
-        for item in pending_items:
-            # Create a dictionary for each item
-            item_data = {
-                'item_name': item[1],
-                'price': item[2],
-                'category': item[3],
-                'quantity': item[4],
-                'currency': item[6],
-                'created_at': item[5],
-                'status': item[7],
-                'total_cost': item[4] * item[2],
-            }
+        # Pass the pending_items directly to the template
+        return render_template('pending_items.html', pending_items=pending_items)
 
-            # Append the item dictionary to the list
-            items_list.append(item_data)
-
-        return render_template('pending_items.html', pending_items=items_list)
-    
     except Exception as e:
         # Handle exceptions, you can log the error or show a flash message
         flash(f"Error fetching pending items: {str(e)}", 'error')
         return render_template('pending_items.html', pending_items=[])
 
-@app.route('/change_status/<int:item_id>/<status>', methods=['POST'])
+
+
+@app.route('/change_status', methods=['POST'])
 @login_required
 @admin_required
-def change_status(id, status):
+def change_status():
     try:
+        item_id = request.form.get('id')
+        status = request.form.get('status')
+
         # Call a method to update the status in the database
-        db.update_item_status(id, status)
+        db.update_item_status(item_id, status)
         flash(f"Item status updated to {status}.", 'success')
     except Exception as e:
         # Handle exceptions, you can log the error or show a flash message
@@ -316,9 +305,7 @@ def change_status(id, status):
     # Redirect back to the pending items page
     return redirect(url_for('pending_items'))
 
-@app.route('/approve_items')
-@login_required
-@approver_required
+
 def approve_items():
     # Logic for approving items
     return render_template('approve_items.html')

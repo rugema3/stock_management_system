@@ -41,7 +41,15 @@
     <p>No matching items found.</p>
     {% endif %}
 
-    <a href="/">Back to Home</a>
+    {% if session.role == 'admin' %}
+        <a href="/admin">Back to Admin Dashboard</a>
+    {% elif session.role == 'user' %}
+        <a href="/home">Back to User Dashboard</a>
+    {% elif session.role == 'approver' %}
+    	<a href="/approver">Back to Dashboard</a>
+    {% else %}
+        <a href="/">Back to Home</a>
+    {% endif %}
 
     <script>
         function validateForm() {

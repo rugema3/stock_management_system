@@ -3,7 +3,7 @@
 <head>
     <title>All Stock Items</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <head>
+</head>
 <body>
     <h1>All Stock Items</h1>
 
@@ -14,28 +14,43 @@
                 <th>Price</th>
                 <th>Currency</th>
                 <th>Category</th>
-		<th>Quantity</th>
-		<th>Date Created</th>
-		<th>Total cost</th>
-	
+                <th>Quantity</th>
+                <th>Date Created</th>
+                <th>Total cost</th>
+                <th>Actions</th>  <!-- Added Actions column -->
             </tr>
         </thead>
         <tbody>
             {% for item in stock_items %}
             <tr>
                 <td>{{ item.item_name }}</td>
-		<td>{{ item.price }} </td>
-		<td>{{ item.currency }}</td>
+                <td>{{ item.price }} </td>
+                <td>{{ item.currency }}</td>
                 <td>{{ item.category }}</td>
-		<td>{{ item.quantity }}</td>
-		<td>{{ item.created_at }}</td>
-		<td>{{ item.total_cost }}</td>
-                
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.created_at }}</td>
+                <td>{{ item.total_cost }}</td>
+                <td>
+                    <form action="{{ url_for('checkout') }}" method="post">
+                        <input type="hidden" name="item_name" value="{{ item.item_name }}">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" name="quantity" value="1" min="1" required>
+                        <button type="submit">Checkout</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <a href="/">Back to Home</a>
+    {% if session.role == 'admin' %}
+        <a href="/admin">Back to Admin Dashboard</a>
+    {% elif session.role == 'user' %}
+        <a href="/home">Back to User Dashboard</a>
+    {% elif session.role == 'approver' %}
+        <a href="/approver">Back to Dashboard</a>
+    {% else %}
+        <a href="/">Back to Home</a>
+    {% endif %}
 </body>
 </html>

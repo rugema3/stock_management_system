@@ -189,10 +189,77 @@ class Database:
 
     def get_pending_items(self):
         """Retrieve all the pending items from the db."""
-        cursor = self.db_connection.cursor()
+        cursor = self.db_connection.cursor(dictionary=True)
         search_query = "SELECT * FROM stock_items WHERE status = 'pending'"
         cursor.execute(search_query)
         matching_items = cursor.fetchall()
         cursor.close()
         return matching_items
+
+    def update_item_status(self, id, status):
+        """
+        Update the status of an item in the database.
+
+        Args:
+            item_id (int): The ID of the item to be updated.
+            status (str): The new status of the item.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        cursor = self.db_connection.cursor()
+        update_query = "UPDATE stock_items SET status = %s WHERE id = %s"
+        cursor.execute(update_query, (status, id))
+        rows_affected = cursor.rowcount
+        self.db_connection.commit()
+        cursor.close()
+        return rows_affected > 0  
+
+
+if __name__ == '__main__':
+    # Create an instance of the Database class with your configuration
+    db_config = {
+        'user': 'rugema3',
+        'password': 'Shami@2020',
+        'host': 'localhost',
+        'database': 'stock'
+    }
+    
+    database = Database(db_config)
+
+    while True:
+        print("\n1. Update Item Status")
+        print("2. Exit")
+
+        choice = input("Enter your choice (1 or 2): ")
+
+        if choice == '1':
+            # Fetch all pending items
+            pending_items = database.get_pending_items()
+
+            if not pending_items:
+                print("No pending items found.")
+                continue
+
+            print("\nPending Items:")
+            for item in pending_items:
+                print(f"{item['id']}. Item: {item['item_name']}, Price: {item['price']}, Category: {item['category']}, Staus: {item['status']}, Quantity: {item['quantity']}")
+
+
+            item_id = input("Enter the ID of the item to update: ")
+            new_status = input("Enter the new status: ")
+            
+            # Call the update_item_status method from your Database class
+            success = database.update_item_status(item_id, new_status)
+
+            if success:
+                print("Item status updated successfully.")
+            else:
+                print("Failed to update item status.")
+                
+        elif choice == '2':
+            print("Exiting the Item Status Updater. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please enter 1 or 2.")
 
