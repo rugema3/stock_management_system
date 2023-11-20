@@ -215,6 +215,45 @@ class Database:
         cursor.close()
         return rows_affected > 0  
 
+    def update_user_password(self, user_id, new_password):
+        """
+        Update the password of a user in the database with plain text password.
+
+        Args:
+            user_id (int): The ID of the user to be updated.
+            new_password (str): The new password (plain text).
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        cursor = self.db_connection.cursor()
+        update_query = "UPDATE users SET password = %s WHERE id = %s"
+        cursor.execute(update_query, (new_password, user_id))
+        rows_affected = cursor.rowcount
+        self.db_connection.commit()
+        cursor.close()
+        return rows_affected > 0
+
+
+    def update_user_email(self, user_id, new_email):
+        """
+        Update the email of a user in the database.
+
+        Args:
+            user_id (int): The ID of the user to be updated.
+            new_email (str): The new email address.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        cursor = self.db_connection.cursor()
+        update_query = "UPDATE users SET email = %s WHERE id = %s"
+        cursor.execute(update_query, (new_email, user_id))
+        rows_affected = cursor.rowcount
+        self.db_connection.commit()
+        cursor.close()
+        return rows_affected > 0
+
 
 if __name__ == '__main__':
     # Create an instance of the Database class with your configuration

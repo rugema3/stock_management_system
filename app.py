@@ -12,6 +12,7 @@ from flask_session import Session
 from decorators.authentication_decorators import login_required
 from decorators.admin_decorators import admin_required
 from decorators.approver_decorators import approver_required
+from flask_login import current_user
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
 
@@ -205,6 +206,7 @@ def login():
         if login_result == "Login successful!":
             # Store user information in the session
             session['user_email'] = email
+            session['id'] = user_data[0]
             session['role'] = user_data[4] if user_data else None  
             # Redirect to a dashboard or home page
             if session['role'] == 'admin':
@@ -287,7 +289,7 @@ def pending_items():
 
 
 
-@app.route('/change_status', methods=['POST'])
+@app.route('/change_status', methods=['POST','GET'])
 @login_required
 @admin_required
 def change_status():
@@ -310,6 +312,73 @@ def approve_items():
     # Logic for approving items
     return render_template('approve_items.html')
 
+
+@app.route('/update_email', methods=['GET', 'POST'])
+@login_required
+def update_email():
+    """
+    Update the user's email address.
+
+    If the user is not authenticated, redirect to the login page.
+    If the update is successful, redirect to the profile page; otherwise, handle the failure.
+
+    Returns:
+        Response: Redirects to the profile page or shows an error message.
+    """
+    if 'id' not in session:
+        # Redirect to login if user is not authenticated
+        return redirect(url_for('login'))
+
+    user_id = session['id']  # Update to use 'id'
+    new_email = request.form.get('new_email')
+    if new_email is None:
+        return render_template('update_email.html', error='New email Required.')
+    # Call the update email method from your database class
+    success = db.update_user_email(user_id, new_email)
+
+    if success:
+        flash("Email updated successfully.", 'success')
+        # Redirect to a success page or back to the profile page
+        return redirect(url_for('home'))
+    else:
+        flash("Failed to update email.", 'error')
+        # Handle the failure, maybe show an error message to the user
+        return render_template('update_email.html')  # Render the form again
+
+
+@app.route('/update_password', methods=['GET', 'POST'])
+@login_required
+def update_password():
+    """
+    Update the user's password.
+
+    If the user is not authenticated, redirect to the login page.
+    If the update is successful, redirect to the profile page; otherwise, handle the failure.
+
+    Returns:
+        Response: Redirects to the profile page or shows an error message.
+    """
+    if 'id' not in session:
+        # Redirect to login if the user is not authenticated
+        return redirect(url_for('login'))
+
+    user_id = session['id']
+    new_password = request.form.get('new_password')  # Use the correct form field name
+    
+    if new_password is None:
+        return render_template('change_password.html', error='New password cannot be null')
+
+
+    # Call the update password method from your database class
+    success = db.update_user_password(user_id, new_password)
+
+    if success:
+        print("Password updated successfully.")
+        # Redirect to a success page or back to the profile page
+        return redirect(url_for('home'))
+    else:
+        print("Failed to update password.")
+        # Handle the failure, maybe show an error message to the user
 
 
 if __name__ == "__main__":

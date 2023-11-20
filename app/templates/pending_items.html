@@ -36,8 +36,8 @@
                 <form action="{{ url_for('change_status', id=item['id']) }}" method="post">
 		    <input type="hidden" name="id" value="{{ item['id'] }}">
                     <select name="status">
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="approved">Approve</option>
+                        <option value="rejected">Reject</option>
                     </select>
                     <button type="submit">Update</button>
                 </form>

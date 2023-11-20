@@ -33,6 +33,10 @@
 
     </form>
     <br><br>
-    <a href="/">Back to Home</a>
+    {% if session.role == 'admin' %}
+    	<a href="/admin">Back to Dashborad</a>
+    {% else %}
+    <a href='/'>Back Home</a>
+    {% endif %}
 </body>
 </html>
