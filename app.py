@@ -235,7 +235,6 @@ def logout():
     # Redirect to the login page or any other desired page
     return render_template('logout.html')
 
-from flask import request, flash
 
 @app.route('/checkout', methods=['GET', 'POST'])
 @login_required
