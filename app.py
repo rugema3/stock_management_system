@@ -377,7 +377,21 @@ def update_password():
         return redirect(url_for('home'))
     else:
         print("Failed to update password.")
-        # Handle the failure, maybe show an error message to the user
+        # Handle the failure, maybe show an error messa
+
+@app.route('/admin/view_users')
+@login_required
+@admin_required
+def view_users():
+    try:
+        users = db.get_all_users()
+        if users:
+            return render_template('view_users.html', users=users)
+        else:
+            return "No users found."
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return "An error occurred."
 
 
 if __name__ == "__main__":

@@ -254,6 +254,21 @@ class Database:
         cursor.close()
         return rows_affected > 0
 
+    def get_all_users(self):
+        """
+        Retrieve a list of all users from the database with selected fields.
+
+        Returns:
+            list: A list of tuples containing selected user information.
+        """
+        query = "SELECT email, role, department FROM users"
+        cursor = self.db_connection.cursor(dictionary=True)
+        cursor.execute(query)
+        users = cursor.fetchall()
+        cursor.close()
+        return users
+
+
 
 if __name__ == '__main__':
     # Create an instance of the Database class with your configuration
