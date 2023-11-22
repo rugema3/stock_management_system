@@ -12,6 +12,7 @@ from flask_session import Session
 from decorators.authentication_decorators import login_required
 from decorators.admin_decorators import admin_required
 from decorators.approver_decorators import approver_required
+from decorators.roles import any_role_required
 from flask_login import current_user
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
@@ -190,7 +191,7 @@ def register():
         registration_result = user_manager.register_user(user)
 
         # Render the result in the HTML response
-        return registration_result
+        return render_template('registration_success.html')
     else:
         return render_template('register.html')
 
@@ -208,6 +209,7 @@ def login():
             session['user_email'] = email
             session['id'] = user_data[0]
             session['role'] = user_data[4] if user_data else None  
+            session['department'] = user_data[3] if user_data else None
             # Redirect to a dashboard or home page
             if session['role'] == 'admin':
                 return redirect('/admin')
@@ -269,7 +271,7 @@ def checkout():
 
 @app.route('/pending_items')
 @login_required
-@admin_required
+@any_role_required(['admin', 'approver'])
 def pending_items():
     try:
         # Fetch all items with a pending status from the database
@@ -377,14 +379,19 @@ def update_password():
         return redirect(url_for('home'))
     else:
         print("Failed to update password.")
-        # Handle the failure, maybe show an error messa
+        # Handle the failure, maybe show an error message
 
 @app.route('/admin/view_users')
 @login_required
 @admin_required
 def view_users():
     try:
-        users = db.get_all_users()
+        # Get the admin's department from the session
+        admin_department = session.get('department')
+
+        # Fetch users only in the admin's department
+        users = db.get_all_users(department=admin_department)
+
         if users:
             return render_template('view_users.html', users=users)
         else:
@@ -392,6 +399,7 @@ def view_users():
     except Exception as e:
         print(f"Error: {str(e)}")
         return "An error occurred."
+
 
 
 if __name__ == "__main__":

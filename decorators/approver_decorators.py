@@ -29,6 +29,9 @@ def approver_required(func):
         Returns:
             Any: The result of the wrapped function.
         """
+        print("Session:", session)
+        role = session.get('role')
+        print("Role:", role)
         # Check if the user is logged in
         if 'user_email' not in session:
             return redirect(url_for('login'))

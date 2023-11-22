@@ -108,7 +108,7 @@ class Database:
 
     def insert_user(self, user):
         """
-        Insert a new user into the database.
+       Insert a new user into the database.
 
         Args:
             user (User): The User object to be inserted into the database.
@@ -254,19 +254,29 @@ class Database:
         cursor.close()
         return rows_affected > 0
 
-    def get_all_users(self):
+    def get_all_users(self, department=None):
         """
         Retrieve a list of all users from the database with selected fields.
+
+        Args:
+            department (str): The department for which to retrieve users. If None, retrieve all users.
 
         Returns:
             list: A list of tuples containing selected user information.
         """
-        query = "SELECT email, role, department FROM users"
+        if department:
+            query = "SELECT email, role, department FROM users WHERE department = %s"
+            params = (department,)
+        else:
+            query = "SELECT email, role, department FROM users"
+            params = None
+
         cursor = self.db_connection.cursor(dictionary=True)
-        cursor.execute(query)
+        cursor.execute(query, params)
         users = cursor.fetchall()
         cursor.close()
         return users
+
 
 
 
