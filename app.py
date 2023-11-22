@@ -86,8 +86,12 @@ def add_item():
         # Create a StockItem object with the UUID generated
         stock_item = StockItem(item_name, price, category, quantity)
 
+        # Get the current user's ID and department from the session
+        maker_id = session.get('id')
+        department = session.get('department')
+
         # Insert the new item into the database using the Database class
-        db.insert_item(stock_item)
+        db.insert_item(stock_item, maker_id=maker_id)
 
     # Fetch the updated stock items from the database
     stock_items = db.get_all_items()
@@ -274,8 +278,11 @@ def checkout():
 @any_role_required(['admin', 'approver'])
 def pending_items():
     try:
-        # Fetch all items with a pending status from the database
-        pending_items = db.get_pending_items()
+        # Get the logged-in user's department from the session
+        user_department = session.get('department')
+
+        # Fetch pending items only in the user's department
+        pending_items = db.get_pending_items(department=user_department)
 
         # Print or log the pending_items for debugging
         print("Pending Items:", pending_items)

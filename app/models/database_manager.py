@@ -26,18 +26,36 @@ class Database:
         self.db_connection = mysql.connector.connect(**db_config)
         self.cursor = self.db_connection.cursor()
 
-    def insert_item(self, item):
+    def insert_item(self, item, maker_id=None):
         """
         Insert an item into the database.
 
         Args:
             item (StockItem): The StockItem object to be inserted into the database.
+            maker_id (int, optional): The ID of the user who added the item. Default is None.
         """
-        cursor = self.db_connection.cursor()
-        insert_query = "INSERT INTO stock_items(item_name, price, category, quantity) VALUES (%s, %s, %s, %s)"
-        cursor.execute(insert_query, (item.item_name, item.price, item.category, item.quantity))
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        if maker_id is not None:
+            # Fetch the department information based on the maker_id
+            department_query = "SELECT department FROM users WHERE id = %s"
+            cursor.execute(department_query, (maker_id,))
+            department_result = cursor.fetchone()
+
+            if department_result:
+                department = department_result['department']
+
+                # Insert the item with the fetched department information
+                insert_query = """
+                    INSERT INTO stock_items(item_name, price, category, quantity, department, maker_id)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """
+                cursor.execute(insert_query, (item.item_name, item.price, item.category, item.quantity, department, maker_id))
+
         self.db_connection.commit()
         cursor.close()
+
+
 
     def get_all_items(self):
         """
@@ -187,14 +205,28 @@ class Database:
             cursor.execute(insert_query, (user.email, user.password, user.department, user.role))
         self.db_connection.commit()
 
-    def get_pending_items(self):
-        """Retrieve all the pending items from the db."""
+    def get_pending_items(self, department=None):
+        """
+        Retrieve a list of all pending items from the database with selected fields.
+
+        Args:
+            department (str): The department for which to retrieve pending items. If None, retrieve all pending items.
+
+        Returns:
+            list: A list of tuples containing selected pending item information.
+        """
+        if department:
+            query = "SELECT id, item_name, price, category, quantity, created_at, currency, status, maker_id FROM stock_items WHERE status = 'pending' AND department = %s"
+            params = (department,)
+        else:
+            query = "SELECT id, item_name, price, category, quantity, created_at, currency, status, maker_id FROM stock_items WHERE status = 'pending'"
+            params = None
+
         cursor = self.db_connection.cursor(dictionary=True)
-        search_query = "SELECT * FROM stock_items WHERE status = 'pending'"
-        cursor.execute(search_query)
-        matching_items = cursor.fetchall()
+        cursor.execute(query, params)
+        pending_items = cursor.fetchall()
         cursor.close()
-        return matching_items
+        return pending_items
 
     def update_item_status(self, id, status):
         """
