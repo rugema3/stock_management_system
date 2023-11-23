@@ -1,0 +1,46 @@
+/* static/admin_style.css */
+
+/* Container for the admin page */
+.admin-container {
+    display: flex;
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 20%; /* Adjust the width as needed */
+    padding: 20px;
+    background-color: #333; /* Dark background color for the sidebar */
+    color: white;
+}
+
+.sidebar h1, .sidebar h2 {
+    color: #FFA500; /* Orange heading colors */
+}
+
+/* Styles for the options list */
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 8px;
+    display: block;
+}
+
+.sidebar a:hover {
+    background-color: #555;
+}
+
+/* Styles for the dashboard section */
+.dashboard-section {
+    flex: 1; /* Take up the remaining space in the container */
+    padding: 20px;
+}
+
