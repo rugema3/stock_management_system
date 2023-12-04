@@ -1,6 +1,4 @@
-/* static/login_style.css */
-
-/* Center-align the login form */
+/* Center-align the registration form */
 body.selected-body {
     display: flex;
     justify-content: center;
@@ -9,15 +7,16 @@ body.selected-body {
     margin: 0;
 }
 
-/* Style the login form container */
+/* Style the registration form container */
 form {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 50%; /* Set the width to cover half the page */
 }
 
-/* Center-align and style the login form title */
+/* Center-align and style the registration form title */
 h1 {
     color: #1F4834;
     text-align: center;
@@ -27,13 +26,15 @@ h1 {
 label {
     display: block;
     margin-bottom: 5px;
-    text-align: left;
+    width: 100px; /* Set a fixed width for labels */
 }
 
+
 /* Style form input fields */
-input[type="email"],
-input[type="password"] {
-    width: 100%;
+input[type="text"],
+input[type="password"],
+select {
+    width: calc(100% - 20px); /* Calculate width, considering padding */
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -41,7 +42,7 @@ input[type="password"] {
     box-sizing: border-box;
 }
 
-/* Apply the button style to the login button */
+/* Apply the button style to the registration button */
 input[type="submit"] {
     background-color: #1F4834;
     border: none;
@@ -53,19 +54,21 @@ input[type="submit"] {
     font-size: 16px;
     cursor: pointer;
     border-radius: 4px;
-    width: 100%;
+    width: 100%; /* Make the button span the full width */
 }
 
 input[type="submit"]:hover {
     background-color: #14402d;
 }
 
-/* Style the flash messages (alerts) */
-.alert {
-    background-color: #e44d26;
-    color: white;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
+/* Style the back to dashboard link */
+p a {
+    color: #1F4834;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
 }
 

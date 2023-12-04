@@ -14,8 +14,16 @@ from decorators.admin_decorators import admin_required
 from decorators.approver_decorators import approver_required
 from decorators.roles import any_role_required
 from flask_login import current_user
+from flask_mail import Mail, Message
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'rugema61@gmail.com'
+app.config['MAIL_PASSWORD'] = 'swxo mvts cwtn yzqw'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
 
 stock_manager = StockManager()
 #user_manager = UserManager()
