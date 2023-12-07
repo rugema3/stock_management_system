@@ -87,24 +87,41 @@ class Database:
         cursor.close()
         return matching_items
 
-    def checkout_item(self, item_name, quantity):
-        """
-        Checkout a specified quantity of an item from the stock.
-
-        Args:
-            item_name (str): The name of the item to be checked out.
-            quantity (int): The quantity of the item to be checked out.
-
-        Returns:
-            bool: True if the checkout was successful, False otherwise.
-        """
+    def checkout_item(self, user_id, item_name, quantity):
         cursor = self.db_connection.cursor()
-        update_query = "UPDATE stock_items SET quantity = quantity - %s WHERE item_name = %s AND quantity >= %s"
-        cursor.execute(update_query, (quantity, item_name, quantity))
-        rows_affected = cursor.rowcount
-        self.db_connection.commit()
-        cursor.close()
-        return rows_affected > 0
+
+        try:
+            # Retrieve department information based on user_id
+            department_query = "SELECT department FROM users WHERE id = %s"
+            cursor.execute(department_query, (user_id,))
+            department_result = cursor.fetchone()
+
+            if department_result:
+                department = department_result['department']
+
+                
+                update_query = "UPDATE stock_items SET quantity = quantity - %s WHERE item_name = %s AND quantity >= %s"
+                cursor.execute(update_query, (quantity, item_name, quantity))
+
+                # Create a checkout transaction record with user_id and department
+                checkout_query = "INSERT INTO checkout_transactions (item_name, quantity, user_id, department, approval_status) VALUES (%s, %s, %s, %s, %s)"
+                cursor.execute(checkout_query, (item_name, quantity, user_id, department, 'pending'))
+
+                # Commit the changes
+                self.db_connection.commit()
+
+                return True
+            else:
+                return False
+        except Exception as e:
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
+            return False
+        finally:
+            cursor.close()
+
+
+
 
     def delete_item(self, item_name):
         """
@@ -309,53 +326,46 @@ class Database:
         cursor.close()
         return users
 
+    def get_pending_checkouts(self, department=None):
+        """
+        Retrieve a list of all pending checkout requests from the database with selected fields.
 
+        Args:
+            department (str): The department for which to retrieve pending checkout requests. 
+            If None, retrieve all pending requests.
 
-
-if __name__ == '__main__':
-    # Create an instance of the Database class with your configuration
-    db_config = {
-        'user': 'rugema3',
-        'password': 'Shami@2020',
-        'host': 'localhost',
-        'database': 'stock'
-    }
-    
-    database = Database(db_config)
-
-    while True:
-        print("\n1. Update Item Status")
-        print("2. Exit")
-
-        choice = input("Enter your choice (1 or 2): ")
-
-        if choice == '1':
-            # Fetch all pending items
-            pending_items = database.get_pending_items()
-
-            if not pending_items:
-                print("No pending items found.")
-                continue
-
-            print("\nPending Items:")
-            for item in pending_items:
-                print(f"{item['id']}. Item: {item['item_name']}, Price: {item['price']}, Category: {item['category']}, Staus: {item['status']}, Quantity: {item['quantity']}")
-
-
-            item_id = input("Enter the ID of the item to update: ")
-            new_status = input("Enter the new status: ")
-            
-            # Call the update_item_status method from your Database class
-            success = database.update_item_status(item_id, new_status)
-
-            if success:
-                print("Item status updated successfully.")
-            else:
-                print("Failed to update item status.")
-                
-        elif choice == '2':
-            print("Exiting the Item Status Updater. Goodbye!")
-            break
+        Returns:
+            list: A list of tuples containing selected checkout request
+            information.
+        """
+        if department:
+            query = """
+                SELECT 
+                ct.checkout_id, 
+                ct.item_name, 
+                ct.quantity, 
+                ct.user_id, 
+                ct.created_at
+                FROM checkout_transactions ct
+                INNER JOIN users u ON ct.user_id = u.id
+                WHERE ct.approval_status = 'pending' AND u.department = %s
+            """
+            params = (department,)
         else:
-            print("Invalid choice. Please enter 1 or 2.")
+            query = """
+                SELECT 
+                checkout_id, 
+                item_name, 
+                quantity, 
+                user_id, 
+                created_at 
+                FROM checkout_transactions WHERE approval_status = 'pending'
+            """
+            params = None
+
+        cursor = self.db_connection.cursor(dictionary=True)
+        cursor.execute(query, params)
+        pending_checkouts = cursor.fetchall()
+        cursor.close()
+        return pending_checkouts
 

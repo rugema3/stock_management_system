@@ -267,7 +267,7 @@ def checkout():
         quantity = int(request.form.get('quantity'))
 
         # Call the checkout_item method to remove the specified quantity of the item
-        success = db.checkout_item(item_name, quantity)
+        success = db.checkout_item(session['id'], item_name, quantity)
 
         if success:
             # Redirect back to the items page with a success message
@@ -307,7 +307,7 @@ def pending_items():
 
 @app.route('/change_status', methods=['POST','GET'])
 @login_required
-@admin_required
+@any_role_required(['admin', 'approver'])
 def change_status():
     try:
         item_id = request.form.get('id')
@@ -414,6 +414,28 @@ def view_users():
     except Exception as e:
         print(f"Error: {str(e)}")
         return "An error occurred."
+
+@app.route('/pending_checkouts')
+@login_required
+@any_role_required(['admin', 'approver'])
+def pending_checkouts():
+    try:
+        # Get the logged-in user's department from the session
+        user_department = session.get('department')
+
+        # Fetch pending checkout requests only in the user's department
+        pending_checkouts = db.get_pending_checkouts(department=user_department)
+
+        # Print or log the pending_checkouts for debugging
+        print("Pending Checkouts:", pending_checkouts)
+
+        # Pass the pending_checkouts directly to the template
+        return render_template('pending_checkouts.html', pending_checkouts=pending_checkouts)
+
+    except Exception as e:
+        # Handle exceptions, you can log the error or show a flash message
+        flash(f"Error fetching pending checkouts: {str(e)}", 'error')
+        return render_template('pending_checkouts.html', pending_checkouts=[])
 
 
 
