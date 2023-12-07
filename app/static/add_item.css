@@ -1,0 +1,74 @@
+/* Center-align the registration form */
+body.selected-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Style the registration form container */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 50%; /* Set the width to cover half the page */
+}
+
+/* Center-align and style the registration form title */
+h1 {
+    color: #1F4834;
+    text-align: center;
+}
+
+/* Style form labels */
+label {
+    display: block;
+    margin-bottom: 5px;
+    width: 100px; /* Set a fixed width for labels */
+}
+
+
+/* Style form input fields */
+input[type="text"],
+input[type="password"],
+select {
+    width: calc(100% - 20px); /* Calculate width, considering padding */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Apply the button style to the registration button */
+input[type="submit"] {
+    background-color: #1F4834;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%; /* Make the button span the full width */
+}
+
+input[type="submit"]:hover {
+    background-color: #14402d;
+}
+
+/* Style the back to dashboard link */
+p a {
+    color: #1F4834;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+

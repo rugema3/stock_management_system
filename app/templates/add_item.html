@@ -4,6 +4,7 @@
     <title>Add Items</title>
    
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register_style.css') }}">
     
 </head>
 <body class="selected-body">
@@ -14,7 +15,7 @@
         <input type="text" id="item_name" name="item_name"><br><br>
 
         <label for="price">Price:</label>
-        <input type="number" id="price" name="price"><br><br>
+        <input type="text" id="price" name="price"><br><br>
 
         <label for="category">Category:</label>
         <select id="category" name="category">
@@ -26,7 +27,7 @@
 	</select><br><br>
 
         <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" value="0"><br><br>
+        <input type="text" id="quantity" name="quantity" value="0"><br><br>
 
        <button type="submit" class="button">Add Item</button>
 

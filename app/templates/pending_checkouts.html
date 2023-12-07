@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Pending Checkouts</title>
+</head>
+<body>
+    <h1>Pending Checkouts</h1>
+
+    {% if pending_checkouts %}
+    <table border="1">
+        <tr>
+            <th>Checkout ID</th>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>User ID</th>
+            <th>Created At</th>
+            <th>Actions</th>  <!-- Added Actions column -->
+        </tr>
+        {% for checkout in pending_checkouts %}
+        <tr>
+            <td>{{ checkout['checkout_id'] }}</td>
+            <td>{{ checkout['item_name'] }}</td>
+            <td>{{ checkout['quantity'] }}</td>
+            <td>{{ checkout['user_id'] }}</td>
+            <td>{{ checkout['created_at'] }}</td>
+            <td>
+                <form action="{{ url_for('change_checkout_status', checkout_id=checkout['checkout_id']) }}" method="post">
+                    <input type="hidden" name="checkout_id" value="{{ checkout['checkout_id'] }}">
+                    <select name="status">
+                        <option value="approved">Approve</option>
+                        <option value="rejected">Reject</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No pending checkouts.</p>
+    {% endif %}
+
+    {% if session.role == 'admin' %}
+        <a href="/admin">Back to Admin Dashboard</a>
+    {% elif session.role == 'user' %}
+        <a href="/home">Back to User Dashboard</a>
+    {% elif session.role == 'approver' %}
+        <a href="/approver">Back to Dashboard</a>
+    {% else %}
+        <a href="/">Back to Home</a>
+    {% endif %}
+
+</body>
+</html>

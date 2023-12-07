@@ -12,9 +12,18 @@ from flask_session import Session
 from decorators.authentication_decorators import login_required
 from decorators.admin_decorators import admin_required
 from decorators.approver_decorators import approver_required
+from decorators.roles import any_role_required
 from flask_login import current_user
+from flask_mail import Mail, Message
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'rugema61@gmail.com'
+app.config['MAIL_PASSWORD'] = 'swxo mvts cwtn yzqw'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+mail = Mail(app)
 
 stock_manager = StockManager()
 #user_manager = UserManager()
@@ -85,8 +94,12 @@ def add_item():
         # Create a StockItem object with the UUID generated
         stock_item = StockItem(item_name, price, category, quantity)
 
+        # Get the current user's ID and department from the session
+        maker_id = session.get('id')
+        department = session.get('department')
+
         # Insert the new item into the database using the Database class
-        db.insert_item(stock_item)
+        db.insert_item(stock_item, maker_id=maker_id)
 
     # Fetch the updated stock items from the database
     stock_items = db.get_all_items()
@@ -190,7 +203,7 @@ def register():
         registration_result = user_manager.register_user(user)
 
         # Render the result in the HTML response
-        return registration_result
+        return render_template('registration_success.html')
     else:
         return render_template('register.html')
 
@@ -208,6 +221,7 @@ def login():
             session['user_email'] = email
             session['id'] = user_data[0]
             session['role'] = user_data[4] if user_data else None  
+            session['department'] = user_data[3] if user_data else None
             # Redirect to a dashboard or home page
             if session['role'] == 'admin':
                 return redirect('/admin')
@@ -235,7 +249,6 @@ def logout():
     # Redirect to the login page or any other desired page
     return render_template('logout.html')
 
-from flask import request, flash
 
 @app.route('/checkout', methods=['GET', 'POST'])
 @login_required
@@ -254,7 +267,7 @@ def checkout():
         quantity = int(request.form.get('quantity'))
 
         # Call the checkout_item method to remove the specified quantity of the item
-        success = db.checkout_item(item_name, quantity)
+        success = db.checkout_item(session['id'], item_name, quantity)
 
         if success:
             # Redirect back to the items page with a success message
@@ -270,11 +283,14 @@ def checkout():
 
 @app.route('/pending_items')
 @login_required
-@admin_required
+@any_role_required(['admin', 'approver'])
 def pending_items():
     try:
-        # Fetch all items with a pending status from the database
-        pending_items = db.get_pending_items()
+        # Get the logged-in user's department from the session
+        user_department = session.get('department')
+
+        # Fetch pending items only in the user's department
+        pending_items = db.get_pending_items(department=user_department)
 
         # Print or log the pending_items for debugging
         print("Pending Items:", pending_items)
@@ -291,7 +307,7 @@ def pending_items():
 
 @app.route('/change_status', methods=['POST','GET'])
 @login_required
-@admin_required
+@any_role_required(['admin', 'approver'])
 def change_status():
     try:
         item_id = request.form.get('id')
@@ -378,7 +394,49 @@ def update_password():
         return redirect(url_for('home'))
     else:
         print("Failed to update password.")
-        # Handle the failure, maybe show an error message to the user
+        # Handle the failure, maybe show an error message
+
+@app.route('/admin/view_users')
+@login_required
+@admin_required
+def view_users():
+    try:
+        # Get the admin's department from the session
+        admin_department = session.get('department')
+
+        # Fetch users only in the admin's department
+        users = db.get_all_users(department=admin_department)
+
+        if users:
+            return render_template('view_users.html', users=users)
+        else:
+            return "No users found."
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return "An error occurred."
+
+@app.route('/pending_checkouts')
+@login_required
+@any_role_required(['admin', 'approver'])
+def pending_checkouts():
+    try:
+        # Get the logged-in user's department from the session
+        user_department = session.get('department')
+
+        # Fetch pending checkout requests only in the user's department
+        pending_checkouts = db.get_pending_checkouts(department=user_department)
+
+        # Print or log the pending_checkouts for debugging
+        print("Pending Checkouts:", pending_checkouts)
+
+        # Pass the pending_checkouts directly to the template
+        return render_template('pending_checkouts.html', pending_checkouts=pending_checkouts)
+
+    except Exception as e:
+        # Handle exceptions, you can log the error or show a flash message
+        flash(f"Error fetching pending checkouts: {str(e)}", 'error')
+        return render_template('pending_checkouts.html', pending_checkouts=[])
+
 
 
 if __name__ == "__main__":
