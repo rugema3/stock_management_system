@@ -369,3 +369,76 @@ class Database:
         cursor.close()
         return pending_checkouts
 
+    def get_pending_items_count(self, department=None):
+        """
+        Retrieve the count of pending items from the database.
+
+        Args:
+            department (str): The department for which to retrieve the count of pending items.
+                             If None, retrieve the count for all pending items.
+
+        Returns:
+            int: The count of pending items.
+        """
+        if department:
+            query = "SELECT COUNT(*) as count FROM stock_items WHERE status = 'pending' AND department = %s"
+            params = (department,)
+        else:
+            query = "SELECT COUNT(*) as count FROM stock_items WHERE status = 'pending'"
+            params = None
+
+        cursor = self.db_connection.cursor()
+        cursor.execute(query, params)
+        count = cursor.fetchone()[0]  # Access the count using [0]
+        cursor.close()
+        return count
+
+
+    def get_users_count_by_department(self, department):
+        """
+        Retrieve the count of users based on their roles and department from the database.
+
+        Args:
+            department (str): The department for which to retrieve user counts.
+
+        Returns:
+            dict: A dictionary containing user counts for each role.
+        """
+        query = """
+        SELECT 
+            (SELECT COUNT(*) FROM users WHERE department = %s AND role = 'user') as user_count,
+            (SELECT COUNT(*) FROM users WHERE department = %s AND role = 'admin') as admin_count,
+            (SELECT COUNT(*) FROM users WHERE department = %s AND role = 'approver') as approver_count
+        """
+        params = (department, department, department)
+
+        cursor = self.db_connection.cursor(dictionary=True)
+        cursor.execute(query, params)
+        user_counts = cursor.fetchone()
+        cursor.close()
+        return user_counts
+
+    def get_total_cost_of_stock(self, department=None, status='approved'):
+        """
+        Calculate the total cost of approved items in the stock.
+
+        Args:
+            department (str): The department for which to calculate the total cost.
+                             If None, calculate the total cost for all items.
+            status (str): The status of items to include in the calculation. Default is 'approved'.
+
+        Returns:
+            float: The total cost of approved items in the stock.
+        """
+        if department:
+            query = "SELECT SUM(price * quantity) as total_cost FROM stock_items WHERE department = %s AND status = %s"
+            params = (department, status)
+        else:
+            query = "SELECT SUM(price * quantity) as total_cost FROM stock_items WHERE status = %s"
+            params = (status,)
+
+        cursor = self.db_connection.cursor()
+        cursor.execute(query, params)
+        total_cost = cursor.fetchone()[0] or 0  # Access the total cost using [0] and handle None result
+        cursor.close()
+        return total_cost

@@ -74,13 +74,29 @@ def approver_dashboard():
 @login_required
 @admin_required
 def admin():
-    # Retrieve the user's email from the session
-    user_email = session.get('user_email')
-    if user_email:
-        return render_template('admin.html', user_email=user_email)
-    else:
-        # If the user is not logged in, redirect to the login page
+    try:
+        user_email = session.get('user_email')
+        user_department = session.get('department')
+
+        # Ensure user_department is not None before calling methods
+        if user_department is not None:
+            pending_items_count = db.get_pending_items_count(department=user_department)
+            user_counts = db.get_users_count_by_department(department=user_department)
+            total_cost = db.get_total_cost_of_stock(department=user_department, status='approved')
+            damaged_items=0
+
+        else:
+            pending_items_count = 0  # Set a default count
+            user_counts = {'user_count': 0, 'admin_count': 0, 'approver_count': 0}  # Set default counts
+            total_cost = 0
+            damaged_items= 0
+
+        return render_template('admin.html', user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items)
+
+    except Exception as e:
+        flash(f"Error in admin route: {str(e)}", 'error')
         return redirect('/login')
+
 
 @app.route('/add_item', methods=['POST', 'GET'])
 @login_required

@@ -42,5 +42,40 @@
 .dashboard-section {
     flex: 1; /* Take up the remaining space in the container */
     padding: 20px;
+    background-color: #f4f4f4;
 }
 
+.divk{
+
+height: 200px;
+  width: 25%;
+background-color:orange;  
+}
+
+.divt{
+	height: 200px;
+	width: 25%;
+	margin-left:290px;
+	background-color:orange;
+	margin-top:-200px;
+}
+
+/* Updated Styles for the Dashboard Widgets */
+.dashboard-widget {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* Updated Styles for the Sidebar Links */
+.sidebar a {
+    color: #ddd;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+    transition: background-color 0.3s ease;
+}
+.sidebar a:hover {
+    background-color: #555;
+}
