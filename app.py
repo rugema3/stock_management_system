@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, redirect, session, url_for, f
 from app.models.stock_manager import StockManager
 from app.models.stock_item import StockItem
 from app.models.database_manager import Database
+from app.models.send_email import send_email
+from app.helpers.random_password import random_password
 from decouple import config  
 import bcrypt
 from app.models.user import User 
@@ -15,15 +17,9 @@ from decorators.approver_decorators import approver_required
 from decorators.roles import any_role_required
 from flask_login import current_user
 from flask_mail import Mail, Message
+import os
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'rugema61@gmail.com'
-app.config['MAIL_PASSWORD'] = 'swxo mvts cwtn yzqw'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-mail = Mail(app)
 
 stock_manager = StockManager()
 #user_manager = UserManager()
@@ -453,6 +449,52 @@ def pending_checkouts():
         flash(f"Error fetching pending checkouts: {str(e)}", 'error')
         return render_template('pending_checkouts.html', pending_checkouts=[])
 
+@app.route('/forgot_password', methods=['POST', 'GET'])
+def forgot_password():
+    """
+    Handle the forgot password functionality.
+
+    For GET requests, render the forgot password form.
+    For POST requests, check if the provided email exists in the database.
+    If the email exists, generate a temporary password, update the user's password,
+    and send an email with the temporary password. Redirect to the login page.
+
+    Returns:
+        render_template or redirect: Depending on the request type and the success of the operation.
+    """
+    if request.method == 'POST':
+        email = request.form.get('email')
+
+        # Check if the email exists in the database
+        user_data = db.find_user_by_email(email)
+        print(user_data)
+
+        if user_data:
+            # Generate a temporary password
+            temporary_password = random_password()
+
+            # Update the user's password in the database with the temporary password
+            if db.update_user_password(user_data['id'], temporary_password):
+                # Send an email with the temporary password using the existing send_email function
+                sender_email = 'info@remmittance.com'  # Update with your sender email
+                subject = 'Temporary Password for Password Reset'
+                message = f'<p>Your temporary password is: <b>{temporary_password}</b></p>'
+
+                # Get the SendGrid API key from the environment
+                api_key = os.getenv('email_api')
+
+                # Send the email using the existing send_email function
+                send_email(api_key, sender_email, email, subject, message)
+
+                flash("Temporary password sent to your email. Please check your inbox.")
+                return redirect(url_for('login'))
+
+            flash("Error updating password. Please try again.")
+        else:
+            flash("Email not found. Please try again.")
+    
+    # For GET requests or unsuccessful POST requests, render the forgot password form
+    return render_template('forgot_password.html')
 
 
 if __name__ == "__main__":

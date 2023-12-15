@@ -3,8 +3,7 @@ Module: database_manager
 
 This module defines the Database class, which provides functionality for interacting
 with a MySQL database for a stock management system.
-"""
-
+""" 
 import mysql.connector
 
 class Database:
@@ -176,9 +175,7 @@ class Database:
         cursor.close()
 
         if user_data:
-            # You can create a User object from user_data and return it
-            user = User(**user_data)
-            return user
+            return user_data
         else:
             return None
 
