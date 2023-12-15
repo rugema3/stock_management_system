@@ -18,8 +18,12 @@ from decorators.roles import any_role_required
 from flask_login import current_user
 from flask_mail import Mail, Message
 import os
+from app.routes.backup import backup_route
 
 app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
+
+# Register the backup route from the imported module
+app.register_blueprint(backup_route)
 
 stock_manager = StockManager()
 #user_manager = UserManager()
@@ -112,6 +116,9 @@ def add_item():
 
         # Insert the new item into the database using the Database class
         db.insert_item(stock_item, maker_id=maker_id)
+
+        # Flash a success message
+        flash(f'The Item <b>"{item_name}"</b> has been added successfully!', 'success')
 
     # Fetch the updated stock items from the database
     stock_items = db.get_all_items()
@@ -214,6 +221,8 @@ def register():
         # Call the user_manager to register the user
         registration_result = user_manager.register_user(user)
 
+        flash(f'You have successfull registered <b>"{email}"</b> in <b>"{department}"</b> department with <b>"{role}"</b> priviledges!', 'success')
+
         # Render the result in the HTML response
         return render_template('registration_success.html')
     else:
@@ -283,7 +292,7 @@ def checkout():
 
         if success:
             # Redirect back to the items page with a success message
-            flash(f'{quantity} units of {item_name} checked out successfully', 'success')
+            flash(f'<b>{quantity}</b> units of <b>{item_name}</b> checked out successfully', 'success')
         else:
             # Redirect back to the items page with an error message
             flash(f'Failed to check out {quantity} units of {item_name}', 'error')
