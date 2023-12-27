@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
-from app.models.user_manager import UserManager
+from application.models.user_manager import UserManager
 from flask import Flask, render_template, request, redirect, session, url_for, flash
-from app.models.stock_manager import StockManager
-from app.models.stock_item import StockItem
-from app.models.database_manager import Database
-from app.models.send_email import send_email
-from app.helpers.random_password import random_password
+from application.models.stock_manager import StockManager
+from application.models.stock_item import StockItem
+from application.models.database_manager import Database
+from application.models.send_email import send_email
+from application.helpers.random_password import random_password
 from decouple import config  
 import bcrypt
-from app.models.user import User 
+from application.models.user import User 
 from flask_session import Session
 from decorators.authentication_decorators import login_required
 from decorators.admin_decorators import admin_required
@@ -18,12 +18,12 @@ from decorators.roles import any_role_required
 from flask_login import current_user
 from flask_mail import Mail, Message
 import os
-from app.routes.backup import backup_route
+#from app.routes.backup import backup_route
 
-app = Flask(__name__, template_folder='app/templates',  static_folder='app/static')
+app = Flask(__name__, template_folder='application/templates',  static_folder='application/static')
 
 # Register the backup route from the imported module
-app.register_blueprint(backup_route)
+#app.register_blueprint(backup_route)
 
 stock_manager = StockManager()
 #user_manager = UserManager()
@@ -91,7 +91,7 @@ def admin():
             total_cost = 0
             damaged_items= 0
 
-        return render_template('admin.html', user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items)
+        return render_template('admin2.html', user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items)
 
     except Exception as e:
         flash(f"Error in admin route: {str(e)}", 'error')
@@ -270,42 +270,62 @@ def logout():
     # Redirect to the login page or any other desired page
     return render_template('logout.html')
 
-
 @app.route('/checkout', methods=['GET', 'POST'])
 @login_required
 def checkout():
     """
-    Handle the checkout process for removing items from the stock.
+    Handle the checkout process for items.
 
-    Users can specify the item name and quantity to check out items from the stock.
+    If the request method is POST, attempt to check out the specified quantity
+    of the specified item. If successful, redirect to the items page with a
+    success message; otherwise, redirect with an error message.
+
+    If the request method is GET, render the checkout form.
 
     Returns:
-        Response: Redirects the user back to the items page with a success or error message.
+        flask.Response: Redirects to the items page with a success or error message
+                       on POST; renders the checkout form on GET.
     """
     if request.method == 'POST':
         # Get the item name and quantity from the user's input
         item_name = request.form.get('item_name')
-        quantity = int(request.form.get('quantity'))
+        quantity = request.form.get('quantity')
+        print(f"item name: {item_name}")
+        print(f"Quanity: {quantity}")
+
+        # Validate quantity input
+        if not quantity.isdigit() or int(quantity) <= 0:
+            flash('Invalid quantity input. Please enter a positive integer.', 'error')
+            return redirect('/checkout')
+
+        quantity = int(quantity)
 
         # Call the checkout_item method to remove the specified quantity of the item
         success = db.checkout_item(session['id'], item_name, quantity)
 
         if success:
             # Redirect back to the items page with a success message
-            flash(f'<b>{quantity}</b> units of <b>{item_name}</b> checked out successfully', 'success')
+            flash(f'{quantity} units of {item_name} checked out successfully', 'success')
+            return redirect('/department_items')
         else:
             # Redirect back to the items page with an error message
             flash(f'Failed to check out {quantity} units of {item_name}', 'error')
-
-        return redirect('/items')
+            return redirect('/department_items')
     else:
+        # Render the checkout form on GET
         return render_template('checkout.html')
-
 
 @app.route('/pending_items')
 @login_required
 @any_role_required(['admin', 'approver'])
 def pending_items():
+    """Display pending items.
+    Descript:
+                This route handles the display of pending items.
+                It only displays items based on the user's department.
+                It will not display items from a department different
+                from the user's.
+    """
     try:
         # Get the logged-in user's department from the session
         user_department = session.get('department')
@@ -324,12 +344,21 @@ def pending_items():
         flash(f"Error fetching pending items: {str(e)}", 'error')
         return render_template('pending_items.html', pending_items=[])
 
-
-
 @app.route('/change_status', methods=['POST','GET'])
 @login_required
 @any_role_required(['admin', 'approver'])
 def change_status():
+    """Change the status of an item.
+    Description:
+                When an item is being added in the stock, it hits the db
+                with a pending status by default.
+
+                The approver will need to approve the item so that the 
+                status changes from pending to approved.
+
+                This ensures that we have items in our stock that are not
+                randomly added or mistakenly added.
+    """
     try:
         item_id = request.form.get('id')
         status = request.form.get('status')
@@ -436,28 +465,6 @@ def view_users():
         print(f"Error: {str(e)}")
         return "An error occurred."
 
-@app.route('/pending_checkouts')
-@login_required
-@any_role_required(['admin', 'approver'])
-def pending_checkouts():
-    try:
-        # Get the logged-in user's department from the session
-        user_department = session.get('department')
-
-        # Fetch pending checkout requests only in the user's department
-        pending_checkouts = db.get_pending_checkouts(department=user_department)
-
-        # Print or log the pending_checkouts for debugging
-        print("Pending Checkouts:", pending_checkouts)
-
-        # Pass the pending_checkouts directly to the template
-        return render_template('pending_checkouts.html', pending_checkouts=pending_checkouts)
-
-    except Exception as e:
-        # Handle exceptions, you can log the error or show a flash message
-        flash(f"Error fetching pending checkouts: {str(e)}", 'error')
-        return render_template('pending_checkouts.html', pending_checkouts=[])
-
 @app.route('/forgot_password', methods=['POST', 'GET'])
 def forgot_password():
     """
@@ -505,8 +512,78 @@ def forgot_password():
     # For GET requests or unsuccessful POST requests, render the forgot password form
     return render_template('forgot_password.html')
 
+@app.route('/department_items')
+@login_required  
+def get_items_by_department():
+    """
+    Fetch items based on the user's department and render the department_items.html template.
+
+    Returns:
+        str: Rendered HTML template with the items or an error message if the department is not available in the session.
+    """
+    # Retrieve department from the session
+    user_department = session.get('department')
+    print("User Department:", user_department)
+
+    if user_department:
+        # Fetch items based on the user's department
+        items = db.get_items_by_department(user_department)
+        print("Items:", items, user_department)
+        return render_template('department_items.html', items=items, user_department=user_department)
+    else:
+        # Handle the case when the department is not available in the session
+        return "Department information not found in the session."
+@app.route('/checkout_items')
+@login_required
+def checkout_items():
+    """
+    Display checkout items for the logged-in user's department.
+
+    Returns:
+        flask.Response: Renders a template with checkout items.
+    """
+    department = session.get('department')
+
+    if department:
+        checkout_items = db.get_checkout_items_by_department(department)
+        return render_template('checkout_items.html', checkout_items=checkout_items)
+    else:
+        # Handle the case when the department is not available in the session
+        return "Department information not found in the session."
+
+@app.route('/change_checkout_status', methods=['POST'])
+@login_required
+@approver_required
+def change_checkout_status():
+    """Approve a checkout. 
+    Description:
+                The approver or the admin will be able to change the status
+                of the checkout. When the user tries to checkout an item, it 
+                hits the db with a default status of pending.
+
+                The approver or the admin will be able to approve
+                the checkout. They can give it a status of approved, rejected.
+    """
+    # Get the id of the user from the login session.
+    approver_id = session.get('id')
+
+    # Get the checkout_id from the form
+    checkout_id = int(request.form.get('checkout_id'))
+
+    # Get the status chosen by the approver/admin
+    status = request.form.get('status')
+
+    success = db.update_checkout_status(checkout_id, status, approver_id)
+
+    if success:
+        flash(f'Checkout status updated successfully', 'success')
+    else:
+        flash(f'Failed to update checkout status', 'error')
+
+    return redirect('/checkout_items')
+
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0')
 

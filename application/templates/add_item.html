@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Items</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register_style.css') }}">
+    {% include 'header.html' %}
+</head>
+<body class="selected-body">
+    <h1>Please add items in the stock</h1>
+    
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{  message|safe }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form action="/add_item" method="POST">
+	    
+
+        <label for="item_name">Item Name:</label>
+        <input type="text" id="item_name" name="item_name"><br><br>
+
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price"><br><br>
+
+        <label for="category">Category:</label>
+        <select id="category" name="category">
+            <option value="Cleaning">Cleaning</option>
+            <option value="Stationary">Stationary</option>
+            <option value="Meals and Water">Meals and Water</option>
+            <option value="Guest Entertainment">Guest Entertainment</option>
+            <option value="Kitchen Utensil">Kitchen Utensils</option>
+        </select><br><br>
+
+        <label for="quantity">Quantity:</label>
+        <input type="text" id="quantity" name="quantity" value="0"><br><br>
+
+       <button type="submit" class="button">Add Item</button>
+    </form>
+    <br><br>
+    {% if session.role == 'admin' %}
+        <a href="/admin">Back to Dashborad</a>
+    {% else %}
+        <a href='/'>Back Home</a>
+    {% endif %}
+</body>
+{% include 'footer.html' %}
+</html>
+

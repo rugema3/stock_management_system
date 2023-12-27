@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Management System</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+   <!--
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    -->
+</head>
+<body>
+	<h1>Welcome {{ user_email}} to the Stock Management System</h1>
+    
+
+    <div class="logout-link">
+	    <p>{{ user_email }}</p>
+    <a href="/logout">Logout</a>
+    </div>
+
+
+  
+
+    <h2>Navigation:</h2>
+    <ul>
+        <li><a href="/items">Display Items</a></li>
+	<li><a href="/search">Search Item</a></li>
+	<li><a href="/add_item">Add Item</a></li>
+	<li><a href="/checkout">Check Out Item</a></li>
+	<li><a href="/update_password">Change password</a></li>
+	<li><a href="/update_email">Change Email</a></li>
+	<li><a href="/department_items">Display Items in Department</a></li>
+	<li><a href="/checkout_items">View checkout details</a></li>
+    </ul>
+</body>
+</html>

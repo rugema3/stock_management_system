@@ -1,0 +1,87 @@
+/* Reset some default margin and padding */
+body, h1, h2, h3, ul, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Basic styling for the header */
+.header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Style for the navigation bar */
+.navbar {
+    background-color: #eee;
+    padding: 10px;
+}
+
+.navbar ul {
+    list-style-type: none;
+}
+
+.navbar li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+}
+
+/* Styling for the admin container */
+.admin-container {
+    display: flex;
+}
+
+/* Styling for the sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.sidebar h1 {
+    color: #333;
+}
+
+.sidebar h2 {
+    color: #777;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+/* Styling for the dashboard section */
+.dashboard-section {
+    flex: 1;
+    padding: 20px;
+}
+
+.dashboard-widget {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* Styling for the footer */
+.footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+

@@ -1,0 +1,56 @@
+<!-- checkout_items.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Items</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Checkout Items</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Checkout ID</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>User ID</th>
+                <th>Approval Status</th>
+                <th>Approver ID</th>
+                <th>Created At</th>
+                <th>Department</th>
+                <th>Change Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for checkout_item in checkout_items %}
+                <tr>
+                    <td>{{ checkout_item['checkout_id'] }}</td>
+                    <td>{{ checkout_item['item_name'] }}</td>
+                    <td>{{ checkout_item['quantity'] }}</td>
+                    <td>{{ checkout_item['user_id'] }}</td>
+                    <td>{{ checkout_item['approval_status'] }}</td>
+                    <td>{{ checkout_item['approver_id'] }}</td>
+                    <td>{{ checkout_item['created_at'] }}</td>
+                    <td>{{ checkout_item['department'] }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('change_checkout_status') }}">
+                            <input type="hidden" name="checkout_id" value="{{ checkout_item['checkout_id'] }}">
+                            <select name="status">
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <button type="submit">Change Status</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
