@@ -86,7 +86,19 @@ class Database:
         cursor.close()
         return matching_items
 
+    
     def checkout_item(self, user_id, item_name, quantity):
+        """
+        Checkout an item for a user.
+
+        Args:
+            user_id (int): The ID of the user performing the checkout.
+            item_name (str): The name of the item to be checked out.
+            quantity (int): The quantity of the item to be checked out.
+
+        Returns:
+            bool: True if the checkout is successful, False otherwise.
+        """
         cursor = self.db_connection.cursor()
 
         try:
@@ -98,13 +110,17 @@ class Database:
             if department_result:
                 department = department_result[0]
 
-                
-                update_query = "UPDATE stock_items SET quantity = quantity - %s WHERE item_name = %s AND quantity >= %s"
-                cursor.execute(update_query, (quantity, item_name, quantity))
-
-                # Create a checkout transaction record with user_id and department
-                checkout_query = "INSERT INTO checkout_transactions (item_name, quantity, user_id, department, approval_status) VALUES (%s, %s, %s, %s, %s)"
-                cursor.execute(checkout_query, (item_name, quantity, user_id, department, 'pending'))
+                # Create a checkout transaction record with user_id, 
+                # department, and pending status
+                checkout_query = """
+                    INSERT INTO checkout_transactions (
+                    item_name, quantity, user_id, department, approval_status)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """
+                cursor.execute(
+                        checkout_query, 
+                        (item_name, quantity, user_id, department, 'pending')
+                        )
 
                 # Commit the changes
                 self.db_connection.commit()
@@ -137,20 +153,26 @@ class Database:
         cursor.close()
         return rows_affected > 0
 
-    def insert_user(self, user):
+    def insert_user(self, email, password, department, role='user', name=None):
         """
-       Insert a new user into the database.
+        Insert a new user into the 'users' table.
 
         Args:
-            user (User): The User object to be inserted into the database.
+            email (str): The user's email address.
+            password (str): The user's password.
+            department (str): The user's department.
+            role (str, optional): The user's role (default is 'user').
+            name (str, optional): The user's name.
+
+        Returns:
+            None
         """
         cursor = self.db_connection.cursor()
         insert_query = """
-            INSERT INTO users(first_name, last_name, email, phone, department, role, username, password)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO users(email, password, department, role, name)
+            VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(insert_query, (user.first_name, user.last_name, user.email, user.phone,
-                                      user.department, user.role, user.username, user.password))
+        cursor.execute(insert_query, (email, password, department, role, name))
         self.db_connection.commit()
         cursor.close()
 
@@ -200,21 +222,6 @@ class Database:
             self.db_connection.rollback()  # Update this line
             return None
 
-
-    def insert_user(self, user):
-        """
-        Insert a new user into the database.
-
-        Args:
-            user (User): The User object to be inserted into the database.
-        """
-        insert_query = """
-            INSERT INTO users(email, password, department, role)
-            VALUES (%s, %s, %s, %s)
-         """
-        with self.db_connection.cursor() as cursor:
-            cursor.execute(insert_query, (user.email, user.password, user.department, user.role))
-        self.db_connection.commit()
 
     def get_pending_items(self, department=None):
         """
@@ -485,7 +492,7 @@ class Database:
     
     def update_checkout_status(self, checkout_id, status, approver_id):
         """
-        Update the status of a checkout transaction.
+        Update the status of a checkout transaction and, if approved, deduct the quantity from the stock.
 
         Args:
             checkout_id (int): The ID of the checkout transaction to be updated.
@@ -498,20 +505,50 @@ class Database:
         cursor = self.db_connection.cursor()
 
         try:
-            # Update the status and approver_id
-            update_query = "UPDATE checkout_transactions SET approval_status = %s, approver_id = %s WHERE checkout_id = %s"
-            cursor.execute(update_query, (status, approver_id, checkout_id))
+            # Retrieve checkout details
+            checkout_query = """
+                SELECT item_name, quantity, department 
+                FROM checkout_transactions 
+                WHERE checkout_id = %s AND approval_status = 'pending'
+            """
+            cursor.execute(checkout_query, (checkout_id,))
+            checkout_details = cursor.fetchone()
 
-            # Commit the changes
-            self.db_connection.commit()
+            if checkout_details:
+                item_name, quantity, department = checkout_details
 
-            return True
+                # Update checkout status and approver_id
+                update_query = """
+                    UPDATE checkout_transactions 
+                    SET approval_status = %s, 
+                    approver_id = %s WHERE checkout_id = %s
+                """
+                cursor.execute(update_query, (status, approver_id, checkout_id))
+
+                if status == 'approved':
+                    # Deduct the quantity from the stock if the checkout is approved
+                    update_stock_query = """
+                        UPDATE stock_items 
+                        SET quantity = quantity - %s 
+                        WHERE item_name = %s 
+                        AND quantity >= %s 
+                        AND department = %s
+                    """
+                    cursor.execute(
+                            update_stock_query, 
+                            (quantity, item_name, quantity, department)
+                    )
+
+                # Commit the changes
+                self.db_connection.commit()
+
+                return True
+            else:
+                return False
         except Exception as e:
             # Handle exceptions here if needed
             print(f"Error: {e}")
             return False
         finally:
             cursor.close()
-
-
 

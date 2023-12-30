@@ -76,7 +76,15 @@ def approver_dashboard():
 def admin():
     try:
         user_email = session.get('user_email')
-        user_department = session.get('department')
+        user_department = session.get('department', '')
+        print(type(user_department))
+        user_role = session.get('role', '')
+        user_name = session.get('name')
+        print(f"user name is : {user_name} ")
+        print(f"email: {user_email}")
+        print(user_department)
+        print(user_role)
+        
 
         # Ensure user_department is not None before calling methods
         if user_department is not None:
@@ -84,6 +92,8 @@ def admin():
             user_counts = db.get_users_count_by_department(department=user_department)
             total_cost = db.get_total_cost_of_stock(department=user_department, status='approved')
             damaged_items=0
+            checkout_items = session.get('checkout_items', [])
+            print("Checkout Items:", checkout_items)
 
         else:
             pending_items_count = 0  # Set a default count
@@ -91,7 +101,7 @@ def admin():
             total_cost = 0
             damaged_items= 0
 
-        return render_template('admin2.html', user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items)
+        return render_template('index.html', user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
 
     except Exception as e:
         flash(f"Error in admin route: {str(e)}", 'error')
@@ -209,19 +219,16 @@ def register():
         password = request.form['password']
         department = request.form['department']
         role = request.form['role']
+        name = request.form['name']
         # Print all form fields for debugging
         print(f"Received email: {email}")
         print(f"Received password: {password}")
         print(f"Received department: {department}")
         print(f"Received role: {role}")
+        print(f"Received name: {name}")       
 
-        # Create a User object with email and password
-        user = User(email=email, password=password, department=department, role=role)
-
-        # Call the user_manager to register the user
-        registration_result = user_manager.register_user(user)
-
-        flash(f'You have successfull registered <b>"{email}"</b> in <b>"{department}"</b> department with <b>"{role}"</b> priviledges!', 'success')
+        db.insert_user(email, password, department, role, name)
+        flash(f'You have successfull registered <b>"{name} <b> in <b>"{department}"</b> department with <b>"{role}"</b> priviledges!', 'success')
 
         # Render the result in the HTML response
         return render_template('registration_success.html')
@@ -243,6 +250,8 @@ def login():
             session['id'] = user_data[0]
             session['role'] = user_data[4] if user_data else None  
             session['department'] = user_data[3] if user_data else None
+            session['name'] = user_data[5] if user_data else None
+            print(f"name: {session['name']}")
             # Redirect to a dashboard or home page
             if session['role'] == 'admin':
                 return redirect('/admin')
@@ -546,6 +555,9 @@ def checkout_items():
 
     if department:
         checkout_items = db.get_checkout_items_by_department(department)
+        # Store the details in a session for future use anywhere in the app.
+        session['checkout_items'] = checkout_items
+        print(checkout_items)
         return render_template('checkout_items.html', checkout_items=checkout_items)
     else:
         # Handle the case when the department is not available in the session

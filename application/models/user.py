@@ -19,7 +19,7 @@ class User:
         password (str): The user's password.
     """
 
-    def __init__(self, email, password, first_name=None, last_name=None, phone=None, department=None, role=None, username=None):
+    def __init__(self, email, password, name=None, last_name=None, phone=None, department=None, role=None, username=None):
         """
         Initialize a User object.
 
@@ -33,7 +33,7 @@ class User:
             username (str, optional): The user's username.
             password (str, optional): The user's password.
         """
-        self.first_name = first_name
+        self.name = name
         self.last_name = last_name
         self.email = email
         self.phone = phone

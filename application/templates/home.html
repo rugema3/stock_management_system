@@ -1,35 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Management System</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-
-   <!--
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home.css') }}">
+    
 </head>
 <body>
-	<h1>Welcome {{ user_email}} to the Stock Management System</h1>
+	<header>
+	{% include 'header.html' %}
+	</header>
+    <!-- Navigation Section -->
+    <nav>
+        <h2>Navigation:</h2>
+        <ul>
+            <li><a href="/items"><i class="fas fa-list"></i> Display Items</a></li>
+            <li><a href="/search"><i class="fas fa-search"></i> Search Item</a></li>
+            <li><a href="/add_item"><i class="fas fa-plus"></i> Add Item</a></li>
+            <li><a href="/checkout"><i class="fas fa-shopping-cart"></i> Check Out Item</a></li>
+            <li><a href="/update_password"><i class="fas fa-key"></i> Change password</a></li>
+            <li><a href="/update_email"><i class="fas fa-envelope"></i> Change Email</a></li>
+            <li><a href="/department_items"><i class="fas fa-building"></i> Display Items in Department</a></li>
+            <li><a href="/checkout_items"><i class="fas fa-receipt"></i> View checkout details</a></li>
+            <li class="logout-link">
+                <p>{{ user_email }}</p>
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Section -->
+    <main>
+        <!-- Your main content goes here -->
+    </main>
+
+    <!-- Footer Section -->
     
-
-    <div class="logout-link">
-	    <p>{{ user_email }}</p>
-    <a href="/logout">Logout</a>
-    </div>
-
-
-  
-
-    <h2>Navigation:</h2>
-    <ul>
-        <li><a href="/items">Display Items</a></li>
-	<li><a href="/search">Search Item</a></li>
-	<li><a href="/add_item">Add Item</a></li>
-	<li><a href="/checkout">Check Out Item</a></li>
-	<li><a href="/update_password">Change password</a></li>
-	<li><a href="/update_email">Change Email</a></li>
-	<li><a href="/department_items">Display Items in Department</a></li>
-	<li><a href="/checkout_items">View checkout details</a></li>
-    </ul>
+    <footer>
+	    {% include 'footer.html' %}
+    </footer>
+    
 </body>
 </html>
+

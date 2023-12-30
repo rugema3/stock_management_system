@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Items</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-
 </head>
 <body>
 
@@ -25,6 +24,7 @@
                 <th>Status</th>
                 <th>Maker ID</th>
                 <th>Department</th>
+                <th>Action</th>  <!-- Add a new column for the checkout button -->
             </tr>
         </thead>
         <tbody>
@@ -39,6 +39,15 @@
                     <td>{{ item[7] }}</td>
                     <td>{{ item[8] }}</td>
                     <td>{{ item[9] }}</td>
+                    <td>
+                        <!-- Add a checkout button for each item -->
+                        <form method="POST" action="/checkout">
+                            <input type="hidden" name="item_name" value="{{ item[1] }}">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" name="quantity" value="1" min="1" required>
+                            <button type="submit">Checkout</button>
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

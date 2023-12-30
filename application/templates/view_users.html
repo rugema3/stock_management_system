@@ -11,13 +11,15 @@
     {% if users %}
         <table>
             <tr>
+		    <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Department</th>
             </tr>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.email }}</td>
+			<td>{{ user.name}}</td>
+		    <td>{{ user.email }}</td>
                     <td>{{ user.role }}</td>
                     <td>{{ user.department }}</td>
                 </tr>

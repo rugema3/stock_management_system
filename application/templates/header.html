@@ -1,15 +1,23 @@
-<!-- header.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Management System</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='admin_style.css') }}">
+    <title>Chancen International</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='header1.css') }}">
+
 </head>
 <body>
-    <div class="header">
-        <h1>Stock Management System</h1>
-        <!-- Add any additional header elements or styling here -->
-    </div>
+
+    <div id="header-container">
+        <div id="logo">
+            <img src="{{ url_for('static', filename='chancen.png') }}" alt="Chancen International Logo">
+        </div>
+        <div id="branding">
+            <h1>Chancen International</h1>
+            <p>Empowering Education Through Loans</p>
+	</div>
+
+</body>
+</html>
+

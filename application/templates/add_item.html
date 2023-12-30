@@ -2,11 +2,12 @@
 <html>
 <head>
     <title>Add Items</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register_style.css') }}">
-    {% include 'header.html' %}
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register_style.css') }}"> 
+  
 </head>
 <body class="selected-body">
+	
     <h1>Please add items in the stock</h1>
     
 
@@ -50,6 +51,5 @@
         <a href='/'>Back Home</a>
     {% endif %}
 </body>
-{% include 'footer.html' %}
 </html>
 

@@ -15,7 +15,7 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
-
+	<a href="/department_items">View Available Items for Checkout</a>
     <form method="POST" action="/checkout">
         <label for="item_name">Item Name:</label>
         <input type="text" id="item_name" name="item_name" required><br>
