@@ -1,0 +1,115 @@
+<!-- common_sidebar.html -->
+
+<input type="checkbox" id="menu-toggle">
+<div class="sidebar">
+    <div class="side-header">
+        <span><img src="/static/img/chancen.png" alt="Logo" class="logo"></span>
+    </div>
+
+    <div class="side-content">
+        <div class="profile">
+            <div class="profile-img bg-img" style="background-image: url(static/img/rugema.jpg)"></div>
+            <h4>{{ user_name }}</h4>
+            <small>{{ user_department.upper() }} {{ user_role.upper() }}</small>
+        </div>
+
+        <div class="side-menu">
+            <ul>
+                <li>
+                    <a href="/admin" class="active">
+                        <span class="las la-home"></span>
+                        <small>Dashboard</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="">
+                        <span class="las la-user-alt"></span>
+                        <small>Profile</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="/items">
+                        <span class="las la-list"></span>
+                        <small>View Items</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="/pending_items">
+                        <span class="las la-clock"></span>
+                        <small>Pending items</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="/add_item">
+                        <span class="las la-plus-circle"></span>
+                        <small>Add Item</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/view_users">
+                        <span class="las la-users"></span>
+                        <small>View users</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="register">
+                        <span class="las la-user-plus"></span>
+                        <small>Register Users</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="/update_email">
+                        <span class="las la-envelope"></span>
+                        <small>Update Email</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="update_password">
+                        <span class="las la-key"></span>
+                        <small>Change Password</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="//backup">
+                        <span class="las la-database"></span>
+                        <small>Database Backup</small>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <header>
+        <div class="header-content">
+            <label for="menu-toggle">
+                <span class="las la-bars"></span>
+            </label>
+
+            <div class="header-menu">
+                <label for="">
+                    <span class="las la-search"></span>
+                </label>
+
+                <div class="notify-icon">
+                    <span class="las la-envelope"></span>
+                    <span class="notify">4</span>
+                </div>
+
+                <div class="notify-icon">
+                    <span class="las la-bell"></span>
+                    <span class="notify">3</span>
+                </div>
+
+                <div class="user">
+                    <div class="bg-img" style="background-image: url(static/static/img/1.jpeg)"></div>
+                    <a href="/logout">
+                        <span class="las la-power-off"></span>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>

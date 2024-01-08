@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item Category</title>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Item Category</h2>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-{{ messages[0].category }}">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('add_item_category.add_item_category') }}">
+      
+        <div class="mb-3">
+            <label for="category_name" class="form-label">Category Name:</label>
+            <input type="text" class="form-control" id="category_name" name="category_name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Category</button>
+    </form>
+</div>
+
+</body>
+</html>
+

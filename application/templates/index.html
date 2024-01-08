@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <title>Admin Dashboard | Keyframe Effects</title>
+    <title>{{ user_role.upper() }} Dashboard | Keyframe Effects</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 </head>
@@ -17,7 +17,11 @@
         <div class="side-content">
             <div class="profile">
                 <div class="profile-img bg-img" style="background-image: url(static/img/rugema.jpg)"></div>
-                <h4> {{ user_name }}</h4>
+		{% if user_name is not none %}
+                <h4> {{ user_name.upper() }}</h4>
+		{% else %}
+		<h4> {{ user_name }} </h4>
+		{% endif %}
 		<small>{{ user_department.upper() }} {{ user_role.upper() }}</small>
             </div>
 
@@ -63,6 +67,12 @@
 			    <a href="register">
 				    <span class="las la-user-plus"></span>
 				    <small>Register Users</small>
+			    </a>
+		    </li>
+		    <li>
+			    <a href="{{ url_for('add_item_category.add_item_category') }}">
+				    <span class=""></span>
+				    <small>Add Item category</small>
 			    </a>
 		    </li>
 		    <li> 
@@ -152,7 +162,7 @@
                     <div class="card">
                         <div class="card-head">
                             <h2>{{ pending_items_count }}</h2>
-                            <span class="las la-eye"></span>
+                            <span class="las la-hourglass-half"></span>
                         </div>
                         <div class="card-progress">
                             <small>Added Items awaiting approval</small>
@@ -177,67 +187,35 @@
 
                     <div class="card">
                         <div class="card-head">
-                            <h2>{{ damaged_items }}</h2>
-                            <span class="las la-envelope"></span>
+                            <h2>{{ checkout_count }}</h2>
+                            <span class="las la-ellipsis-h"></span>
                         </div>
                         <div class="card-progress">
-                            <small>Damaged Items</small>
+				{% if checkout_count == 1 %}
+				<small>Pending Checkout</small>
+				{% else %}
+                            <small>Pending Checkouts</small>
+			    {% endif %}
                             <div class="card-indicator">
                                 <div class="indicator four" style="width: 90%"></div>
                             </div>
                         </div>
+        
                     </div>
-		    <div class="card">
-                        <div class="card-head">
-                            <h2>{{ damaged_items }}</h2>
-                            <span class="las la-envelope"></span>
-                        </div>
-                        <div class="card-progress">
-                            <small>Damaged Items</small>
-                            <div class="card-indicator">
-                                <div class="indicator four" style="width: 90%"></div>
-                            </div>
-                        </div>
-                    </div>
-		    <div class="card">
-                        <div class="card-head">
-                            <h2>{{ damaged_items }}</h2>
-                            <span class="las la-envelope"></span>
-                        </div>
-                        <div class="card-progress">
-                            <small>Damaged Items</small>
-                            <div class="card-indicator">
-                                <div class="indicator four" style="width: 90%"></div>
-                            </div>
-                        </div>
-                    </div>
-		    <div class="card">
-                        <div class="card-head">
-                            <h2>{{ damaged_items }}</h2>
-                            <span class="las la-envelope"></span>
-                        </div>
-                        <div class="card-progress">
-                            <small>Damaged Items</small>
-                            <div class="card-indicator">
-                                <div class="indicator four" style="width: 90%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-		    <div class="card">
-                        <div class="card-head">
-                            <h2>{{ damaged_items }}</h2>
-                            <span class="las la-envelope"></span>
-                        </div>
-                        <div class="card-progress">
-                            <small>Damaged Items</small>
-                            <div class="card-indicator">
-                                <div class="indicator three" style="width: 90%"></div>
-                            </div>
-                        </div>
-                    </div>
-
+		   
                 </div>
+		<div class="card">
+                        <div class="card-head">
+                          <img src="data:image/png;base64,{{ plot_url }}" alt="User Stats Chart">
+			  <img src="data:image/png;base64,{{ plot_url }}" alt="User Stats Chart">
+			  <img src="data:image/png;base64,{{ plot_url }}" alt="User Stats Chart">
+			  <img src="data:image/png;base64,{{ plot_url }}" alt="User Stats Chart">
+
+
+
+                        </div>
+
+
 
 
                 <div class="records table-responsive">
@@ -266,267 +244,38 @@
                                     <th>CHECKOUT ID</th>
                                     <th><span class="las la-sort"></span> INITIOTOR</th>
                                     <th><span class="las la-sort"></span> ITEM NAME</th>
-                                    <th><span class="las la-sort"></span>CREATED AT </th>
+                                    <th><span class="las la-sort"></span>CREATED DATE </th>
                                     <th><span class="las la-sort"></span> QUANTITY</th>
                                     <th><span class="las la-sort"></span> ACTION</th>
                                 </tr>
                             </thead>
                             <tbody>
+				    {% for item in pending_checkout %}
                                 <tr>
-                                    <td>2</td>
+                                    <td>#{{ item.checkout_id }}</td>
                                     <td>
                                         <div class="client">
                                            <div class="client-img bg-img" style="background-image: url(img/3.jpeg)"></div>
                                             <div class="client-info">
-                                                <h4>Andrew Bruno</h4>
-                                                <small>bruno@crossover.org</small>
+                                                <h4>{{ item.user_id }}</h4>
+						<small>{{ item.user_email }}</small>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        $3171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        -$205
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(img/1.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Exty Bruno</h4>
-                                                <small>exty@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $3171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        -$205
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(img/1.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Exty Bruno</h4>
-                                                <small>exty@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $2171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        <span class="paid">Paid</span>
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(img/3.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Andrew Bruno</h4>
-                                                <small>bruno@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $3171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        -$205
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(img/1.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Exty Bruno</h4>
-                                                <small>exty@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $3171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        <span class="paid">Paid</span>
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(img/1.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Exty Bruno</h4>
-                                                <small>exty@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $2171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        <span class="paid">Paid</span>
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(img/3.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Andrew Bruno</h4>
-                                                <small>bruno@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $3171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        -$205
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(img/1.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Exty Bruno</h4>
-                                                <small>exty@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $3171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        -$205
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>#5033</td>
-                                    <td>
-                                        <div class="client">
-                                           <div class="client-img bg-img" style="background-image: url(static/img/1.jpeg)"></div>
-                                            <div class="client-info">
-                                                <h4>Exty Bruno</h4>
-                                                <small>exty@crossover.org</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        $2171
-                                    </td>
-                                    <td>
-                                        19 April, 2022
-                                    </td>
-                                    <td>
-                                        <span class="paid">Paid</span>
-                                    </td>
-                                    <td>
-                                        <div class="actions">
-                                            <span class="lab la-telegram-plane"></span>
-                                            <span class="las la-eye"></span>
-                                            <span class="las la-ellipsis-v"></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                            </tbody>
-                        </table>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.created_at.strftime('%d %B, %Y') }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>
+                        <div class="actions">
+                            <span class="lab la-telegram-plane"></span>
+                            <span class="las la-eye"></span>
+                            <span class="las la-ellipsis-v"></span>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
                     </div>
 
                 </div>

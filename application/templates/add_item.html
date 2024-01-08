@@ -3,12 +3,16 @@
 <head>
     <title>Add Items</title>
       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register_style.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='register_style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
+ 
   
 </head>
 <body class="selected-body">
-	
-    <h1>Please add items in the stock</h1>
+	{% include 'sidebar.html' %}	
+	<div class="form-container">	
+		<h1>Add items</h1><br><br>
     
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -42,14 +46,17 @@
         <label for="quantity">Quantity:</label>
         <input type="text" id="quantity" name="quantity" value="0"><br><br>
 
-       <button type="submit" class="button">Add Item</button>
+        <input type="submit" class="button" value="Add">
+
     </form>
+	
     <br><br>
     {% if session.role == 'admin' %}
         <a href="/admin">Back to Dashborad</a>
     {% else %}
         <a href='/'>Back Home</a>
     {% endif %}
+	</div>
 </body>
 </html>
 

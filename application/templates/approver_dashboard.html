@@ -1,36 +1,311 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Stock Management System</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-
-   <!--
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>{{ user_role.upper() }} Dashboard | Keyframe Effects</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 </head>
 <body>
-	<h1>Approver Dashboard</h1>
-	<h2>Welcome {{ user_email}}</h2>
-    
+   <input type="checkbox" id="menu-toggle">
+    <div class="sidebar">
+        <div class="side-header">
+		<span> <img src="/static/img/chancen.png" alt="Logo" class="logo"></span>
+        </div>
+        
+        <div class="side-content">
+            <div class="profile">
+                <div class="profile-img bg-img" style="background-image: url(static/img/rugema.jpg)"></div>
+                <h4> {{ user_name.upper() }}</h4>
+		<small>{{ user_department.upper() }} {{ user_role.upper() }}</small>
+            </div>
 
-    <div class="logout-link">
-	    <p>{{ user_email }}</p>
-    <a href="/logout">Logout</a>
+            <div class="side-menu">
+                <ul>
+                    <li>
+                       <a href="" class="active">
+                            <span class="las la-home"></span>
+                            <small>Dashboard</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="/search">
+                            <span class="las la-search"></span>
+                            <small>Search Item</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="/items">
+                            <span class="las la-list"></span>
+                            <small>View Items</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="/pending_items">
+                            <span class="las la-clock"></span>
+                            <small>Pending items</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="/add_item">
+                            <span class="las la-plus-circle"></span>
+                            <small>Add Item</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="/checkout">
+                            <span class="las la-shopping-cart"></span>
+			    <small>checkout</small>
+                        </a>
+		    </li>
+		    <li>
+			    <a href="/department_items">
+				    <span class="las la-building"></span>
+				    <small>Display Items in Department</small>
+			    </a>
+		    </li>
+		    <li> 
+			    <a href="/update_email">
+				    <span class="las la-envelope"></span>
+				    <small>Update Email</small>
+			    </a>
+		    </li>
+		    <li>
+			    <a href="update_password">
+				    <span class="las la-key"></span>
+				    <small>Change Password</small>
+			    </a>
+		    </li>
+
+		    <li>
+			    <a href="/checkout_items">
+				    <span class="las la-receipt"></span>
+				    <small>View checkout details</small>
+			    </a>
+		    </li>
+
+                </ul>
+            </div>
+        </div>
     </div>
+    
+    <div class="main-content">
+        
+        <header>
+            <div class="header-content">
+                <label for="menu-toggle">
+                    <span class="las la-bars"></span>
+                </label>
+                
+                <div class="header-menu">
+                    <label for="">
+                        <span class="las la-search"></span>
+                    </label>
+                    
+                    <div class="notify-icon">
+                        <span class="las la-envelope"></span>
+                        <span class="notify">4</span>
+                    </div>
+                    
+                    <div class="notify-icon">
+                        <span class="las la-bell"></span>
+                        <span class="notify">3</span>
+                    </div>
+                    
+                    <div class="user">
+                        <div class="bg-img" style="background-image: url(static/static/img/1.jpeg)"></div>
+                        <a href="/logout">
+				<span class="las la-power-off"></span>
+				<span>Logout</span>
+			</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        
+        <main>
+            
+            <div class="page-header">
+		    <h1>{{ user_role.upper() }} DASHBOARD</h1>
+		<small>{{ user_role }} / Dashboard</small>
+            </div>
+            
+            <div class="page-content">
+            
+                <div class="analytics">
+
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ user_counts.user_count + user_counts.admin_count + user_counts.approver_count }}</h2>
+                            <span class="las la-user-friends"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Current users</small>
+                            <div class="card-indicator">
+                                <div class="indicator one" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ pending_items_count }}</h2>
+                            <span class="las la-eye"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Added Items awaiting approval</small>
+                            <div class="card-indicator">
+                                <div class="indicator two" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ total_cost }} RWF</h2>
+                            <span class="las la-shopping-cart"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Current Stock value</small>
+                            <div class="card-indicator">
+                                <div class="indicator three" style="width: 65%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ damaged_items }}</h2>
+                            <span class="las la-envelope"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Damaged Items</small>
+                            <div class="card-indicator">
+                                <div class="indicator four" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+		    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ damaged_items }}</h2>
+                            <span class="las la-envelope"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Damaged Items</small>
+                            <div class="card-indicator">
+                                <div class="indicator four" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+		    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ damaged_items }}</h2>
+                            <span class="las la-envelope"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Damaged Items</small>
+                            <div class="card-indicator">
+                                <div class="indicator four" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+		    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ damaged_items }}</h2>
+                            <span class="las la-envelope"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Damaged Items</small>
+                            <div class="card-indicator">
+                                <div class="indicator four" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+		    <div class="card">
+                        <div class="card-head">
+                            <h2>{{ damaged_items }}</h2>
+                            <span class="las la-envelope"></span>
+                        </div>
+                        <div class="card-progress">
+                            <small>Damaged Items</small>
+                            <div class="card-indicator">
+                                <div class="indicator three" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
 
 
-  
+                <div class="records table-responsive">
 
-    <h2>OPTIONS:</h2>
-    <ul>
-        <li><a href="/items">Display Items</a></li>
-	<li><a href="/search">Search Item</a></li>
-	<li><a href="/pending_items">PENDING ITEMS</a></li>
-	<li><a href="/update_password">Change password</a></li>
-        <li><a href="/update_email">Change Email</a></li>
-	<li><a href="/pending_checkouts">Pending checkouts</a></li>
-	<li><a href="/checkout_items">Approve checkout</a></li>
+                    <div class="record-header">
+                        <div class="add">
+                            <span>Entries</span>
+                            <select name="" id="">
+                                <option value="">ID</option>
+                            </select>
+                            <button>Add record</button>
+                        </div>
 
-    </ul>
+                        <div class="browse">
+                           <input type="search" placeholder="Search" class="record-search">
+                            <select name="" id="">
+                                <option value="">Status</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <table width="100%">
+                            <thead>
+                                <tr>
+                                    <th>CHECKOUT ID</th>
+                                    <th><span class="las la-sort"></span> INITIOTOR</th>
+                                    <th><span class="las la-sort"></span> ITEM NAME</th>
+                                    <th><span class="las la-sort"></span>CREATED AT </th>
+                                    <th><span class="las la-sort"></span> QUANTITY</th>
+                                    <th><span class="las la-sort"></span> ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+				    {% for item in checkout_items %}
+                                <tr>
+                                    <td>#{{ item.checkout_id }}</td>
+                                    <td>
+                                        <div class="client">
+                                           <div class="client-img bg-img" style="background-image: url(img/3.jpeg)"></div>
+                                            <div class="client-info">
+                                                <h4>{{ item.user_id }}</h4>
+						<small>{{ item.user_email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.created_at.strftime('%d %B, %Y') }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>
+                        <div class="actions">
+                            <span class="lab la-telegram-plane"></span>
+                            <span class="las la-eye"></span>
+                            <span class="las la-ellipsis-v"></span>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+                    </div>
+
+                </div>
+            
+            </div>
+            
+        </main>
+        
+    </div>
 </body>
 </html>

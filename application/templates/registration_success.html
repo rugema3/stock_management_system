@@ -1,21 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Logout</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-     <meta http-equiv="refresh" content="4;url=/register">
-    
+    <title>User Registration Confirmation</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='success.css') }}">
+    <script>
+        setTimeout(function() {
+            window.location.href = '/register';
+        }, 6000); // 6000 milliseconds (6 seconds) delay
+    </script>
+    <meta http-equiv="refresh" content="4;url=/register">
 </head>
 <body>
-    <h1>User Registartion Confirmation</h1>
-    <p>You have successfully registered the user.
-    <li> name: {{ name }} </li>
-    <li> email: {{ email }} </li>
-    <li> Role: {{ role }} </li>
-    <li> Department: {{ department }} </li>
+    <div class="confirmation-container">
+        <h1>User Registration Confirmation</h1>
+        <p>You have successfully registered the user.</p>
+        
+        <dl>
+            <dt>Name:</dt>
+            <dd>{{ name }}</dd>
+            
+            <dt>Email:</dt>
+            <dd>{{ email }}</dd>
+            
+            <dt>Role:</dt>
+            <dd>{{ role }}</dd>
+            
+            <dt>Department:</dt>
+            <dd>{{ department }}</dd>
+        </dl>
 
-    </p><br>
-    <p>You are now being redirected back to registration page.</p>
-    <p><a href="/admin">Back to DashBoard</a></p><br>
-   </body>
+        <p>You are now being redirected back to the registration page.</p>
+        <p><a href="/admin">Back to DashBoard</a></p>
+    </div>
+</body>
 </html>
+

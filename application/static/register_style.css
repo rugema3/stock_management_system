@@ -1,41 +1,41 @@
 /* static/register_style.css */
 
 /* Center-align the registration form */
-body.selected-body {
+body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
+    margin-top: 3%; 
 }
 
 /* Style the registration form container */
-form {
+.form-container {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 50%; /* Set the width to cover half the page */
+    width: 100%; /* Set the width to cover half the page */
+    text-align: center; /* Center the form content */
+     margin-right: 500px;
 }
 
 /* Center-align and style the registration form title */
-h1 {
+.form-container h1 {
     color: #1F4834;
-    text-align: center;
 }
 
 /* Style form labels */
-label {
+.form-container label {
     display: block;
     margin-bottom: 5px;
     width: 100px; /* Set a fixed width for labels */
 }
 
-
 /* Style form input fields */
-input[type="text"],
-input[type="password"],
-select {
+.form-container input[type="text"],
+.form-container input[type="password"],
+.form-container select {
     width: calc(100% - 20px); /* Calculate width, considering padding */
     padding: 10px;
     margin-bottom: 10px;
@@ -45,7 +45,7 @@ select {
 }
 
 /* Apply the button style to the registration button */
-input[type="submit"] {
+.form-container input[type="submit"] {
     background-color: #1F4834;
     border: none;
     color: white;
@@ -59,18 +59,38 @@ input[type="submit"] {
     width: 100%; /* Make the button span the full width */
 }
 
-input[type="submit"]:hover {
+.form-container input[type="submit"]:hover {
     background-color: #14402d;
 }
 
 /* Style the back to dashboard link */
-p a {
+.form-container p a {
     color: #1F4834;
     text-decoration: none;
     font-weight: bold;
 }
 
-p a:hover {
+.form-container p a:hover {
     text-decoration: underline;
 }
+/* Style for flashed messages */
+.alert {
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
+/* Success message style */
+.alert.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+/* Error message style */
+.alert.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}

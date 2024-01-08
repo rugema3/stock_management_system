@@ -1,11 +1,3 @@
-#!/bin/bash
-# This script starts a Gunicorn server in the background using nohup
+# Run gunicorn in the background. 
+gunicorn -w 2 -b 0.0.0.0:8080 -D app:app
 
-
-APP_ENTRY_POINT="app:app"
-
-# Run Gunicorn with nohup to keep it running even if the terminal is closed
-nohup gunicorn $APP_ENTRY_POINT &
-
-# Print a message indicating that the Gunicorn server has been started
-echo "Gunicorn server started in the background. PID: $!"

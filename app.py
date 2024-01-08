@@ -18,7 +18,12 @@ from decorators.roles import any_role_required
 from flask_login import current_user
 from flask_mail import Mail, Message
 import os
-#from app.routes.backup import backup_route
+from application.routes.edit_pending_items import edit_pending_items_route
+from application.routes.backup import backup_route
+from application.routes.add_item_category import add_item_category_route
+import matplotlib.pyplot as plt
+import io
+import base64
 
 app = Flask(__name__, template_folder='application/templates',  static_folder='application/static')
 
@@ -39,6 +44,10 @@ db_config = {
 # Configure Flask-Session
 app.config['SESSION_TYPE'] = 'filesystem'  
 Session(app)
+
+# Register different Blueprints
+app.register_blueprint(add_item_category_route)
+app.register_blueprint(edit_pending_items_route)
 # Create a Database instance
 db = Database(db_config)
 user_manager = UserManager(db_config)
@@ -50,10 +59,21 @@ def index():
 @app.route('/home')
 @login_required
 def home():
-    # Retrieve the user's email from the session
+    # Retrieve the user's info from the session
     user_email = session.get('user_email')
+    user_department = session.get('department', '')
+    user_role = session.get('role')
+
     if user_email:
-        return render_template('home.html', user_email=user_email)
+        pending_items_count = db.get_pending_items_count(department=user_department)
+        user_counts = db.get_users_count_by_department(department=user_department)
+        total_cost = db.get_total_cost_of_stock(department=user_department, status='approved')
+        damaged_items=0
+        checkout_items = session.get('checkout_items', [])
+        user_name = session.get('name')
+
+
+        return render_template('home.html', user_name=user_name, user_email=user_email, user_department=user_department, user_role=user_role, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, checkout_items=checkout_items)
     else:
         # If the user is not logged in, redirect to the login page
         return redirect('/login')
@@ -64,8 +84,17 @@ def approver_dashboard():
     """A route that handles approver dashboard home page."""
     # Retrieve the user's email from the session
     user_email = session.get('user_email')
+    user_department = session.get('department')
+    user_role = session.get('role')
     if user_email:
-        return render_template('approver_dashboard.html', user_email=user_email)
+        pending_items_count = db.get_pending_items_count(department=user_department)
+        user_counts = db.get_users_count_by_department(department=user_department)
+        total_cost = db.get_total_cost_of_stock(department=user_department, status='approved')
+        damaged_items=0
+        checkout_items = session.get('checkout_items', [])
+        user_name = session.get('name')
+
+        return render_template('approver_dashboard.html', user_name=user_name, user_email=user_email, user_department=user_department, user_role=user_role, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, checkout_items=checkout_items)
     else:
         # If the user is not logged in, redirect to the login page
         return redirect('/login')
@@ -90,10 +119,31 @@ def admin():
         if user_department is not None:
             pending_items_count = db.get_pending_items_count(department=user_department)
             user_counts = db.get_users_count_by_department(department=user_department)
+
             total_cost = db.get_total_cost_of_stock(department=user_department, status='approved')
             damaged_items=0
+            pending_checkout = db.get_checkout_items_by_department(user_department)
+            checkout_count = len(pending_checkout) # Count pending checkouts
+            print(f"Checkout count = {checkout_count}")
+            print(pending_checkout)
             checkout_items = session.get('checkout_items', [])
             print("Checkout Items:", checkout_items)
+             # Generate the Matplotlib graph
+            categories = ['Users', 'Approvers', 'Admins']
+            user_counts_data = [user_counts.get('user_count', 0), user_counts.get('approver_count', 0), user_counts.get('admin_count', 0)]
+            plt.figure(figsize=(3, 2)) # Set width and height respectively
+            plt.bar(categories, user_counts_data)
+            plt.xlabel('User Categories')
+            plt.ylabel('Number of Users')
+            plt.title('User Stats')
+
+            # Save the plot to a BytesIO object
+            img = io.BytesIO()
+            plt.savefig(img, format='png')
+            img.seek(0)
+
+            # Encode the image as base64 and convert to a string
+            plot_url = base64.b64encode(img.getvalue()).decode()
 
         else:
             pending_items_count = 0  # Set a default count
@@ -101,7 +151,7 @@ def admin():
             total_cost = 0
             damaged_items= 0
 
-        return render_template('index.html', user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
+        return render_template('index.html', plot_url=plot_url, pending_checkout=pending_checkout, checkout_count=checkout_count, user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
 
     except Exception as e:
         flash(f"Error in admin route: {str(e)}", 'error')
@@ -132,8 +182,11 @@ def add_item():
 
     # Fetch the updated stock items from the database
     stock_items = db.get_all_items()
+    user_department = session.get('department')
+    user_role = session.get('role')
 
-    return render_template('add_item.html', stock_items=stock_items)
+
+    return render_template('add_item.html', stock_items=stock_items, user_department=user_department, user_role=user_role)
 
 
 @app.route('/items')
@@ -231,9 +284,11 @@ def register():
         flash(f'You have successfull registered <b>"{name} <b> in <b>"{department}"</b> department with <b>"{role}"</b> priviledges!', 'success')
 
         # Render the result in the HTML response
-        return render_template('registration_success.html')
+        return render_template('registration_success.html', name=name, role=role, department=department)
     else:
-        return render_template('register.html')
+         user_department = session.get('department')
+         user_role = session.get('role')
+         return render_template('register.html', user_department=user_department, user_role=user_role)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -326,7 +381,7 @@ def checkout():
 
 @app.route('/pending_items')
 @login_required
-@any_role_required(['admin', 'approver'])
+#@any_role_required(['admin', 'approver'])
 def pending_items():
     """Display pending items.
     Descript:
@@ -338,6 +393,7 @@ def pending_items():
     try:
         # Get the logged-in user's department from the session
         user_department = session.get('department')
+        print(user_department)
 
         # Fetch pending items only in the user's department
         pending_items = db.get_pending_items(department=user_department)
@@ -463,11 +519,18 @@ def view_users():
         # Get the admin's department from the session
         admin_department = session.get('department')
 
+        # Get user info from session.
+        user_role = session.get('role')
+        user_name = session.get('name')
+
+
         # Fetch users only in the admin's department
         users = db.get_all_users(department=admin_department)
+        print(users)
+        user_department = admin_department
 
         if users:
-            return render_template('view_users.html', users=users)
+            return render_template('view_users.html', user_name=user_name, user_department=user_department, users=users, user_role=user_role)
         else:
             return "No users found."
     except Exception as e:

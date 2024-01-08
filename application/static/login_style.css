@@ -1,44 +1,53 @@
-/* static/login_style.css */
+/* login_style.css */
 
-/* Center-align the login form */
-body.selected-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+body {
+	 background-image: url('/static/img/chancen2.png');
+	 background-size: cover; /* Cover the entire page with the background image */
+    background-position: center; /* Center the background image */
+    /* background-repeat:repeat; /* Do not repeat the background image */
+     background-color: rgba(255, 255, 255, 0.8); /* Adjust the opacity value (0.0 to 1.0) */
     margin: 0;
-}
+    padding: 0;
+ }
 
-/* Style the login form container */
+/* Set the background image for the login form */
 form {
+    background-size: 100% 100%; /* Cover the entire container with the background image */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Do not repeat the background image */
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    margin-top: 50px;
+    margin: 0 auto;
 }
 
 /* Center-align and style the login form title */
 h1 {
     color: #1F4834;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 /* Style form labels */
 label {
     display: block;
-    margin-bottom: 5px;
-    text-align: left;
+    margin-bottom: 10px;
+    width: 100px;
 }
 
 /* Style form input fields */
 input[type="email"],
 input[type="password"] {
-    width: 100%;
+    width: calc(100% - 20px);
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.7); /* Add a semi-transparent white background */
 }
 
 /* Apply the button style to the login button */
@@ -60,12 +69,18 @@ input[type="submit"]:hover {
     background-color: #14402d;
 }
 
-/* Style the flash messages (alerts) */
-.alert {
-    background-color: #e44d26;
-    color: white;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
+/* Style the "Forgot Password?" link */
+p {
+    text-align: center;
+}
+
+p a {
+    color: #1F4834;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
 }
 

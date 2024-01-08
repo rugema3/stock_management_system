@@ -234,7 +234,18 @@ class Database:
             list: A list of tuples containing selected pending item information.
         """
         if department:
-            query = "SELECT id, item_name, price, category, quantity, created_at, currency, status, maker_id FROM stock_items WHERE status = 'pending' AND department = %s"
+            query = """
+                SELECT id,
+                item_name,
+                price, 
+                category,
+                quantity, 
+                created_at, 
+                currency, 
+                status,
+                maker_id 
+                FROM stock_items WHERE status = 'pending' AND department = %s
+                """
             params = (department,)
         else:
             query = "SELECT id, item_name, price, category, quantity, created_at, currency, status, maker_id FROM stock_items WHERE status = 'pending'"
@@ -315,10 +326,10 @@ class Database:
             list: A list of tuples containing selected user information.
         """
         if department:
-            query = "SELECT email, role, department FROM users WHERE department = %s"
+            query = "SELECT email, role, department, name FROM users WHERE department = %s"
             params = (department,)
         else:
-            query = "SELECT email, role, department FROM users"
+            query = "SELECT email, role, department, name FROM users"
             params = None
 
         cursor = self.db_connection.cursor(dictionary=True)
@@ -478,7 +489,11 @@ class Database:
 
         try:
             # Retrieve checkout items for the department
-            query = "SELECT * FROM checkout_transactions WHERE department = %s AND (approval_status = 'pending' OR approval_status = 'rejected')"
+            query = """
+                SELECT * FROM checkout_transactions 
+                WHERE department = %s AND (approval_status = 'pending' 
+                OR approval_status = 'rejected')
+            """
             cursor.execute(query, (department,))
             checkout_items = cursor.fetchall()
 
@@ -550,5 +565,139 @@ class Database:
             print(f"Error: {e}")
             return False
         finally:
+            cursor.close()
+
+    def update_pending_item_quantity(self, item_id, new_quantity):
+        """
+        Update the quantity of a pending item in the database.
+
+        Args:
+            item_id (int): The ID of the pending item to be updated.
+            new_quantity (int): The new quantity.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        cursor = self.db_connection.cursor()
+
+        try:
+            # Update the quantity of the pending item
+            update_query = """
+                UPDATE stock_items 
+                SET quantity = %s 
+                WHERE id = %s 
+                AND status = 'pending'
+            """
+            cursor.execute(update_query, (new_quantity, item_id))
+
+            # Commit the changes
+            self.db_connection.commit()
+
+            return True
+        except Exception as e:
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
+            return False
+        finally:
+            cursor.close()
+
+    def update_item(self, item_id, new_name=None, new_quantity=None, new_price=None):
+        """
+        Update the name, quantity, and price for an item.
+
+        Args:
+            item_id (int): The ID of the item to update.
+            new_name (str): The new name for the item.
+            new_quantity (int): The new quantity for the item.
+            new_price (float): The new price for the item.
+
+        Returns:
+            bool: True if the update is successful, False otherwise.
+        """
+        try:
+            # Build and execute the SQL query
+            query = "UPDATE stock_items SET "
+            updates = []
+
+            if new_name is not None:
+                updates.append(f"item_name = '{new_name}'")
+            if new_quantity is not None:
+                updates.append(f"quantity = {new_quantity}")
+            if new_price is not None:
+                updates.append(f"price = {new_price}")
+
+            set_clause = ', '.join(updates)
+            query += f"{set_clause} WHERE id = %s"
+
+            params = [item_id]
+
+            cursor = self.db_connection.cursor()
+            cursor.execute(query, params)
+            self.db_connection.commit()
+            cursor.close()
+
+            return True
+
+        except Exception as e:
+            # Log the error or handle it as needed
+            print(f"Error updating item: {e}")
+            return False
+
+    def add_item_category(self, category_name):
+        """
+        Add a new category to the item_category table.
+
+        Args:
+            category_name (str): The name of the category to be added.
+
+        Returns:
+            bool: True if the category was added successfully, False otherwise.
+        """
+        cursor = self.db_connection.cursor()
+
+        try:
+            # Use parameterized query to prevent SQL injection
+            query = "INSERT INTO item_category (category_name) VALUES (%s)"
+            values = (category_name.lower(),)  # Convert to lowercase
+
+            cursor.execute(query, values)
+
+            # Commit the transaction
+            self.db_connection.commit()
+
+            print("Category added successfully!")
+            return True
+
+        except mysql.connector.Error as err:
+            print(f"Error adding category: {err}")
+            return False
+
+        finally:
+            # Close the cursor
+            cursor.close()
+
+    def get_item_categories(self):
+        """
+        Retrieve all categories from the item_category table.
+
+        Returns:
+            list: A list of strings representing category names.
+        """
+        cursor = self.db_connection.cursor()
+
+        try:
+            # Retrieve all categories
+            query = "SELECT category_name FROM item_category"
+            cursor.execute(query)
+            categories = [row[0] for row in cursor.fetchall()]
+
+            return categories
+
+        except mysql.connector.Error as err:
+            print(f"Error retrieving categories: {err}")
+            return []
+
+        finally:
+            # Close the cursor
             cursor.close()
 
