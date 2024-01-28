@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User Role</title>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add User Role</h2>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-{{ messages[0].category }}">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('add_user_role.add_user_role') }}">
+      
+        <div class="mb-3">
+            <label for="role_name" class="form-label">Role Name:</label>
+            <input type="text" class="form-control" id="role_name" name="role_name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Role</button>
+    </form>
+</div>
+
+</body>
+</html>

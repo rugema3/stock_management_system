@@ -33,24 +33,18 @@
             <input type="password" id="password" name="password" required><br>
 
             <label for="department">Department:</label>
-            <select id="department" name="department">
-                <option value="kitchen">Kitchen</option>
-                <option value="it">IT</option>
-                <option value="hr">People and Culture</option>
-                <option value="finance">Finance</option>
-                <option value="communication">Communication</option>
-                <option value="administration">Administration</option>
-                <option value="repayment">Repayment</option>
-                <option value="application">Application</option>
-                <option value="pei">PEI</option>
-                <option value="ceo">CEO Office</option>
-            </select><br><br>
+	    <select id="department" name="department">
+    		{% for department in departments %}
+        	<option value="{{ department }}">{{ department.upper() }}</option>
+    		{% endfor %}
+	</select><br><br>
+
 
             <label for="role">Role:</label>
             <select id="role" name="role">
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-                <option value="approver">Approver</option>
+		    {% for role in roles %}
+		    <option value="{{ role }}">{{ role.upper() }}</option>
+                {% endfor %}
             </select><br><br>
 
             <input type="submit" class="button" value="Register">

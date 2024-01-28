@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, redirect, session, url_for, f
 from application.models.stock_manager import StockManager
 from application.models.stock_item import StockItem
 from application.models.database_manager import Database
+from application.models.user_handler import UserHandler
 from application.models.send_email import send_email
 from application.helpers.random_password import random_password
 from decouple import config  
@@ -19,16 +20,18 @@ from flask_login import current_user
 from flask_mail import Mail, Message
 import os
 from application.routes.edit_pending_items import edit_pending_items_route
-from application.routes.backup import backup_route
+#from application.routes.backups import backup_route
 from application.routes.add_item_category import add_item_category_route
+from application.routes.add_user_department import add_user_department_route
+from application.routes.add_user_role import add_user_role_route
+
 import matplotlib.pyplot as plt
 import io
 import base64
+import subprocess
+
 
 app = Flask(__name__, template_folder='application/templates',  static_folder='application/static')
-
-# Register the backup route from the imported module
-#app.register_blueprint(backup_route)
 
 stock_manager = StockManager()
 #user_manager = UserManager()
@@ -48,9 +51,14 @@ Session(app)
 # Register different Blueprints
 app.register_blueprint(add_item_category_route)
 app.register_blueprint(edit_pending_items_route)
+app.register_blueprint(add_user_department_route)
+app.register_blueprint(add_user_role_route)
+#app.register_blueprint(backup_route, url_prefix='/backup')
+
 # Create a Database instance
 db = Database(db_config)
 user_manager = UserManager(db_config)
+user_handler = UserHandler(db_config)
 
 @app.route('/')
 def index():
@@ -100,7 +108,6 @@ def approver_dashboard():
         return redirect('/login')
 
 @app.route('/admin')
-@login_required
 @admin_required
 def admin():
     try:
@@ -131,7 +138,7 @@ def admin():
              # Generate the Matplotlib graph
             categories = ['Users', 'Approvers', 'Admins']
             user_counts_data = [user_counts.get('user_count', 0), user_counts.get('approver_count', 0), user_counts.get('admin_count', 0)]
-            plt.figure(figsize=(3, 2)) # Set width and height respectively
+            plt.figure(figsize=(3, 4)) # Set width and height respectively<
             plt.bar(categories, user_counts_data)
             plt.xlabel('User Categories')
             plt.ylabel('Number of Users')
@@ -166,6 +173,7 @@ def add_item():
         price = float(request.form['price'])
         category = request.form['category']
         quantity = int(request.form['quantity'])
+        description = request.form['description']
 
         # Create a StockItem object with the UUID generated
         stock_item = StockItem(item_name, price, category, quantity)
@@ -175,7 +183,7 @@ def add_item():
         department = session.get('department')
 
         # Insert the new item into the database using the Database class
-        db.insert_item(stock_item, maker_id=maker_id)
+        db.insert_item(stock_item, maker_id=maker_id, description=description)
 
         # Flash a success message
         flash(f'The Item <b>"{item_name}"</b> has been added successfully!', 'success')
@@ -185,8 +193,12 @@ def add_item():
     user_department = session.get('department')
     user_role = session.get('role')
 
+    # Get all categories for the form dropdown
+    categories = db.get_item_categories()
+    print(categories)
 
-    return render_template('add_item.html', stock_items=stock_items, user_department=user_department, user_role=user_role)
+
+    return render_template('add_item.html', stock_items=stock_items, user_department=user_department, user_role=user_role, categories=categories)
 
 
 @app.route('/items')
@@ -286,9 +298,13 @@ def register():
         # Render the result in the HTML response
         return render_template('registration_success.html', name=name, role=role, department=department)
     else:
+         departments = user_handler.get_user_department()
+         roles = user_handler.get_user_role()
+         print(roles)
+         print(departments)
          user_department = session.get('department')
          user_role = session.get('role')
-         return render_template('register.html', user_department=user_department, user_role=user_role)
+         return render_template('register.html', user_department=user_department, user_role=user_role, departments=departments, roles=roles)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -400,9 +416,18 @@ def pending_items():
 
         # Print or log the pending_items for debugging
         print("Pending Items:", pending_items)
+        
+        # Create an empty list of names.
+        names = []
+        for item in pending_items:
+            maker_id = item.get('maker_id')
+            user_name = db.get_user_name_by_id(maker_id)
+            print(f'maker_id: {maker_id}, user_name: {user_name}')
+            names.append(user_name)
+            print(names)
 
         # Pass the pending_items directly to the template
-        return render_template('pending_items.html', pending_items=pending_items)
+        return render_template('pending_items.html', pending_items=pending_items, names=names)
 
     except Exception as e:
         # Handle exceptions, you can log the error or show a flash message
@@ -656,6 +681,45 @@ def change_checkout_status():
         flash(f'Failed to update checkout status', 'error')
 
     return redirect('/checkout_items')
+
+@app.route('/backup', methods=['GET', 'POST'])
+def backup():
+    """
+    Run the database backup script and provide the backup file for download.
+
+    This route triggers the execution of the database backup script, and once
+    the backup is complete, it provides the user with the option to download
+    the backup file. After the download, a success message is flashed.
+
+    Returns:
+        Flask.Response: Flask response object containing the backup file.
+    """
+    print("Backup route accessed!")
+    try:
+        # Run the backup script
+        subprocess.run(['/home/rugema3/automations/stock_backup.sh'])
+
+        # Compose the path to the backup file
+        current_date = subprocess.check_output(['date', '+%d-%m-%Y']).decode().strip()
+        database_name = "stock"
+        backup_path = "/home/rugema3/db_backups"
+        backup_filename = f"{backup_path}/{database_name}-{current_date}.sql.tar.gz"
+
+        # Send the file for download
+        response = send_file(backup_filename, as_attachment=True)
+
+        # Flash a success message
+        flash('Database backup completed successfully! File downloaded.')
+
+        return response
+
+    except Exception as e:
+        # Handle any exceptions and flash an error message
+        flash(f'Error: {str(e)}')
+
+    # If an error occurred, you might want to redirect to an error page or another route
+    return "An Error oocured"
+
 
 
 if __name__ == "__main__":

@@ -6,8 +6,7 @@ from decorators.authentication_decorators import login_required
 
 backup_route = Blueprint('backup', __name__)
 
-@backup_route.route('/backup')
-@login_required
+@backup_route.route('/backup', methods=['GET', 'POST'])
 @admin_required
 def backup():
     """
@@ -20,6 +19,7 @@ def backup():
     Returns:
         Flask.Response: Flask response object containing the backup file.
     """
+    print("Backup route accessed!")
     try:
         # Run the backup script
         subprocess.run(['/home/rugema3/automations/stock_backup.sh'])

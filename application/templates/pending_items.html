@@ -19,18 +19,29 @@
             <th>Currency</th>
             <th>Created At</th>
             <th>Status</th>
+	    <th>Added By</th>
+	    <th>DESCRIPTION</th>
             <th>Total Cost</th>
             <th>Actions</th>  <!-- Added Actions column -->
         </tr>
         {% for item in pending_items %}
         <tr>
-            <td>{{ item['item_name'] }}</td>
+            <td>{{ item['item_name'].upper() }}</td>
             <td>{{ item['price'] }}</td>
-            <td>{{ item['category'] }}</td>
+            <td>{{ item['category'].upper() }}</td>
             <td>{{ item['quantity'] }}</td>
             <td>{{ item['currency'] }}</td>
             <td>{{ item['created_at'] }}</td>
-            <td>{{ item['status'] }}</td>
+            <td>{{ item['status'].upper() }}</td>
+	    <td>
+		    {% if names[loop.index0] %}
+		    	{{ names[loop.index0].upper() }}
+    			{% else %}
+        		None
+    			{% endif %}		    
+	
+	    </td>
+	    <td>{{ item['description'] }}</td>
             <td>{{ item['quantity'] * item['price'] }}</td>
             <td>
                 <form action="{{ url_for('change_status', id=item['id']) }}" method="post">

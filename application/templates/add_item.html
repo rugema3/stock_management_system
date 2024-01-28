@@ -35,16 +35,18 @@
         <input type="text" id="price" name="price"><br><br>
 
         <label for="category">Category:</label>
-        <select id="category" name="category">
-            <option value="Cleaning">Cleaning</option>
-            <option value="Stationary">Stationary</option>
-            <option value="Meals and Water">Meals and Water</option>
-            <option value="Guest Entertainment">Guest Entertainment</option>
-            <option value="Kitchen Utensil">Kitchen Utensils</option>
-        </select><br><br>
+	<select id="category" name="category">
+    {% for category in categories %}
+        <option value="{{ category }}">{{ category }}</option>
+    {% endfor %}
+</select><br><br>
+   
 
         <label for="quantity">Quantity:</label>
         <input type="text" id="quantity" name="quantity" value="0"><br><br>
+	
+	<label for="description">Description:</label>
+	<input type="text" id="description" name="description"><br><br>
 
         <input type="submit" class="button" value="Add">
 

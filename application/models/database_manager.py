@@ -25,7 +25,7 @@ class Database:
         self.db_connection = mysql.connector.connect(**db_config)
         self.cursor = self.db_connection.cursor()
 
-    def insert_item(self, item, maker_id=None):
+    def insert_item(self, item, maker_id=None, description=None):
         """
         Insert an item into the database.
 
@@ -46,10 +46,10 @@ class Database:
 
                 # Insert the item with the fetched department information
                 insert_query = """
-                    INSERT INTO stock_items(item_name, price, category, quantity, department, maker_id)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO stock_items(item_name, price, category, quantity, department, maker_id, description)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
-                cursor.execute(insert_query, (item.item_name, item.price, item.category, item.quantity, department, maker_id))
+                cursor.execute(insert_query, (item.item_name, item.price, item.category, item.quantity, department, maker_id, description))
 
         self.db_connection.commit()
         cursor.close()
@@ -243,12 +243,13 @@ class Database:
                 created_at, 
                 currency, 
                 status,
-                maker_id 
+                maker_id,
+                description
                 FROM stock_items WHERE status = 'pending' AND department = %s
                 """
             params = (department,)
         else:
-            query = "SELECT id, item_name, price, category, quantity, created_at, currency, status, maker_id FROM stock_items WHERE status = 'pending'"
+            query = "SELECT id, item_name, price, category, quantity, created_at, currency, status, maker_id, description FROM stock_items WHERE status = 'pending'"
             params = None
 
         cursor = self.db_connection.cursor(dictionary=True)
@@ -601,47 +602,40 @@ class Database:
         finally:
             cursor.close()
 
-    def update_item(self, item_id, new_name=None, new_quantity=None, new_price=None):
+    def update_pending_item_price(self, item_id, new_price):
         """
-        Update the name, quantity, and price for an item.
+        Update the price of a pending item in the database.
 
         Args:
-            item_id (int): The ID of the item to update.
-            new_name (str): The new name for the item.
-            new_quantity (int): The new quantity for the item.
-            new_price (float): The new price for the item.
+            item_id (int): The ID of the pending item to be updated.
+            new_quantity (int): The new quantity.
 
         Returns:
-            bool: True if the update is successful, False otherwise.
+            bool: True if the update was successful, False otherwise.
         """
+        cursor = self.db_connection.cursor()
+
         try:
-            # Build and execute the SQL query
-            query = "UPDATE stock_items SET "
-            updates = []
+            # Update the quantity of the pending item
+            update_query = """
+                UPDATE stock_items
+                SET price = %s
+                WHERE id = %s
+                AND status = 'pending'
+            """
+            cursor.execute(update_query, (new_price, item_id))
 
-            if new_name is not None:
-                updates.append(f"item_name = '{new_name}'")
-            if new_quantity is not None:
-                updates.append(f"quantity = {new_quantity}")
-            if new_price is not None:
-                updates.append(f"price = {new_price}")
-
-            set_clause = ', '.join(updates)
-            query += f"{set_clause} WHERE id = %s"
-
-            params = [item_id]
-
-            cursor = self.db_connection.cursor()
-            cursor.execute(query, params)
+            # Commit the changes
             self.db_connection.commit()
-            cursor.close()
 
             return True
-
         except Exception as e:
-            # Log the error or handle it as needed
-            print(f"Error updating item: {e}")
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
             return False
+        finally:
+            cursor.close()
+
 
     def add_item_category(self, category_name):
         """
@@ -701,3 +695,22 @@ class Database:
             # Close the cursor
             cursor.close()
 
+    def get_user_name_by_id(self, user_id):
+        """
+        Retrieve the name of a user based on the user ID.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            str: The name of the user.
+        """
+        query = "SELECT name FROM users WHERE id = %s"
+        params = (user_id,)
+
+        cursor = self.db_connection.cursor()
+        cursor.execute(query, params)
+        user_name = cursor.fetchone()
+        cursor.close()
+
+        return user_name[0] if user_name else None

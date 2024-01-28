@@ -19,6 +19,7 @@ class StockItem(BaseModel):
         """Initialize a StockItem instance."""
         super().__init__(item_name, price, category, quantity, currency)
 
+
     def display(self):
         total_price = self.calculate_total_price()
         return (f"Item ID: {self.item_id}\n"
