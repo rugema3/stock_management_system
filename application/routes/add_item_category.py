@@ -22,6 +22,8 @@ def add_item_category():
         'database': config('DB_NAME'),
     }
     db = Database(db_config)
+    user_department = session.get('department')
+    user_role = session.get('role')
 
     if request.method == 'POST':
         try:
@@ -41,5 +43,5 @@ def add_item_category():
             flash(f'Error: {str(e)}', 'error')
 
     # Render the template on GET http
-    return render_template('add_item_category.html')
+    return render_template('add_item_category.html', user_department=user_department, user_role=user_role)
 

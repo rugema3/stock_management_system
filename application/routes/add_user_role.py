@@ -22,6 +22,8 @@ def add_user_role():
         'database': config('DB_NAME'),
     }
     db = UserHandler(db_config)
+    user_department = session.get('department')
+    user_role = session.get('role')
 
     if request.method == 'POST':
         try:
@@ -42,5 +44,5 @@ def add_user_role():
             flash(f'Error: {str(e)}', 'error')
 
     # Render the template on GET http
-    return render_template('add_user_role.html')
+    return render_template('add_user_role.html', user_department=user_department, user_role=user_role)
 

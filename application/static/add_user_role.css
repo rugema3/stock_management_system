@@ -1,0 +1,62 @@
+/* Center container vertically */
+.container {
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
+    align-items: flex-start;
+    height: 100vh;
+}
+
+/* Additional styling for form container */
+.form-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-top: 20px; /* Add top margin to the form container */
+}
+
+/* Form styling */
+.form-label {
+    font-weight: bold;
+    margin-right: 10px;
+     align-items: flex-start;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+/* Styling for the title */
+.container h2 {
+    margin-top: 8%;
+
+     
+}
+/* Flexbox layout for form label and input */
+.form-group {
+    display: flex; /* Use flexbox layout */
+    align-items: center; /* Align items vertically */
+    margin-bottom: 15px; /* Add margin between form groups */
+}

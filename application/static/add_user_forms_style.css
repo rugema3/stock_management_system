@@ -1,0 +1,20 @@
+/* Center container vertically and horizontally */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-left: 50px; /* Center the container horizontally */
+}
+
+/* Additional styling for forms */
+.form-container {
+    margin: 20px;
+    padding: 20%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    max-width: 70%; /* Increase max-width for better spacing */
+    width: 100%; /* Ensure the forms take up the available width */
+}
+
