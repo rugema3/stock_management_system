@@ -6,6 +6,7 @@ from application.models.stock_manager import StockManager
 from application.models.stock_item import StockItem
 from application.models.database_manager import Database
 from application.models.user_handler import UserHandler
+from application.models.item_manager import ItemManager
 from application.models.send_email import send_email
 from application.helpers.random_password import random_password
 from decouple import config  
@@ -59,6 +60,7 @@ app.register_blueprint(add_user_role_route)
 db = Database(db_config)
 user_manager = UserManager(db_config)
 user_handler = UserHandler(db_config)
+item_manager = ItemManager(db_config)
 
 @app.route('/')
 def index():
@@ -135,14 +137,46 @@ def admin():
             print(pending_checkout)
             checkout_items = session.get('checkout_items', [])
             print("Checkout Items:", checkout_items)
+
+            # Retrieve categories by department
+            category_count = item_manager.get_category_counts(user_department)
+            print(f"counts: {category_count}")
+
+            # Extract category names and counts from the dictionary
+            category_names = list(category_count.keys())
+            counts = list(category_count.values())
+
+            # Calculate percentages
+            total_count = sum(counts)
+            percentages = [(count / total_count) * 100 for count in counts]
+
+            # Plot a pie chart
+            plt.figure(figsize=(4, 4))
+            # plt.pie(counts, labels=category_names, autopct='%1.1f%%', startangle=140)
+            # plt.title('Items by Category')
+            plt.bar(category_names, percentages, color='blue')
+            plt.xlabel('Category')
+            plt.ylabel('Percentage (%)')
+            plt.title('Items by Category')
+            plt.xticks(rotation=30)  # Rotate category names for better readability
+            plt.tight_layout()
+
+            # Save the plot to a BytesIO object
+            img = io.BytesIO()
+            plt.savefig(img, format='png')
+            img.seek(0)
+
+            # Encode the image as base64 and convert to a string
+            category_url = base64.b64encode(img.getvalue()).decode()
+
+    
              # Generate the Matplotlib graph
-            categories = ['Users', 'Approvers', 'Admins']
+            roles = ['Users', 'Approvers', 'Admins']
             user_counts_data = [user_counts.get('user_count', 0), user_counts.get('approver_count', 0), user_counts.get('admin_count', 0)]
-            plt.figure(figsize=(3, 4)) # Set width and height respectively<
-            plt.bar(categories, user_counts_data)
-            plt.xlabel('User Categories')
-            plt.ylabel('Number of Users')
+            plt.figure(figsize=(3.5, 3.5)) # Set width and height respectively<
+            plt.pie(user_counts_data, labels=roles, autopct='%1.1f%%', startangle=140)
             plt.title('User Stats')
+        
 
             # Save the plot to a BytesIO object
             img = io.BytesIO()
@@ -158,7 +192,7 @@ def admin():
             total_cost = 0
             damaged_items= 0
 
-        return render_template('index.html', plot_url=plot_url, pending_checkout=pending_checkout, checkout_count=checkout_count, user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
+        return render_template('index.html', category_url=category_url, plot_url=plot_url, pending_checkout=pending_checkout, checkout_count=checkout_count, user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
 
     except Exception as e:
         flash(f"Error in admin route: {str(e)}", 'error')

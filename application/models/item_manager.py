@@ -1,0 +1,103 @@
+"""item_manager module.
+This module has a class that handles the database operations concerning items.
+"""
+import mysql.connector
+
+
+class ItemManager:
+    """
+    A class for managing item operations in the inventory management system.
+
+    Attributes:
+        db: An instance of the Database class for interacting with the database.
+    """
+
+    def __init__(self, db_config):
+        """
+        Initialize the ItemManager with the provided database configuration.
+
+        Args:
+            db_config (dict): A dictionary containing database connection parameters,
+                such as 'user', 'password', 'host', and 'database'.
+        """
+        self.db_connection = mysql.connector.connect(**db_config)
+        self.cursor = self.db_connection.cursor()
+
+    def get_item_category(self):
+        """
+        The method for retrieving the item category.
+
+        Returns:
+                List: A list of Strings representing item categories.
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            # Retrieve all categories
+            query = "SELECT category FROM stock_items"
+            cursor.execute(query)
+            categories = [row[0] for row in cursor.fetchall()]
+
+            return categories
+
+        except  mysql.connector.Error as err:
+            print(f"Error retrieving roles: {err}")
+            return []
+
+        finally:
+            # Close the cursor
+            cursor.close()
+
+    def get_categories(self):
+        """
+        The method that retrieves the list of categories in the 
+        item_category_table in database.
+
+        Returns:
+                list: A list of strings of categories.
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            # Retrieve all categories
+            query = "SELECT category_name FROM item_category"
+            cursor.execute(query)
+            categories = [row[0] for row in cursor.fetchall()]
+
+            return categories
+
+        except mysql.connector.Error as err:
+            print(f"Error retrieving roles: {err}")
+            return []
+
+        finally:
+            # Close the cursor
+            cursor.close()
+
+    def get_category_counts(self, department):
+        """
+        Retrieve the count of items in the stock_items table for each category.
+
+        Returns:
+            dict: A dictionary where keys are category names and values are the counts of items in each category.
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            if department:
+                # Retrieve category counts for the specified department
+                query = "SELECT category, COUNT(*) FROM stock_items WHERE department = %s GROUP BY category"
+                cursor.execute(query, (department,))
+            else:
+                # Retrieve category counts for all departments
+                query = "SELECT category, COUNT(*) FROM stock_items GROUP BY category"
+                cursor.execute(query)
+
+            category_counts = {row[0]: row[1] for row in cursor.fetchall()}
+
+            return category_counts
+
+        except mysql.connector.Error as err:
+            print(f"Error retrieving category counts by department: {err}")
+            return {}
+
+        finally:
+            # Close the cursor
+            cursor.close()

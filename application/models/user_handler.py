@@ -116,7 +116,7 @@ class UserHandler:
         cursor = self.db_connection.cursor()
 
         try:
-            # Retrieve all categories
+            # Retrieve all roles
             query = "SELECT role_name FROM user_role"
             cursor.execute(query)
             categories = [row[0] for row in cursor.fetchall()]
@@ -131,3 +131,40 @@ class UserHandler:
             # Close the cursor
             cursor.close()
 
+    def update_profile_picture(self, user_id, profile_picture_file):
+        """
+        Update the profile picture for a user.
+
+        Args:
+            user_id (int): The ID of the user.
+            profile_picture_file (FileStorage): The uploaded profile picture file.
+        Returns:
+            bool: True if the profile picture was updated successfully, False otherwise.
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            # Check if the file was provided
+            if profile_picture_file:
+                # Save the uploaded file to the designated folder
+                filename = secure_filename(profile_picture_file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                profile_picture_file.save(filepath)
+
+                # Update user's profile picture reference in the database
+                query = "UPDATE users SET profile_picture = %s WHERE id = %s"
+                cursor.execute(query, (filepath, user_id))
+
+                # Commit the transaction
+                self.db_connection.commit()
+
+                print("Profile picture updated successfully!")
+                return True
+            else:
+                print("No profile picture provided.")
+                return False
+        except mysql.connector.Error as err:
+            print(f"Error updating profile picture: {err}")
+            return False
+        finally:
+            # Close the cursor
+            cursor.close()
