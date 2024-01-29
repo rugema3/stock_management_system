@@ -2,6 +2,9 @@
 This module has a class that handles the database operations concerning users.
 """
 import mysql.connector
+import os
+from werkzeug.utils import secure_filename
+import uuid
 
 
 class UserHandler:
@@ -131,40 +134,60 @@ class UserHandler:
             # Close the cursor
             cursor.close()
 
-    def update_profile_picture(self, user_id, profile_picture_file):
+    def update_profile_picture(self, user_id, filename, filepath):
         """
         Update the profile picture for a user.
 
         Args:
             user_id (int): The ID of the user.
-            profile_picture_file (FileStorage): The uploaded profile picture file.
+            filename (str): The name of the uploaded profile picture file.
+            filepath (str): The full path to the uploaded profile picture file.
+
         Returns:
             bool: True if the profile picture was updated successfully, False otherwise.
         """
         cursor = self.db_connection.cursor()
         try:
-            # Check if the file was provided
-            if profile_picture_file:
-                # Save the uploaded file to the designated folder
-                filename = secure_filename(profile_picture_file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                profile_picture_file.save(filepath)
-
+            if user_id and filename and filepath:
                 # Update user's profile picture reference in the database
                 query = "UPDATE users SET profile_picture = %s WHERE id = %s"
                 cursor.execute(query, (filepath, user_id))
-
-                # Commit the transaction
                 self.db_connection.commit()
 
                 print("Profile picture updated successfully!")
                 return True
             else:
-                print("No profile picture provided.")
+                print("User ID, filename, or filepath not provided.")
                 return False
         except mysql.connector.Error as err:
             print(f"Error updating profile picture: {err}")
             return False
         finally:
             # Close the cursor
+            cursor.close()
+    
+    def get_profile_picture_path(self, user_id):
+        """
+        Retrieve the profile picture path for a user from the database.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            str or None: The profile picture path if found, None otherwise.
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            query = "SELECT profile_picture FROM users WHERE id = %s"
+            cursor.execute(query, (user_id,))
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                print("User not found.")
+                return None
+        except mysql.connector.Error as err:
+            print(f"Error retrieving profile picture path: {err}")
+            return None
+        finally:
             cursor.close()

@@ -25,7 +25,7 @@ from application.routes.edit_pending_items import edit_pending_items_route
 from application.routes.add_item_category import add_item_category_route
 from application.routes.add_user_department import add_user_department_route
 from application.routes.add_user_role import add_user_role_route
-
+from application.routes.upload_profile_pic import update_profile_picture_route
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -46,21 +46,28 @@ db_config = {
 }
 
 # Configure Flask-Session
-app.config['SESSION_TYPE'] = 'filesystem'  
+app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
+
+# Configure File upload where the uploaded files will go.
+app.config['UPLOAD_FOLDER'] = 'static/img/profile_pics'
 
 # Register different Blueprints
 app.register_blueprint(add_item_category_route)
 app.register_blueprint(edit_pending_items_route)
 app.register_blueprint(add_user_department_route)
 app.register_blueprint(add_user_role_route)
+app.register_blueprint(update_profile_picture_route)
 #app.register_blueprint(backup_route, url_prefix='/backup')
 
-# Create a Database instance
+# Create Instances of different classes.
 db = Database(db_config)
 user_manager = UserManager(db_config)
 user_handler = UserHandler(db_config)
 item_manager = ItemManager(db_config)
+
+# Add different instances to the current_app object
+app.user_handler = user_handler
 
 @app.route('/')
 def index():
@@ -114,15 +121,24 @@ def approver_dashboard():
 def admin():
     try:
         user_email = session.get('user_email')
+        user_id = session.get('id')
+        print(f'id: {user_id}')
         user_department = session.get('department', '')
         print(type(user_department))
         user_role = session.get('role', '')
         user_name = session.get('name')
+        path_pic = user_handler.get_profile_picture_path(user_id)
         print(f"user name is : {user_name} ")
         print(f"email: {user_email}")
         print(user_department)
         print(user_role)
-        
+        print(f"pic: {path_pic}")
+
+        # Define the prefix to be removed
+        prefix = "/home/rugema3/stock_management_system/application"
+        # Remove the prefix from the full path
+        extracted_path = path_pic.replace(prefix, "")
+        print(f"extracted: {extracted_path}")
 
         # Ensure user_department is not None before calling methods
         if user_department is not None:
@@ -192,7 +208,7 @@ def admin():
             total_cost = 0
             damaged_items= 0
 
-        return render_template('index.html', category_url=category_url, plot_url=plot_url, pending_checkout=pending_checkout, checkout_count=checkout_count, user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
+        return render_template('index.html', extracted_path=extracted_path, category_url=category_url, plot_url=plot_url, pending_checkout=pending_checkout, checkout_count=checkout_count, user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
 
     except Exception as e:
         flash(f"Error in admin route: {str(e)}", 'error')

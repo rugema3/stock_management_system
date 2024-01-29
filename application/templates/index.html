@@ -16,7 +16,7 @@
         
         <div class="side-content">
             <div class="profile">
-                <div class="profile-img bg-img" style="background-image: url(static/img/rugema.jpg)"></div>
+		    <div class="profile-img bg-img" style="background-image: url({{ extracted_path }})"></div>
 		{% if user_name is not none %}
                 <h4> {{ user_name.upper() }}</h4>
 		{% else %}
@@ -34,7 +34,7 @@
                         </a>
                     </li>
                     <li>
-                       <a href="">
+                       <a href="{{ url_for('update_profile_picture.update_profile_picture') }}">
                             <span class="las la-user-alt"></span>
                             <small>Profile</small>
                         </a>
