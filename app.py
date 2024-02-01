@@ -26,6 +26,7 @@ from application.routes.add_item_category import add_item_category_route
 from application.routes.add_user_department import add_user_department_route
 from application.routes.add_user_role import add_user_role_route
 from application.routes.upload_profile_pic import update_profile_picture_route
+from application.routes.store_approval_details import store_approval_details_route
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -58,6 +59,7 @@ app.register_blueprint(edit_pending_items_route)
 app.register_blueprint(add_user_department_route)
 app.register_blueprint(add_user_role_route)
 app.register_blueprint(update_profile_picture_route)
+app.register_blueprint(store_approval_details_route)
 #app.register_blueprint(backup_route, url_prefix='/backup')
 
 # Create Instances of different classes.
@@ -68,6 +70,7 @@ item_manager = ItemManager(db_config)
 
 # Add different instances to the current_app object
 app.user_handler = user_handler
+app.item_manager = item_manager
 
 @app.route('/')
 def index():
@@ -488,7 +491,7 @@ def pending_items():
 @login_required
 @any_role_required(['admin', 'approver'])
 def change_status():
-    """Change the status of an item.
+    """Change the status of an item and store approval details.
     Description:
                 When an item is being added in the stock, it hits the db
                 with a pending status by default.
@@ -502,9 +505,17 @@ def change_status():
     try:
         item_id = request.form.get('id')
         status = request.form.get('status')
+        approval_comment = request.form.get('approval_comment')  # Get approval comment
 
         # Call a method to update the status in the database
         db.update_item_status(item_id, status)
+
+        # Get the approver ID from the session
+        approver_id = session.get('id')
+
+        # Call a method to store approval details
+        item_manager.store_approval_details(item_id, status, approver_id, approval_comment)
+
         flash(f"Item status updated to {status}.", 'success')
     except Exception as e:
         # Handle exceptions, you can log the error or show a flash message

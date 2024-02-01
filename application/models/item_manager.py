@@ -101,3 +101,26 @@ class ItemManager:
         finally:
             # Close the cursor
             cursor.close()
+
+    def store_approval_details(self, item_id, approval_status, approver_id, approval_comment):
+        """
+        Store approval details for added items in the approval_details table.
+
+        Args:
+            
+            item_id (int): The ID of the item associated with the approval.
+            approval_status (str): The status of the approval (e.g., 'approved', 'rejected').
+            approver_id (int): The ID of the user who approved/rejected the transaction.
+            approval_comment (str): Any comment provided by the approver.
+
+        Returns:
+            None
+        """
+        cursor = self.db_connection.cursor()
+        query = "INSERT INTO approval_details (item_id, approval_status, approver_id, approval_comment) VALUES (%s, %s, %s, %s, %s)"
+        params = (item_id, approval_status, approver_id, approval_comment)
+
+        cursor.execute(query, params)
+        self.db_connection.commit()
+        cursor.close()
+
