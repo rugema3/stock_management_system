@@ -137,11 +137,14 @@ def admin():
         print(user_role)
         print(f"pic: {path_pic}")
 
-        # Define the prefix to be removed
-        prefix = "/home/rugema3/stock_management_system/application"
-        # Remove the prefix from the full path
-        extracted_path = path_pic.replace(prefix, "")
-        print(f"extracted: {extracted_path}")
+        if path_pic is not None:
+            # Define the prefix to be removed
+            prefix = "/home/rugema3/stock_management_system/application"
+            # Remove the prefix from the full path
+            extracted_path = path_pic.replace(prefix, "")
+            print(f"extracted: {extracted_path}")
+        else:
+            extracted_path = None
 
         # Ensure user_department is not None before calling methods
         if user_department is not None:
@@ -506,15 +509,19 @@ def change_status():
         item_id = request.form.get('id')
         status = request.form.get('status')
         approval_comment = request.form.get('approval_comment')  # Get approval comment
+        print(f'comment: {approval_comment}')
+        print(f'item: {item_id}')
 
         # Call a method to update the status in the database
         db.update_item_status(item_id, status)
 
         # Get the approver ID from the session
         approver_id = session.get('id')
+        print(f"user_id: {approver_id}")
 
         # Call a method to store approval details
-        item_manager.store_approval_details(item_id, status, approver_id, approval_comment)
+        result=item_manager.store_approval_details(item_id, status, approver_id, approval_comment)
+        print(result)
 
         flash(f"Item status updated to {status}.", 'success')
     except Exception as e:

@@ -117,10 +117,16 @@ class ItemManager:
             None
         """
         cursor = self.db_connection.cursor()
-        query = "INSERT INTO approval_details (item_id, approval_status, approver_id, approval_comment) VALUES (%s, %s, %s, %s, %s)"
-        params = (item_id, approval_status, approver_id, approval_comment)
+        try:
+            query = "INSERT INTO approval_details (item_id, approval_status, approver_id, approval_comment) VALUES (%s, %s, %s, %s)"
+            params = (item_id, approval_status, approver_id, approval_comment)
 
-        cursor.execute(query, params)
-        self.db_connection.commit()
-        cursor.close()
+            cursor.execute(query, params)
+            self.db_connection.commit()
+
+        except mysql.connector.Error as err:
+            print(f"Error updating the approval details: {err}")
+
+        finally:
+            cursor.close()
 
