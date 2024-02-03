@@ -21,6 +21,10 @@ def update_profile_picture():
     """
 
     user_id = session.get('id')
+    user_department = session.get('department')
+    user_role = session.get('role')
+    extracted_path = session.get('extracted_path')
+    print(f'path: {extracted_path}')
     user_handler = current_app.user_handler
 
     if request.method == 'POST':
@@ -51,5 +55,5 @@ def update_profile_picture():
 
         return redirect(url_for('admin'))
     else:
-        return render_template('upload_profile_picture.html', user_id=user_id)
+        return render_template('upload_profile_picture.html', extracted_path=extracted_path, user_id=user_id, user_department=user_department, user_role=user_role)
 

@@ -8,7 +8,8 @@
 
     <div class="side-content">
         <div class="profile">
-            <div class="profile-img bg-img" style="background-image: url(static/img/rugema.jpg)"></div>
+            <div class="profile-img bg-img" style="background-image: url({{ extracted_path }})"></div>
+
             <h4>{{ user_name }}</h4>
             <small>{{ user_department.upper() }} {{ user_role.upper() }}</small>
         </div>

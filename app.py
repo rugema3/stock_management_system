@@ -131,20 +131,14 @@ def admin():
         user_role = session.get('role', '')
         user_name = session.get('name')
         path_pic = user_handler.get_profile_picture_path(user_id)
+        extracted_path = path_pic
+        # Store the extracted path in the session
+        session['extracted_path'] = extracted_path
         print(f"user name is : {user_name} ")
         print(f"email: {user_email}")
         print(user_department)
         print(user_role)
-        print(f"pic: {path_pic}")
-
-        if path_pic is not None:
-            # Define the prefix to be removed
-            prefix = "/home/rugema3/stock_management_system/application"
-            # Remove the prefix from the full path
-            extracted_path = path_pic.replace(prefix, "")
-            print(f"extracted: {extracted_path}")
-        else:
-            extracted_path = None
+        print(f"pic: {extracted_path}")
 
         # Ensure user_department is not None before calling methods
         if user_department is not None:

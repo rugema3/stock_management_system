@@ -1,0 +1,78 @@
+/* Style for Upload Profile Picture form */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    margin-top: 5%; 
+
+}
+
+form {
+    width: 50%;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="file"] {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* profile.css */
+
+/* Style the form */
+form.file-upload {
+    margin-top: 20px; /* Adjust the top margin of the form */
+    padding: 20px; /* Add padding to the form for spacing */
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the file input label */
+.file-upload-label {
+    display: inline-block;
+    padding: 20px; /* Increase padding for better click area */
+    background-color: #007bff; /* Change the background color */
+    color: #fff; /* Change the text color */
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.file-upload-label:hover {
+    background-color: #0056b3; /* Darken the background color on hover */
+}
+
+/* Style the icon */
+.file-upload-label .la {
+    margin-right: 5px; /* Add some space between the icon and text */
+}
+

@@ -168,13 +168,13 @@ class UserHandler:
     
     def get_profile_picture_path(self, user_id):
         """
-        Retrieve the profile picture path for a user from the database.
+        Retrieve and extract the profile picture path for a user from the database.
 
         Args:
             user_id (int): The ID of the user.
 
         Returns:
-            str or None: The profile picture path if found, None otherwise.
+            str or None: The extracted profile picture path if found, None otherwise.
         """
         cursor = self.db_connection.cursor()
         try:
@@ -182,7 +182,10 @@ class UserHandler:
             cursor.execute(query, (user_id,))
             result = cursor.fetchone()
             if result:
-                return result[0]
+                path_pic = result[0]
+                prefix = "/home/rugema3/stock_management_system/application"
+                extracted_path = path_pic.replace(prefix, "")
+                return extracted_path
             else:
                 print("User not found.")
                 return None
@@ -191,3 +194,4 @@ class UserHandler:
             return None
         finally:
             cursor.close()
+

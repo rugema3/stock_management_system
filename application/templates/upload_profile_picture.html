@@ -3,14 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='profile.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
     <title>Upload Profile Picture</title>
 </head>
 <body>
+    {% include 'sidebar.html' %}
     <h1>Upload Profile Picture</h1>
-    <form action="/update_profile_picture" method="post" enctype="multipart/form-data">
-        <label for="profile_picture">Select Profile Picture:</label><br>
-        <input type="file" id="profile_picture" name="profile_picture" accept="image/*"><br><br>
+    <form action="/update_profile_picture" method="post" enctype="multipart/form-data" class="file-upload">
+        <!-- Wrap the label around the file input field -->
+        <label for="profile_picture" class="file-upload-label">
+            <i class="la la-upload"></i> Select Profile Picture <!-- Include text and icon -->
+            <!-- Hide the file input visually but keep it accessible -->
+            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display: none;">
+	</label><br><br><br>
         <input type="submit" value="Upload">
     </form>
 </body>
 </html>
+
