@@ -21,7 +21,7 @@ from flask_login import current_user
 from flask_mail import Mail, Message
 import os
 from application.routes.edit_pending_items import edit_pending_items_route
-#from application.routes.backups import backup_route
+from application.routes.backup import backup_route
 from application.routes.add_item_category import add_item_category_route
 from application.routes.add_user_department import add_user_department_route
 from application.routes.add_user_role import add_user_role_route
@@ -60,7 +60,7 @@ app.register_blueprint(add_user_department_route)
 app.register_blueprint(add_user_role_route)
 app.register_blueprint(update_profile_picture_route)
 app.register_blueprint(store_approval_details_route)
-#app.register_blueprint(backup_route, url_prefix='/backup')
+app.register_blueprint(backup_route)
 
 # Create Instances of different classes.
 db = Database(db_config)

@@ -44,4 +44,3 @@ def backup():
 
     # If an error occurred, you might want to redirect to an error page or another route
     return render_template('error.html')  # Adjust this based on your project structure
-
