@@ -16,6 +16,14 @@
 
         <div class="side-menu">
             <ul>
+                {% if user_role == 'user' %}
+                <li>
+                    <a href="/home" class="active">
+                         <span class="las la-home"></span>
+                         <small>Dashboard</small>
+                     </a>
+                 </li>
+                 {% endif %}
                 {% if user_role == 'admin' %}
                 <li>
                     <a href="/admin" class="active">

@@ -93,7 +93,7 @@ def home():
         user_name = session.get('name')
 
 
-        return render_template('home.html', user_name=user_name, user_email=user_email, user_department=user_department, user_role=user_role, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, checkout_items=checkout_items)
+        return render_template('home.html', user_role=user_role, user_name=user_name, user_email=user_email, user_department=user_department, user_role=user_role, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, checkout_items=checkout_items)
     else:
         # If the user is not logged in, redirect to the login page
         return redirect('/login')
