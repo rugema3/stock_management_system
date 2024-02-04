@@ -9,9 +9,9 @@ from application.models.user_handler import UserHandler
 from application.models.item_manager import ItemManager
 from application.models.send_email import send_email
 from application.helpers.random_password import random_password
-from decouple import config  
+from decouple import config
 import bcrypt
-from application.models.user import User 
+from application.models.user import User
 from flask_session import Session
 from decorators.authentication_decorators import login_required
 from decorators.admin_decorators import admin_required
@@ -132,7 +132,7 @@ def admin():
         extracted_path = path_pic
         # Store the extracted path in the session
         session['extracted_path'] = extracted_path
-        
+
         # Ensure user_department is not None before calling methods
         if user_department is not None:
             pending_items_count = db.get_pending_items_count(department=user_department)
@@ -185,14 +185,14 @@ def admin():
             # Encode the image as base64 and convert to a string
             category_url = base64.b64encode(img.getvalue()).decode()
 
-    
+
              # Generate the Matplotlib graph
             roles = ['Users', 'Approvers', 'Admins']
             user_counts_data = [user_counts.get('user_count', 0), user_counts.get('approver_count', 0), user_counts.get('admin_count', 0)]
             plt.figure(figsize=(3.5, 3.5)) # Set width and height respectively<
             plt.pie(user_counts_data, labels=roles, autopct='%1.1f%%', startangle=140)
             plt.title('User Stats')
-        
+
 
             # Save the plot to a BytesIO object
             img = io.BytesIO()
@@ -345,7 +345,7 @@ def register():
         print(f"Received password: {password}")
         print(f"Received department: {department}")
         print(f"Received role: {role}")
-        print(f"Received name: {name}")       
+        print(f"Received name: {name}")
 
         db.insert_user(email, password, department, role, name)
         flash(f'You have successfull registered <b>"{name} <b> in <b>"{department}"</b> department with <b>"{role}"</b> priviledges!', 'success')
@@ -374,7 +374,7 @@ def login():
             # Store user information in the session
             session['user_email'] = email
             session['id'] = user_data[0]
-            session['role'] = user_data[4] if user_data else None  
+            session['role'] = user_data[4] if user_data else None
             session['department'] = user_data[3] if user_data else None
             session['name'] = user_data[5] if user_data else None
             print(f"name: {session['name']}")
@@ -473,7 +473,7 @@ def pending_items():
 
         # Print or log the pending_items for debugging
         print("Pending Items:", pending_items)
-        
+
         # Create an empty list of names.
         names = []
         for item in pending_items:
@@ -500,7 +500,7 @@ def change_status():
                 When an item is being added in the stock, it hits the db
                 with a pending status by default.
 
-                The approver will need to approve the item so that the 
+                The approver will need to approve the item so that the
                 status changes from pending to approved.
 
                 This ensures that we have items in our stock that are not
@@ -589,7 +589,7 @@ def update_password():
 
     user_id = session['id']
     new_password = request.form.get('new_password')  # Use the correct form field name
-    
+
     if new_password is None:
         return render_template('change_password.html', error='New password cannot be null')
 
@@ -674,12 +674,12 @@ def forgot_password():
             flash("Error updating password. Please try again.")
         else:
             flash("Email not found. Please try again.")
-    
+
     # For GET requests or unsuccessful POST requests, render the forgot password form
     return render_template('forgot_password.html')
 
 @app.route('/department_items')
-@login_required  
+@login_required
 def get_items_by_department():
     """
     Fetch items based on the user's department and render the department_items.html template.
@@ -724,10 +724,10 @@ def checkout_items():
 @login_required
 @approver_required
 def change_checkout_status():
-    """Approve a checkout. 
+    """Approve a checkout.
     Description:
                 The approver or the admin will be able to change the status
-                of the checkout. When the user tries to checkout an item, it 
+                of the checkout. When the user tries to checkout an item, it
                 hits the db with a default status of pending.
 
                 The approver or the admin will be able to approve

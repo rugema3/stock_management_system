@@ -56,6 +56,7 @@
                             <span class="las la-plus-circle"></span>
                             <small>Add Item</small>
                         </a>
+			{% if user.role == 'admin' %}
                     </li>
                     <li>
                        <a href="/admin/view_users">
@@ -75,6 +76,7 @@
 				    <small>Add Item category</small>
 			    </a>
 		    </li>
+		    {% endif %}
 		    <li> 
 			    <a href="/update_email">
 				    <span class="las la-envelope"></span>

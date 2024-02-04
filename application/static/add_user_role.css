@@ -4,6 +4,8 @@
     flex-direction: column; /* Arrange items vertically */
     align-items: flex-start;
     height: 100vh;
+    margin-top: 4%;
+    margin-left: 40%;
 }
 
 /* Additional styling for form container */
@@ -14,7 +16,8 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
-    margin-top: 20px; /* Add top margin to the form container */
+    margin-top: 2%;
+   
 }
 
 .form-control {
