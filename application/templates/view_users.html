@@ -11,8 +11,10 @@
 </head>
 <body class="selected-body">
 	{% include 'sidebar.html' %}
+	
 
-    <h1>View Users</h1>
+	<h1>Users In {{ user_department.upper() }}  Department</h1><br>
+
 
     {% if users %}
         <table>
@@ -35,6 +37,6 @@
         <p>No users found.</p>
     {% endif %}
 
-    <p><a href="/admin">Back</a></p>
+    <p class="back-button"><a href="/admin">Back</a></p>
 </body>
 </html>

@@ -125,21 +125,14 @@ def admin():
     try:
         user_email = session.get('user_email')
         user_id = session.get('id')
-        print(f'id: {user_id}')
         user_department = session.get('department', '')
-        print(type(user_department))
         user_role = session.get('role', '')
         user_name = session.get('name')
         path_pic = user_handler.get_profile_picture_path(user_id)
         extracted_path = path_pic
         # Store the extracted path in the session
         session['extracted_path'] = extracted_path
-        print(f"user name is : {user_name} ")
-        print(f"email: {user_email}")
-        print(user_department)
-        print(user_role)
-        print(f"pic: {extracted_path}")
-
+        
         # Ensure user_department is not None before calling methods
         if user_department is not None:
             pending_items_count = db.get_pending_items_count(department=user_department)
@@ -149,8 +142,15 @@ def admin():
             damaged_items=0
             pending_checkout = db.get_checkout_items_by_department(user_department)
             checkout_count = len(pending_checkout) # Count pending checkouts
-            print(f"Checkout count = {checkout_count}")
-            print(pending_checkout)
+            print(f'Pending checkouts: {pending_checkout}')
+
+            # retrieve the user_id of the initiator of the checkout
+            for item in pending_checkout:
+                checkout_user_id = item['user_id']
+
+            # Retrieve the checkout initiator
+            initiator = db.get_user_name_by_id(checkout_user_id)
+            print(f'user: {initiator}')
             checkout_items = session.get('checkout_items', [])
             print("Checkout Items:", checkout_items)
 
@@ -208,7 +208,7 @@ def admin():
             total_cost = 0
             damaged_items= 0
 
-        return render_template('index.html', extracted_path=extracted_path, category_url=category_url, plot_url=plot_url, pending_checkout=pending_checkout, checkout_count=checkout_count, user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
+        return render_template('index.html', initiator=initiator, extracted_path=extracted_path, category_url=category_url, plot_url=plot_url, pending_checkout=pending_checkout, checkout_count=checkout_count, user_email=user_email, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, user_role=user_role, user_department=user_department, user_name=user_name, checkout_items=checkout_items)
 
     except Exception as e:
         flash(f"Error in admin route: {str(e)}", 'error')
@@ -247,8 +247,10 @@ def add_item():
     categories = db.get_item_categories()
     print(categories)
 
+    # retrieve the profile pic path from session.
+    extracted_path = session.get('extracted_path')
 
-    return render_template('add_item.html', stock_items=stock_items, user_department=user_department, user_role=user_role, categories=categories)
+    return render_template('add_item.html', extracted_path=extracted_path, stock_items=stock_items, user_department=user_department, user_role=user_role, categories=categories)
 
 
 @app.route('/items')
@@ -281,8 +283,11 @@ def all_items():
 
         # Append the item dictionary to the list
         items_list.append(item_data)
+        user_department = session.get('department')
+        user_role = session.get('role')
+        extracted_path = session.get('extracted_path')
 
-    return render_template('items.html', stock_items=items_list)
+    return render_template('items.html', extracted_path=extracted_path, user_role=user_role, user_department=user_department, stock_items=items_list)
 
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
@@ -457,9 +462,11 @@ def pending_items():
                 from the user's.
     """
     try:
-        # Get the logged-in user's department from the session
+        # Get the logged-in user's department and role from the session
         user_department = session.get('department')
         print(user_department)
+        user_role = session.get('role')
+
 
         # Fetch pending items only in the user's department
         pending_items = db.get_pending_items(department=user_department)
@@ -482,7 +489,7 @@ def pending_items():
     except Exception as e:
         # Handle exceptions, you can log the error or show a flash message
         flash(f"Error fetching pending items: {str(e)}", 'error')
-        return render_template('pending_items.html', pending_items=[])
+        return render_template('pending_items.html',user_department=user_department, user_role=user_role, pending_items=[])
 
 @app.route('/change_status', methods=['POST','GET'])
 @login_required
