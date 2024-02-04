@@ -16,6 +16,7 @@
 
         <div class="side-menu">
             <ul>
+                {% if user_role == 'admin' %}
                 <li>
                     <a href="/admin" class="active">
                         <span class="las la-home"></span>
@@ -23,27 +24,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="">
-                        <span class="las la-user-alt"></span>
-                        <small>Profile</small>
-                    </a>
-                </li>
-                <li>
                     <a href="/items">
                         <span class="las la-list"></span>
                         <small>View Items</small>
-                    </a>
-                </li>
-                <li>
-                    <a href="/pending_items">
-                        <span class="las la-clock"></span>
-                        <small>Pending items</small>
-                    </a>
-                </li>
-                <li>
-                    <a href="/add_item">
-                        <span class="las la-plus-circle"></span>
-                        <small>Add Item</small>
                     </a>
                 </li>
                 <li>
@@ -59,6 +42,58 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ url_for('add_user_department.add_user_department') }}">
+                           <span class="las la-key"></span>
+                           <small>Add User Department</small>
+                   </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('add_user_role.add_user_role') }}">
+                           <span class="las la-key"></span>
+                           <small>Add User Role</small>
+                   </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('backup.backup') }}">
+                        <span class="las la-database"></span>
+                        <small>Database Backup</small>
+                    </a>
+                </li>
+
+                {% endif %}
+
+                {% if user_role == 'approver' %}
+                <li>
+                    <a href="/approver" class="active">
+                         <span class="las la-home"></span>
+                         <small>Dashboard</small>
+                     </a>
+
+                </li>
+                {% endif %}
+
+                <li>
+                    <a href="{{ url_for('update_profile_picture.update_profile_picture') }}">
+                        <span class="las la-user-alt"></span>
+                        <small>Profile</small>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/pending_items">
+                        <span class="las la-clock"></span>
+                        <small>Pending items</small>
+                    </a>
+                </li>
+                <li>
+                    <a href="/add_item">
+                        <span class="las la-plus-circle"></span>
+                        <small>Add Item</small>
+                    </a>
+                </li>
+                
+                
+                <li>
                     <a href="/update_email">
                         <span class="las la-envelope"></span>
                         <small>Update Email</small>
@@ -70,25 +105,10 @@
                         <small>Change Password</small>
                     </a>
                 </li>
-		<li>
-                              <a href="{{ url_for('add_user_department.add_user_department') }}">
-                                     <span class="las la-key"></span>
-                                     <small>Add User Department</small>
-                             </a>
-                      </li>
-                      <li>
-                              <a href="{{ url_for('add_user_role.add_user_role') }}">
-                                     <span class="las la-key"></span>
-                                     <small>Add User Role</small>
-                             </a>
-                      </li>
+		
+                      
 
-                <li>
-                    <a href="{{ url_for('backup.backup') }}">
-                        <span class="las la-database"></span>
-                        <small>Database Backup</small>
-                    </a>
-                </li>
+                
             </ul>
         </div>
     </div>

@@ -533,11 +533,6 @@ def change_status():
     return redirect(url_for('pending_items'))
 
 
-def approve_items():
-    # Logic for approving items
-    return render_template('approve_items.html')
-
-
 @app.route('/update_email', methods=['GET', 'POST'])
 @login_required
 def update_email():
