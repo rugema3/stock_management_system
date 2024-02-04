@@ -711,7 +711,7 @@ def checkout_items():
         # Store the details in a session for future use anywhere in the app.
         session['checkout_items'] = checkout_items
         print(checkout_items)
-        return render_template('checkout_items.html', user_department=user_department, checkout_items=checkout_items)
+        return render_template('checkout_items.html', user_role=user_role, user_department=user_department, checkout_items=checkout_items)
     else:
         # Handle the case when the department is not available in the session
         return "Department information not found in the session."
