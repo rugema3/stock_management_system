@@ -703,14 +703,15 @@ def checkout_items():
     Returns:
         flask.Response: Renders a template with checkout items.
     """
-    department = session.get('department')
+    user_department = session.get('department')
+    user_role = session.get('role')
 
-    if department:
-        checkout_items = db.get_checkout_items_by_department(department)
+    if user_department:
+        checkout_items = db.get_checkout_items_by_department(user_department)
         # Store the details in a session for future use anywhere in the app.
         session['checkout_items'] = checkout_items
         print(checkout_items)
-        return render_template('checkout_items.html', checkout_items=checkout_items)
+        return render_template('checkout_items.html', user_department=user_department, checkout_items=checkout_items)
     else:
         # Handle the case when the department is not available in the session
         return "Department information not found in the session."
@@ -746,43 +747,7 @@ def change_checkout_status():
 
     return redirect('/checkout_items')
 
-@app.route('/backup', methods=['GET', 'POST'])
-def backup():
-    """
-    Run the database backup script and provide the backup file for download.
 
-    This route triggers the execution of the database backup script, and once
-    the backup is complete, it provides the user with the option to download
-    the backup file. After the download, a success message is flashed.
-
-    Returns:
-        Flask.Response: Flask response object containing the backup file.
-    """
-    print("Backup route accessed!")
-    try:
-        # Run the backup script
-        subprocess.run(['/home/rugema3/automations/stock_backup.sh'])
-
-        # Compose the path to the backup file
-        current_date = subprocess.check_output(['date', '+%d-%m-%Y']).decode().strip()
-        database_name = "stock"
-        backup_path = "/home/rugema3/db_backups"
-        backup_filename = f"{backup_path}/{database_name}-{current_date}.sql.tar.gz"
-
-        # Send the file for download
-        response = send_file(backup_filename, as_attachment=True)
-
-        # Flash a success message
-        flash('Database backup completed successfully! File downloaded.')
-
-        return response
-
-    except Exception as e:
-        # Handle any exceptions and flash an error message
-        flash(f'Error: {str(e)}')
-
-    # If an error occurred, you might want to redirect to an error page or another route
-    return "An Error oocured"
 
 
 
