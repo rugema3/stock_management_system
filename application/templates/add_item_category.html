@@ -8,6 +8,8 @@
     
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='add_user_role.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='availables.css') }}">
+
 </head>
 <body>
     {% include 'sidebar.html' %}
@@ -15,8 +17,21 @@
         <h2>Add Item Category</h2>
 	<br><br>
 	<p>Use this form to add item categories.</p>
-	<p>You can confirm if the desired category if available by trying to add a new item.</p>
-        <div class="form-container">
+	<p>You can confirm available categories before adding a new category.</p>
+	<div class="availables-table">
+		<table  class="categories-table" border="1">
+		<tr>
+			<th>Available Categories</th>
+		</tr>
+		{% for category in categories %}
+		<tr>
+			<td>{{ category }}</td>
+		</tr>
+		{% endfor %}
+		</table>
+	</div>
+
+	<div class="form-container">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <div class="alert alert-{{ messages[0].category }}">

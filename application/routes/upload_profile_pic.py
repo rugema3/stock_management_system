@@ -55,5 +55,11 @@ def update_profile_picture():
 
         return redirect(url_for('admin'))
     else:
-        return render_template('upload_profile_picture.html', extracted_path=extracted_path, user_id=user_id, user_department=user_department, user_role=user_role)
+        return render_template(
+                'upload_profile_picture.html', 
+                extracted_path=extracted_path, 
+                user_id=user_id, 
+                user_department=user_department, 
+                user_role=user_role
+                )
 

@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from application.models.user_handler import UserHandler
 from decorators.admin_decorators import admin_required
-from decouple import config
 
 add_user_department_route = Blueprint('add_user_department', __name__)
 
@@ -14,26 +13,24 @@ def add_user_department():
     Returns:
         Flask.Response: Redirects to the add_item_department page.
     """
-    # Initialize the Database
-    db_config = {
-        'user': config('DB_USER'),
-        'password': config('DB_PASSWORD'),
-        'host': config('DB_HOST'),
-        'database': config('DB_NAME'),
-    }
-    db = UserHandler(db_config)
+    # Retrieve the required instances
+    db = current_app.db
+    user_handler = current_app.user_handler
+
     user_department = session.get('department')
     user_role = session.get('role')
+
+    # Retrieve departments from the database.
+    departments = user_handler.get_user_department()
+    print('departments: ', departments)
 
     if request.method == 'POST':
         try:
             # Get the new details from the form
             department_name = request.form['department_name']
             
-
-            # Add category in the database.:wq
-
-            success = db.add_user_department(department_name)
+            # Add category in the database.
+            success = user_handler.add_user_department(department_name)
 
             if success:
                 flash(f'{department_name} department has been added successfully!', 'success')
@@ -44,5 +41,10 @@ def add_user_department():
             flash(f'Error: {str(e)}', 'error')
 
     # Render the template on GET http
-    return render_template('add_user_department.html', user_department=user_department, user_role=user_role)
+    return render_template(
+            'add_user_department.html', 
+            user_department=user_department, 
+            user_role=user_role,
+            departments=departments
+            )
 

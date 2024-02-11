@@ -17,8 +17,6 @@ from decorators.authentication_decorators import login_required
 from decorators.admin_decorators import admin_required
 from decorators.approver_decorators import approver_required
 from decorators.roles import any_role_required
-from flask_login import current_user
-from flask_mail import Mail, Message
 import os
 from application.routes.edit_pending_items import edit_pending_items_route
 from application.routes.backup import backup_route
@@ -71,6 +69,7 @@ item_manager = ItemManager(db_config)
 # Add different instances to the current_app object
 app.user_handler = user_handler
 app.item_manager = item_manager
+app.db = db
 
 @app.route('/')
 def index():
@@ -93,7 +92,7 @@ def home():
         user_name = session.get('name')
 
 
-        return render_template('home.html', user_role=user_role, user_name=user_name, user_email=user_email, user_department=user_department, user_role=user_role, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, checkout_items=checkout_items)
+        return render_template('home.html', user_name=user_name, user_email=user_email, user_department=user_department, user_role=user_role, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, checkout_items=checkout_items)
     else:
         # If the user is not logged in, redirect to the login page
         return redirect('/login')
@@ -302,6 +301,8 @@ def search_item():
     Returns:
         str: Rendered HTML page displaying the search form and search results (if available).
     """
+    user_department = session.get('department')
+    user_role = session.get('role')
     if request.method == 'POST':
         search_query = request.form['search_query']
         # Perform the database search for the item based on search_query
@@ -325,10 +326,10 @@ def search_item():
             # Append the item dictionary to the list
             items_list.append(item_data)
 
-        return render_template('search.html', search_results=items_list)
+        return render_template('search.html', user_department=user_department, search_results=items_list)
     else:
         # Handle GET request (initial page load)
-        return render_template('search.html', search_results=[])
+        return render_template('search.html', user_department=user_department, user_role=user_role, search_results=[])
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
 @admin_required

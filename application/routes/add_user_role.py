@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from application.models.user_handler import UserHandler
 from decorators.admin_decorators import admin_required
 from decouple import config
@@ -14,16 +14,11 @@ def add_user_role():
     Returns:
         Flask.Response: Redirects to the add_user_role page.
     """
-    # Initialize the Database
-    db_config = {
-        'user': config('DB_USER'),
-        'password': config('DB_PASSWORD'),
-        'host': config('DB_HOST'),
-        'database': config('DB_NAME'),
-    }
-    db = UserHandler(db_config)
+    # Retrieve the item_handler instance
+    user_handler = current_app.user_handler
     user_department = session.get('department')
     user_role = session.get('role')
+    roles = user_handler.get_user_role()
 
     if request.method == 'POST':
         try:
@@ -33,7 +28,7 @@ def add_user_role():
 
             # Add role in the database.
 
-            success = db.add_user_role(role_name)
+            success = user_handler.add_user_role(role_name)
 
             if success:
                 flash(f'{role_name} role has been added successfully!', 'success')
@@ -44,5 +39,5 @@ def add_user_role():
             flash(f'Error: {str(e)}', 'error')
 
     # Render the template on GET http
-    return render_template('add_user_role.html', user_department=user_department, user_role=user_role)
+    return render_template('add_user_role.html', roles=roles, user_department=user_department, user_role=user_role)
 
