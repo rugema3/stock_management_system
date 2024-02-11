@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+
+
+
+    <title>Approved Checkout details</title>
+</head>
+<body class="selected-body">
+	{% include 'sidebar.html' %}
+    <h1>Approved Checkout details</h1>
+
+    {% if approved_checkouts %}
+    <table border="1">
+        <tr>
+            <th>Checkout ID</th>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>INITIATED BY</th>
+	    <th>APPROVER</th>
+            <th>Created At</th>
+        </tr>
+        {% for approved in approved_checkouts %}
+        <tr>
+            <td>{{ approved['checkout_id'] }}</td>
+            <td>{{ approved['item_name'] }}</td>
+            <td>{{ approved['quantity'] }}</td>
+            <td>{{ user_names.get(approved['user_id'], 'Unknown') }}</td>
+	    <td>{{ approver_names.get(approved['approver_id']) }}</td>
+            <td>{{ approved['created_at'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No approved checkouts.</p>
+    {% endif %}
+
+    {% if session.role == 'admin' %}
+        <a href="/admin">Back to Admin Dashboard</a>
+    {% elif session.role == 'user' %}
+        <a href="/home">Back to User Dashboard</a>
+    {% elif session.role == 'approver' %}
+        <a href="/approver">Back to Dashboard</a>
+    {% else %}
+        <a href="/">Back to Home</a>
+    {% endif %}
+
+</body>
+</html>
+

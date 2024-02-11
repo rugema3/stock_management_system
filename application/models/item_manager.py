@@ -130,3 +130,32 @@ class ItemManager:
         finally:
             cursor.close()
 
+    def get_approved_checkouts(self, department):
+        """Retrieve approved checkout items details.
+        Args:
+            department (str): The department for which to retrieve checkout items.
+
+        Returns:
+            list: A list of dictionaries showing approved checkout details.
+
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve checkout items for the department
+            query = """
+                SELECT * FROM checkout_transactions
+                WHERE department = %s AND (approval_status = 'approved')
+            """
+            cursor.execute(query, (department,))
+            checkout_items = cursor.fetchall()
+
+            return checkout_items
+        except Exception as e:
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
+            return []
+        finally:
+            cursor.close()
+
+

@@ -17,7 +17,14 @@
         <div class="side-content">
             <div class="profile">
                 <div class="profile-img bg-img" style="background-image: url(static/img/rugema.jpg)"></div>
-                <h4> {{ user_name.upper() }}</h4>
+		<h4> 
+			{% if user_name is not none %}
+				{{ user_name.upper() }}
+				{% else %}
+				{{ user_name }}
+			{% endif %}
+
+		</h4>
 		<small>{{ user_department.upper() }} {{ user_role.upper() }}</small>
             </div>
 
@@ -65,6 +72,13 @@
 				    <small>Display Items in Department</small>
 			    </a>
 		    </li>
+		    <li>
+			    <a href="{{ url_for('approved_checkout_details.approved_checkout_details') }}">
+                                     <span class="las la-sitemap"></span>
+                                     <small>Approved Checkouts</small>
+                             </a>
+		    </li>
+
 		    <li> 
 			    <a href="/update_email">
 				    <span class="las la-envelope"></span>

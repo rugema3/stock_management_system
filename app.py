@@ -25,6 +25,7 @@ from application.routes.add_user_department import add_user_department_route
 from application.routes.add_user_role import add_user_role_route
 from application.routes.upload_profile_pic import update_profile_picture_route
 from application.routes.store_approval_details import store_approval_details_route
+from application.routes.approved_checkout_details import approved_checkout_details_route
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -59,6 +60,7 @@ app.register_blueprint(add_user_role_route)
 app.register_blueprint(update_profile_picture_route)
 app.register_blueprint(store_approval_details_route)
 app.register_blueprint(backup_route)
+app.register_blueprint(approved_checkout_details_route)
 
 # Create Instances of different classes.
 db = Database(db_config)
@@ -105,6 +107,12 @@ def approver_dashboard():
     user_email = session.get('user_email')
     user_department = session.get('department')
     user_role = session.get('role')
+
+    approved_checkouts = item_manager.get_approved_checkouts(user_department)
+    
+    # Store approved_checkouts in the session
+    session['approved_checkouts'] = approved_checkouts
+
     if user_email:
         pending_items_count = db.get_pending_items_count(department=user_department)
         user_counts = db.get_users_count_by_department(department=user_department)
@@ -113,7 +121,18 @@ def approver_dashboard():
         checkout_items = session.get('checkout_items', [])
         user_name = session.get('name')
 
-        return render_template('approver_dashboard.html', user_name=user_name, user_email=user_email, user_department=user_department, user_role=user_role, pending_items_count=pending_items_count, user_counts=user_counts, total_cost=total_cost, damaged_items=damaged_items, checkout_items=checkout_items)
+        return render_template(
+                'approver_dashboard.html', 
+                user_name=user_name, 
+                user_email=user_email, 
+                user_department=user_department, 
+                user_role=user_role, 
+                pending_items_count=pending_items_count, 
+                user_counts=user_counts, 
+                total_cost=total_cost, 
+                damaged_items=damaged_items, 
+                checkout_items=checkout_items
+                )
     else:
         # If the user is not logged in, redirect to the login page
         return redirect('/login')
