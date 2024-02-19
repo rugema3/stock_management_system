@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Months Added Items</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+	{% include 'sidebar.html' %}
+
+	<h1>Items added in {{ user_department.upper() }} Department for current Months </h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Created At</th>
+                <th>Currency</th>
+                <th>Status</th>
+                <th>Maker ID</th>
+                <th>Descriptiont</th>
+		<th>Purchase Date</td>
+		<th>Expiration Date</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in added_items %}
+                <tr>
+                    <td>{{ item['item_name'] }}</td>
+                    <td>{{ item['price'] }}</td>
+                    <td>{{ item['category'] }}</td>
+                    <td>{{ item['quantity'] }}</td>
+                    <td>{{ item['created_at'] }}</td>
+                    <td>{{ item['currency'] }}</td>
+                    <td>{{ item['status'] }}</td>
+                    <td>{{ item['maker_id'] }}</td>
+                    <td>{{ item['description'] }}</td>
+		    <td>{{ item['purchase_date'] }} </td>
+		    <td>{{ item['expiration_date'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
+

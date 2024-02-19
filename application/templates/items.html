@@ -15,9 +15,9 @@
             <tr>
                 <th>Item Name</th>
                 <th>Price</th>
-                <th>Currency</th>
                 <th>Category</th>
                 <th>Quantity</th>
+		<th>Description</th>
                 <th>Date Created</th>
                 <th>Total cost</th>
                 <!-- <th>Actions</th>  <!-- Added Actions column -->
@@ -28,12 +28,12 @@
             {% for item in stock_items %}
             <tr>
                 <td>{{ item.item_name }}</td>
-                <td>{{ item.price }} </td>
-                <td>{{ item.currency }}</td>
+		<td>{{ item.price }} {{ item.currency }}</td>
                 <td>{{ item.category }}</td>
                 <td>{{ item.quantity }}</td>
+		<td>{{ item.description }}</td>
                 <td>{{ item.created_at }}</td>
-                <td>{{ item.total_cost }}</td>
+		<td>{{ item.total_cost }} {{ item.currency }}</td>
                 <!-- <td>
                     <form action="{{ url_for('checkout') }}" method="post">
                         <input type="hidden" name="item_name" value="{{ item.item_name }}">

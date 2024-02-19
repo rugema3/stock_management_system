@@ -12,6 +12,7 @@
 </head>
 <body>
 	
+	
     <h1>Pending Items</h1>
 
     {% if pending_items %}
@@ -66,8 +67,7 @@
     {% else %}
     <p>No pending items.</p>
     {% endif %}
-
-    {% if session.role == 'admin' %}
+   {% if session.role == 'admin' %}
         <a href="/admin">Back to Admin Dashboard</a>
     {% elif session.role == 'user' %}
         <a href="/home">Back to User Dashboard</a>
@@ -76,6 +76,5 @@
     {% else %}
         <a href="/">Back to Home</a>
     {% endif %}
-
 </body>
 </html>

@@ -45,6 +45,13 @@
                             <small>View Items</small>
                         </a>
                     </li>
+		    <li>
+                            <a href="/department_items">
+                                    <span class="las la-building"></span>
+                                    <small>Display Items in Department</small>
+                            </a>
+                    </li>
+
                     <li>
                        <a href="/pending_items">
                             <span class="las la-clock"></span>
@@ -65,9 +72,28 @@
                         </a>
 		    </li>
 		    <li>
+                       <a href="/checkout_items">
+                            <span class="las la-users"></span>
+                            <small>View pending Checkouts</small>
+                        </a>
+                    </li>
+
+		    <li>
 			    <a href="/register">
 				    <span class="las la-user-plus"></span>
 				    <small>Register Users</small>
+			    </a>
+		    </li>
+		    <li>
+			    <a href="{{ url_for('approved_checkout_details.approved_checkout_details') }}">
+			       	    <span class="las la-check-circle"></span>
+				    <small>Approved Checkouts</small>
+			    </a>
+		    </li>
+		    <li>
+			    <a href="{{ url_for('added_items_current_months.added_items_current_months') }}">
+				    <span class=""></span>
+				    <small>Current Months items</small>
 			    </a>
 		    </li>
 		    <li>
@@ -76,6 +102,20 @@
 				    <small>Add Item category</small>
 			    </a>
 		    </li>
+		    <li>
+                            <a href="{{ url_for('search_items_by_date.search_items_by_date') }}">
+                                    <span class="las la-archive"></span>
+				    <small>Search Items by Date</small>
+                            </a>
+                    </li>
+		    <li>
+                            <a href="{{ url_for('search_weekly_adds.search_weekly_adds') }}">
+                                    <span class="las la-archive"></span>
+                                    <small>Search Weekly adds</small>
+                            </a>
+                    </li>
+
+
 		    
 		    <li> 
 			    <a href="/update_email">
@@ -224,7 +264,7 @@
                         <div class="card-head">
                           <img src="data:image/png;base64,{{ plot_url }}" alt="User Stats Chart">
 			  <img src="data:image/png;base64,{{ category_url }}" alt="User Stats Chart">
-			  <img src="data:image/png;base64,{{ plot_url }}" alt="User Stats Chart">
+			  <img src="data:image/png;base64,{{ added_items_url }}" alt="User Stats Chart">
 			 
 
 

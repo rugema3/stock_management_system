@@ -7,10 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Items</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
-i</head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+</head>
 <body>
+	{% include 'sidebar.html' %}
 
-	<h1>{{ user_department }} Department Items</h1>
+	<h1>{{ user_department.upper() }} Department Items</h1>
 
     <table>
         <thead>
@@ -20,27 +23,27 @@ i</head>
                 <th>Category</th>
                 <th>Quantity</th>
                 <th>Created At</th>
-                <th>Currency</th>
+		<th>Purchase Date</th>
+		<th>Expiration </th>
                 <th>Status</th>
-                <th>Maker ID</th>
-                <th>Department</th>
-                <th>Action</th>  <!-- Add a new column for the checkout button -->
+                <th>Added By</th>
+		<!-- <th>Action</th> -->
             </tr>
         </thead>
         <tbody>
             {% for item in items %}
                 <tr>
                     <td>{{ item[1] }}</td>
-                    <td>{{ item[2] }}</td>
+		    <td>{{ item[2] }} {{ item[8] }}</td>
                     <td>{{ item[3] }}</td>
                     <td>{{ item[4] }}</td>
-                    <td>{{ item[5] }}</td>
-                    <td>{{ item[6] }}</td>
                     <td>{{ item[7] }}</td>
-                    <td>{{ item[8] }}</td>
+		    <td>{{ item[6] }}</td>
+		    <td>{{ item[5] }}</td>
                     <td>{{ item[9] }}</td>
-                    <td>
-                        <!-- Add a checkout button for each item -->
+                    <td>{{ db.get_user_name_by_id(item[10]) }}</td>
+                    <!--<td>
+                        <!-- Add a checkout button for each item
                         <form method="POST" action="/checkout">
                             <input type="hidden" name="item_name" value="{{ item[1] }}">
                             <label for="quantity">Quantity:</label>
@@ -48,6 +51,7 @@ i</head>
                             <button type="submit">Checkout</button>
                         </form>
                     </td>
+			-->
                 </tr>
             {% endfor %}
         </tbody>

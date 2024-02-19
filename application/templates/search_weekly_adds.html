@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Items added weekly</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+</head>
+<body>
+    <h1>Search Items Added in Last 7 Days</h1>
+    <form action="/search_weekly_adds" method="post">
+        
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Added Items</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Created At</th>
+                <th>Currency</th>
+                <th>Status</th>
+                <th>Maker ID</th>
+                <th>Description</th>
+                <th>Purchase Date</th>
+                <th>Expiration Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if added_items %}
+                {% for item in added_items %}
+                    <tr>
+                        <td>{{ item['item_name'] }}</td>
+                        <td>{{ item['price'] }}</td>
+                        <td>{{ item['category'] }}</td>
+                        <td>{{ item['quantity'] }}</td>
+                        <td>{{ item['created_at'] }}</td>
+                        <td>{{ item['currency'] }}</td>
+                        <td>{{ item['status'] }}</td>
+                        <td>{{ item['maker_id'] }}</td>
+                        <td>{{ item['description'] }}</td>
+                        <td>{{ item['purchase_date'] }}</td>
+                        <td>{{ item['expiration_date'] }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="11">No items found within the selected date range.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+</body>
+</html>
+

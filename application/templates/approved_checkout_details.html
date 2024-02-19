@@ -13,7 +13,7 @@
 </head>
 <body class="selected-body">
 	{% include 'sidebar.html' %}
-    <h1>Approved Checkout details</h1>
+    <h1>Checkout Summary</h1>
 
     {% if approved_checkouts %}
     <table border="1">
@@ -23,7 +23,7 @@
             <th>Quantity</th>
             <th>INITIATED BY</th>
 	    <th>APPROVER</th>
-            <th>Created At</th>
+            <th>Approval Date</th>
         </tr>
         {% for approved in approved_checkouts %}
         <tr>

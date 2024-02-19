@@ -9,10 +9,11 @@ def approved_checkout_details():
     """
     Route to display the approved_checkouts details.
     """
-    # Retrieve user-id from session.
+    # Retrieve useful information from session.
     user_id = session.get('id')
     user_department = session.get('department')
     user_role = session.get('role')
+    extracted_path = session.get('extracted_path')
     
     item_manager = current_app.item_manager
     db = current_app.db
@@ -40,5 +41,6 @@ def approved_checkout_details():
             user_names=user_names,
             approver_names=approver_names,
             user_department=user_department,
-            user_role=user_role
+            user_role=user_role,
+            extracted_path=extracted_path
             )

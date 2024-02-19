@@ -25,13 +25,19 @@ class Database:
         self.db_connection = mysql.connector.connect(**db_config)
         self.cursor = self.db_connection.cursor()
 
-    def insert_item(self, item, maker_id=None, description=None):
+    def insert_item(
+            self, item, maker_id=None, description=None, 
+            purchase_date=None, expiration_date=None):
         """
         Insert an item into the database.
 
         Args:
             item (StockItem): The StockItem object to be inserted into the database.
             maker_id (int, optional): The ID of the user who added the item. Default is None.
+            dectription(str, optional): The description of an item when entered in the db.
+            purchade_date(date, optional): The date of the purchase of an item
+            expiration_date(date, optional): The date of an item is set to expire.
+
         """
         cursor = self.db_connection.cursor(dictionary=True)
 
@@ -46,10 +52,19 @@ class Database:
 
                 # Insert the item with the fetched department information
                 insert_query = """
-                    INSERT INTO stock_items(item_name, price, category, quantity, department, maker_id, description)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO stock_items(item_name, price, category, quantity, department, maker_id, description, purchase_date, expiration_date)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
-                cursor.execute(insert_query, (item.item_name, item.price, item.category, item.quantity, department, maker_id, description))
+                cursor.execute(insert_query, (
+                    item.item_name, 
+                    item.price, 
+                    item.category, 
+                    item.quantity, 
+                    department, 
+                    maker_id, 
+                    description, 
+                    purchase_date, 
+                    expiration_date))
 
         self.db_connection.commit()
         cursor.close()
@@ -64,7 +79,7 @@ class Database:
             list: A list of tuples containing the item records.
         """
         cursor = self.db_connection.cursor()
-        cursor.execute("SELECT * FROM stock_items")
+        cursor.execute("SELECT * FROM stock_items WHERE status='approved'")
         items = cursor.fetchall()
         cursor.close()
         return items
@@ -466,7 +481,7 @@ class Database:
         Returns:
             list: A list of tuples containing the item records for the specified department.
         """
-        query = "SELECT * FROM stock_items WHERE department = %s"
+        query = "SELECT * FROM stock_items WHERE status='approved' AND department = %s"
         params = (department,)
 
         cursor = self.db_connection.cursor()
@@ -478,7 +493,7 @@ class Database:
 
     def get_checkout_items_by_department(self, department):
         """
-        Retrieve checkout items for a specific department.
+        Retrieve pending checkout items for a specific department.
 
         Args:
             department (str): The department for which to retrieve checkout items.

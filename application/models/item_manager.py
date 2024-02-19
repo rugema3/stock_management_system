@@ -2,6 +2,7 @@
 This module has a class that handles the database operations concerning items.
 """
 import mysql.connector
+from decouple import config
 
 
 class ItemManager:
@@ -158,4 +159,135 @@ class ItemManager:
         finally:
             cursor.close()
 
+    def get_items_current_month(self, department):
+        """Retrieve items added in the stock for the cutrrent months.
+        Args:
+            department (str): The department for which the current user belongs.
 
+        Returns:
+            list: A list of dictionaries showing added items in the current months.
+
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve added items for the department
+            query = """
+                SELECT * FROM stock_items
+                WHERE department = %s 
+                AND status = 'approved'
+                AND YEAR(created_at) = YEAR(CURDATE())
+                AND MONTH(created_at) = MONTH(CURDATE());
+            """
+            cursor.execute(query, (department,))
+            added_items = cursor.fetchall()
+
+            return added_items
+        except Exception as e:
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
+            return []
+        finally:
+            cursor.close()
+
+    def retrieve_added_items_by_date(self, department, start_date, end_date):
+        """Retrieve items added within a date range.
+        Args:
+            department (str): The department for which the current user belongs.
+            start_date (str): The start date of the range (format: 'YYYY-MM-DD').
+            end_date (str): The end date of the range (format: 'YYYY-MM-DD').
+
+        Returns:
+            list: A list of dictionaries showing added items within the date range.
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve added items for the department within the specified date range
+            query = """
+                SELECT * FROM stock_items
+                WHERE department = %s
+                AND status = 'approved'
+                AND created_at >= %s AND created_at <= %s;
+            """
+            cursor.execute(query, (department, start_date, end_date))
+            added_items = cursor.fetchall()
+
+            return added_items
+        except Exception as e:
+            # Handle exceptions (e.g., database errors)
+            print("An error occurred:", e)
+            return []
+
+    def search_weekly_adds(self, department):
+        """Retrieve items added within the last 7 7 days.
+        Args:
+            department (str): The department for which the current user belongs.
+
+        Returns:
+            list: A list of dictionaries showing added items within the date range.
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve added items for the department within the specified date range
+            query = """
+                SELECT * FROM stock_items
+                WHERE department = %s
+                AND status = 'approved'
+                AND created_at >= CURDATE() - INTERVAL 7 DAY
+                AND created_at <= CURDATE();
+            """
+            cursor.execute(query, (department,))
+            added_items = cursor.fetchall()
+
+            return added_items
+        except Exception as e:
+            # Handle exceptions (e.g., database errors)
+            print("An error occurred:", e)
+            return []
+
+    def get_expiring_soon(self, department):
+        """Retrieve items expiring in the next 7 days.
+        Args:
+            department (str): The department for which the current user belongs.
+
+        Returns:
+            list: A list of dictionaries showing items expiring soon.
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve added items for the department within the specified date range
+            query = """
+                SELECT * FROM stock_items
+                WHERE department = %s
+                AND status = 'approved'
+                AND expiration_date BETWEEN CURDATE() 
+                AND DATE_ADD(CURDATE(), INTERVAL 7 DAY);
+            """
+            cursor.execute(query, (department,))
+            added_items = cursor.fetchall()
+
+            return added_items
+        except Exception as e:
+            # Handle exceptions (e.g., database errors)
+            print("An error occurred:", e)
+            return []
+
+
+
+if __name__ == '__main__':
+    db_config = {
+            'user': config('DB_USER'),
+            'password': config('DB_PASSWORD'),
+            'host': config('DB_HOST'),
+            'database': config('DB_NAME'),
+            }
+
+    item = ItemManager(db_config)
+    weekly_items = item.get_expiring_soon('it')
+    print()
+    for item in weekly_items:
+        print("Weekly items")
+        print(item['item_name'], item['created_at'], item['expiration_date'])

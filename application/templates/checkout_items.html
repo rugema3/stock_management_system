@@ -12,7 +12,7 @@
 </head>
 <body>
     {% include 'sidebar.html' %}
-    <h1>Checkout Items</h1>
+    <h1>Pending Checkouts</h1>
 
     <table>
         <thead>
@@ -20,9 +20,8 @@
                 <th>Checkout ID</th>
                 <th>Item Name</th>
                 <th>Quantity</th>
-                <th>User ID</th>
+                <th>Initiator</th>
                 <th>Approval Status</th>
-                <th>Approver ID</th>
                 <th>Created At</th>
                 <th>Department</th>
                 {% if user_role in ['admin', 'approver'] %}
@@ -37,18 +36,24 @@
                     <td>{{ checkout_item['checkout_id'] }}</td>
                     <td>{{ checkout_item['item_name'] }}</td>
                     <td>{{ checkout_item['quantity'] }}</td>
-                    <td>{{ checkout_item['user_id'] }}</td>
+                    <td>
+			{% if initiator_names[loop.index0] %}
+                        {{ initiator_names[loop.index0].upper() }}
+                        {% else %}
+                        None
+                        {% endif %}
+
+		    </td>
                     <td>{{ checkout_item['approval_status'] }}</td>
-                    <td>{{ checkout_item['approver_id'] }}</td>
                     <td>{{ checkout_item['created_at'] }}</td>
-                    <td>{{ checkout_item['department'] }}</td>
+                    <td>{{ checkout_item['department'].upper() }}</td>
                     {% if user_role in ['admin', 'approver'] %}
                     <td>
                         <form method="post" action="{{ url_for('change_checkout_status') }}">
                             <input type="hidden" name="checkout_id" value="{{ checkout_item['checkout_id'] }}">
                             <select name="status">
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
+                                <option value="approved">Approve</option>
+                                <option value="rejected">Reject</option>
                             </select>
                             <button type="submit">Change Status</button>
                         </form>
