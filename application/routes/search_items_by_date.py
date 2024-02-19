@@ -28,6 +28,7 @@ def search_items_by_date():
     user_department = session.get('department')
     user_role = session.get('role')
     extracted_path = session.get('extracted_path')
+    db = current_app.db
 
     # Retrieve information from form.
     if request.method == 'POST':
@@ -61,7 +62,8 @@ def search_items_by_date():
                 user_role=user_role,
                 extracted_path=extracted_path,
                 start_date=start_date_formatted,
-                end_date=end_date_formatted
+                end_date=end_date_formatted,
+                db=db
                 )
     else:
         start_date = request.args.get('start_date')
@@ -85,5 +87,6 @@ def search_items_by_date():
                 user_department=user_department,
                 start_date=start_date,
                 end_date=end_date,
-                user_role=user_role
+                user_role=user_role,
+                db=db
                 )
