@@ -23,6 +23,7 @@ def add_item_category():
     # Retrieve user info from session
     user_department = session.get('department')
     user_role = session.get('role')
+    extracted_path = session.get('extracted_path')
 
     # Retrieve the categories from the db.
     categories = db.get_item_categories()
@@ -49,5 +50,6 @@ def add_item_category():
             'add_item_category.html', 
             user_department=user_department, 
             user_role=user_role,
-            categories=categories
+            categories=categories,
+            extracted_path=extracted_path
             )
