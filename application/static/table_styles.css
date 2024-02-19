@@ -91,5 +91,51 @@ select::-ms-expand {
 
 select::-webkit-dropdown-arrow {
     display: none; /* Hide default arrow in Chrome/Safari */
+    }
+
+.date-search-form {
+    /* Add your styles for the form container here */
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-left: 20%;
+}
+
+.date-search-form label {
+    /* Add your styles for labels here */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.date-search-form input[type="date"] {
+    /* Add your styles for date inputs here */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+}
+
+.date-search-form button {
+    /* Add your styles for the search button here */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.date-search-form button:hover {
+    background-color: #0056b3;
+}
+.custom-heading {
+    color: #333;
+    font-size: 24px;
+    margin-left:20%;
+    margin-top: 5%;
+    margin-bottom: 2%;
 }
 
