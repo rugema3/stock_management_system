@@ -28,9 +28,13 @@ def add_user_department():
         try:
             # Get the new details from the form
             department_name = request.form['department_name']
-            
-            # Add category in the database.
-            success = user_handler.add_user_department(department_name)
+
+            # Check if the role name already exists in the list of retrieved roles
+            if department_name.lower() in [department.lower() for department in departments]:
+                flash(f'Department "{department_name}" already exists.Please add A department that is not in the Database', 'error')
+            else:
+                # Add category in the database.
+                success = user_handler.add_user_department(department_name)
 
             if success:
                 flash(f'{department_name} department has been added successfully!', 'success')

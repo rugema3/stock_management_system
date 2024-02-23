@@ -267,7 +267,7 @@ def admin():
 
             # Create a bar chart
             plt.figure(figsize=(4, 4))
-            plt.pie(quantities, labels=None, autopct='%1.1f%%', colors=['skyblue', 'lightgreen', 'lightcoral', 'orange'])
+            plt.pie(quantities, labels=categories, autopct='%1.1f%%', colors=['skyblue', 'lightgreen', 'lightcoral', 'orange'])
             # Add legend outside the pie chart
             #plt.legend(categories, loc="center left", bbox_to_anchor=(0.5, 1.15), ncol=len(categories), fontsize='small')
             # Create a tooltip showing the category name when the user clicks on a slice

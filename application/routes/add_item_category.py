@@ -34,8 +34,12 @@ def add_item_category():
             # Get the new details from the form
             category_name = request.form['category_name']
             
-            # Add category in the database.
-            success = db.add_item_category(category_name)
+            # Check if the category name already exists in the list of retrieved categories
+            if category_name.lower() in [category.lower() for category in categories]:
+                flash(f'Category "{category_name}" already exists. Please add a Category not present in the database.', 'error')
+            else:
+                # Add category in the database.
+                success = db.add_item_category(category_name)
 
             if success:
                 flash(f'{category_name} added successfully!', 'success')

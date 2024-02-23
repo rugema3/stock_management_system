@@ -26,9 +26,12 @@ def add_user_role():
             role_name = request.form['role_name']
             
 
-            # Add role in the database.
-
-            success = user_handler.add_user_role(role_name)
+            # Check if the role name already exists in the list of retrieved roles
+            if role_name.lower() in [role.lower() for role in roles]:
+                flash(f'Role "{role_name}" already exists.', 'error')
+            else:
+                # Add role in the database.
+                success = user_handler.add_user_role(role_name)
 
             if success:
                 flash(f'{role_name} role has been added successfully!', 'success')
