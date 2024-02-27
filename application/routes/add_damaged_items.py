@@ -31,6 +31,11 @@ def add_damaged_items():
             damage_description = request.form['damage_description']
             reported_by = session.get('id')
 
+            # Debugging: Print form data
+            print("Form Data - item_id:", item_id)
+            print("Form Data - damaged_quantity:", damaged_quantity)
+            print("Form Data - damage_description:", damage_description)
+
             # Find the item in department_items by item_id
             current_item = next((item for item in department_items if item['id'] == item_id), None)
             if current_item:
