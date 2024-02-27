@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+    <title>Add Damaged Items</title>
+</head>
+<body>
+	<h1>Add Damaged Items</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if department_items %}
+        <table border="1">
+            <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Category</th>
+                <th>Currency</th>
+                <th>Created At</th>
+                <th>Status</th>
+                <th>Total Cost</th>
+            </tr>
+            {% for item in department_items %}
+                <tr>
+                    <td>{{ item['item_name'] }}</td>
+                    <td>
+			    <form action="{{ url_for('add_damaged_items.add_damaged_items') }}" method="post">
+				    <input type="hidden" name="item_id" value="{{ item['id'] }}">
+				    <input type="number" name="damage_description" value="{{ item['price'] }}" required>
+				    <input type="number" name="new_quantity" value="{{ item['quantity'] }}" required>
+
+				    <button type="submit">Edit Quantity</button>
+			    </form>
+		    </td>
+                    <td>
+                        <form action="{{ url_for('edit_pending_items.edit_pending_item') }}" method="post">
+                            <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                            <input type="number" name="new_quantity" value="{{ item['quantity'] }}" required>
+                            <button type="submit">Edit Quantity</button>
+                        </form>
+                    </td>
+                    <td>{{ item['category'] }}</td>
+                    <td>{{ item['currency'] }}</td>
+                    <td>{{ item['created_at'] }}</td>
+                    <td>{{ item['status'] }}</td>
+                    <td>{{ item['quantity'] * item['price'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No pending items found.</p>
+    {% endif %}
+
+    <a href="{{ url_for('pending_items') }}">Back to Pending Items</a>
+</body>
+</html>
+

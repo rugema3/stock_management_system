@@ -417,6 +417,32 @@ class ItemManager:
         finally:
             cursor.close()
 
+    def add_damaged_item(self, item_id, damage_description, reported_by, quantity_damaged):
+        """
+        Add a damaged item to the 'damaged_items' table in the database.
+
+        Args:
+            item_id (int): The ID of the damaged item.
+            damage_description (str): A description of the damage.
+            reported_by (int): The ID of the person who reported the damage.
+            quantity_damaged (int): The quantity of the item that was damaged.
+
+        Returns:
+            None
+        """
+        try:
+            cursor = self.db_connection.cursor()
+            # Inserting data into damaged_items table
+            sql_query = """INSERT INTO damaged_items (item_id, damage_description, reported_by, quantity_damaged)
+                        VALUES (%s, %s, %s, %s)
+                        """
+            cursor.execute(sql_query, (item_id, damage_description, reported_by, quantity_damaged))
+            self.db_connection.commit()
+            print("Damaged item added successfully!")
+        except Error as e:
+            print("Error while adding damaged item:", e)
+        finally:
+            cursor.close()
 
 
 if __name__ == '__main__':

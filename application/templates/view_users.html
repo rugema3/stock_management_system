@@ -19,7 +19,7 @@
                 <th>Email</th>
                 <th>Role</th>
                 <th>Department</th>
-                <th>Actions</th> <!-- New column for update actions -->
+                <th>Actions</th>
             </tr>
             {% for user in users %}
                 <tr>
@@ -53,13 +53,18 @@
     <p class="back-button"><a href="/admin">Back</a></p>
 
     <script>
-        function updateInputFields(selectElement) {
-            var selectedOption = selectElement.options[selectElement.selectedIndex].value;
-            document.getElementById("new_email").style.display = selectedOption === "new_email" ? "block" : "none";
-            document.getElementById("new_password").style.display = selectedOption === "new_password" ? "block" : "none";
-            document.getElementById("new_name").style.display = selectedOption === "new_name" ? "block" : "none";
+    function updateInputFields(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex].value;
+        var inputFields = document.querySelectorAll('[id^="new_"]');
+        inputFields.forEach(function(inputField) {
+            inputField.style.display = "none"; // Hide all input fields
+        });
+        var selectedInputField = document.getElementById(selectedOption);
+        if (selectedInputField) {
+            selectedInputField.style.display = "block"; // Show selected input field
         }
-    </script>
+    }
+</script>
 </body>
 </html>
 
