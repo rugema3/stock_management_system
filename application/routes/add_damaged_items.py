@@ -21,6 +21,7 @@ def add_damaged_items():
     user_id = session.get('id')
 
     department_items = db.get_items_by_department(user_department)
+    print("Department_items:", department_items)
 
     if request.method == 'POST':
         try:
