@@ -342,7 +342,7 @@ class Database:
             list: A list of tuples containing selected user information.
         """
         if department:
-            query = "SELECT email, role, department, name FROM users WHERE department = %s"
+            query = "SELECT id, email, role, department, name FROM users WHERE department = %s"
             params = (department,)
         else:
             query = "SELECT email, role, department, name FROM users"

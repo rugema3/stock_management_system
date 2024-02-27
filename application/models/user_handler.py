@@ -195,3 +195,21 @@ class UserHandler:
         finally:
             cursor.close()
 
+    def update_user_name(self, user_id, new_name):
+        """
+        Update the name of the user in the database.
+
+        Args:
+            user_id (int): The ID of the user to be updated.
+            new_name (str): The new name.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        cursor = self.db_connection.cursor()
+        update_query = "UPDATE users SET name = %s WHERE id = %s"
+        cursor.execute(update_query, (new_name, user_id))
+        rows_affected = cursor.rowcount
+        self.db_connection.commit()
+        cursor.close()
+        return rows_affected > 0

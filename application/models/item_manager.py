@@ -275,6 +275,148 @@ class ItemManager:
             print("An error occurred:", e)
             return []
 
+    def get_expired_items(self, department):
+        """Retrieve items that have expired.
+        Args:
+            department (str): The department for which the current user belongs.
+
+        Returns:
+            list: A list of dictionaries showing expired items.
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve added items for the department within the specified date range
+            query = """
+                SELECT * FROM stock_items
+                WHERE department = %s
+                AND status = 'approved'
+                AND expiration_date <= CURDATE();
+            """
+            cursor.execute(query, (department,))
+            added_items = cursor.fetchall()
+
+            return added_items
+        except Exception as e:
+            # Handle exceptions (e.g., database errors)
+            print("An error occurred:", e)
+            return []
+
+    def get_weekly_checkouts(self, department):
+        """Retrieve weekly approved checkout items details.
+        Args:
+            department (str): The department for which to retrieve checkout items.
+
+        Returns:
+            list: A list of dictionaries showing weekly approved checkout details.
+
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve weekly checkout items for the department
+            query = """
+            SELECT CONCAT(
+                DATE_FORMAT(
+                    MIN(DATE_SUB(created_at, INTERVAL (WEEKDAY(created_at) + 7) % 7 DAY)),
+                    '%Y-%m-%d'
+            ),
+            ' - ',
+            DATE_FORMAT(
+            MAX(DATE_SUB(created_at, INTERVAL (WEEKDAY(created_at) + 7) % 7 - 6 DAY)),
+            '%Y-%m-%d'
+            )
+            ) AS week_period,
+            item_name,
+            SUM(quantity) AS total_quantity
+            FROM checkout_transactions
+            WHERE department = %s AND approval_status = 'approved'
+            GROUP BY WEEK(created_at, 1), item_name
+            ORDER BY week_period, item_name;
+            """
+            cursor.execute(query, (department,))
+            weekly_checkouts = cursor.fetchall()
+
+            return weekly_checkouts
+        except Exception as e:
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
+            return []
+        finally:
+            cursor.close()
+
+    def get_monthly_checkouts(self, department):
+        """Retrieve monthly approved checkout items details.
+        Args:
+            department (str): The department for which to retrieve checkout items.
+
+        Returns:
+            list: A list of dictionaries showing monthly approved checkout details.
+
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve monthly checkout items for the department
+            query = """
+            SELECT CONCAT(
+            DATE_FORMAT(DATE_SUB(created_at, INTERVAL DAYOFMONTH(created_at) - 1 DAY), '%Y-%m-%d'),
+            ' - ',
+            LAST_DAY(created_at)
+            ) AS month_period,
+            item_name,
+            SUM(quantity) AS total_quantity
+            FROM checkout_transactions
+            WHERE department = %s AND approval_status = 'approved'
+            GROUP BY month_period, item_name
+            ORDER BY month_period, item_name;
+            """
+
+            cursor.execute(query, (department,))
+            monthly_checkouts = cursor.fetchall()
+
+            return monthly_checkouts
+        except Exception as e:
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
+            return []
+        finally:
+            cursor.close()
+
+    def get_daily_checkouts(self, department):
+        """Retrieve daily approved checkout items details.
+        Args:
+            department (str): The department for which to retrieve checkout items.
+
+        Returns:
+            list: A list of dictionaries showing daily approved checkout details.
+
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve monthly checkout items for the department
+            query = """
+            SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS checkout_date,
+            item_name,
+            SUM(quantity) AS total_quantity
+            FROM checkout_transactions
+            WHERE department = %s AND approval_status = 'approved'
+            GROUP BY checkout_date, item_name
+            ORDER BY checkout_date, item_name;
+            """
+
+            cursor.execute(query, (department,))
+            monthly_checkouts = cursor.fetchall()
+
+            return monthly_checkouts
+        except Exception as e:
+            # Handle exceptions here if needed
+            print(f"Error: {e}")
+            return []
+        finally:
+            cursor.close()
+
 
 
 if __name__ == '__main__':
@@ -286,8 +428,5 @@ if __name__ == '__main__':
             }
 
     item = ItemManager(db_config)
-    weekly_items = item.get_expiring_soon('it')
-    print()
-    for item in weekly_items:
-        print("Weekly items")
-        print(item['item_name'], item['created_at'], item['expiration_date'])
+    weekly_items = item.get_monthly_checkouts('it')
+    print(weekly_items)

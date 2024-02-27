@@ -22,9 +22,8 @@
                 <th>Category</th>
                 <th>Quantity</th>
                 <th>Created At</th>
-                <th>Currency</th>
                 <th>Status</th>
-                <th>Maker ID</th>
+                <th>Added By</th>
                 <th>Descriptiont</th>
 		<th>Purchase Date</td>
 		<th>Expiration Date</td>
@@ -34,13 +33,12 @@
             {% for item in added_items %}
                 <tr>
                     <td>{{ item['item_name'] }}</td>
-                    <td>{{ item['price'] }}</td>
+		    <td>{{ item['price'] }} {{ item['currency'] }}</td>
                     <td>{{ item['category'] }}</td>
                     <td>{{ item['quantity'] }}</td>
                     <td>{{ item['created_at'] }}</td>
-                    <td>{{ item['currency'] }}</td>
                     <td>{{ item['status'] }}</td>
-                    <td>{{ item['maker_id'] }}</td>
+                    <td>{{ db.get_user_name_by_id(item['maker_id']) }}</td>
                     <td>{{ item['description'] }}</td>
 		    <td>{{ item['purchase_date'] }} </td>
 		    <td>{{ item['expiration_date'] }}</td>

@@ -15,8 +15,9 @@ def added_items_current_months():
     user_role = session.get('role')
     extracted_path = session.get('extracted_path')
 
-    # Accessing item_manager stored in the Flask application.
+    # Accessing item_manager and db instances stored in the Flask application.
     item_manager = current_app.item_manager
+    db = current_app.db
 
     # Retrieve added items for the current from the database.
     added_items = item_manager.get_items_current_month(user_department)
@@ -27,5 +28,6 @@ def added_items_current_months():
             added_items=added_items,
             user_department=user_department,
             user_role=user_role,
-            extracted_path=extracted_path
+            extracted_path=extracted_path,
+            db=db
             )

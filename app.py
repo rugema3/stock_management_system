@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import mplcursors
 from application.models.user_manager import UserManager
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask import Flask, render_template, request, redirect, session, url_for, flash, make_response
 from application.models.stock_manager import StockManager
 from application.models.stock_item import StockItem
 from application.models.database_manager import Database
@@ -29,6 +29,8 @@ from application.routes.approved_checkout_details import approved_checkout_detai
 from application.routes.added_items_current_months import added_items_current_months_route
 from application.routes.search_items_by_date import search_items_by_date_route
 from application.routes.search_weekly_adds import search_weekly_adds_route
+from application.routes.expiring_soon import expiring_soon_route
+from application.routes.checkout_summary import checkout_summary_route
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -68,6 +70,8 @@ app.register_blueprint(approved_checkout_details_route)
 app.register_blueprint(added_items_current_months_route)
 app.register_blueprint(search_items_by_date_route)
 app.register_blueprint(search_weekly_adds_route)
+app.register_blueprint(expiring_soon_route)
+app.register_blueprint(checkout_summary_route)
 
 # Create Instances of different classes.
 db = Database(db_config)
@@ -176,7 +180,7 @@ def admin():
         session['extracted_path'] = extracted_path
 
         approved_checkouts = item_manager.get_approved_checkouts(user_department)
-        
+
         # Count items approved for checkout.
         approval_count = len(approved_checkouts)
         print("approved items: ", approval_count)
@@ -476,7 +480,7 @@ def register():
         # Render the result in the HTML response
         return render_template(
                 'registration_success.html',
-                name=name, role=role, 
+                name=name, role=role,
                 department=department,
                 extracted_path=extracted_path
                 )
@@ -492,10 +496,10 @@ def register():
          extracted_path = session.get('extracted_path')
 
          return render_template(
-                 'register.html', 
-                 user_department=user_department, 
-                 user_role=user_role, 
-                 departments=departments, 
+                 'register.html',
+                 user_department=user_department,
+                 user_role=user_role,
+                 departments=departments,
                  roles=roles,
                  extracted_path=extracted_path
                  )
@@ -528,7 +532,7 @@ def login():
             # Handle any unexpected exceptions gracefully
             flash(f"Wrong email or password. Please check your credentials and try again")
             return render_template(
-                    'login.html', 
+                    'login.html',
                     error="Wrong email or password"
                     )
 
@@ -562,7 +566,7 @@ def checkout():
     If the request method is GET, render the checkout form.
 
     Returns:
-        flask.Response: Redirects to the items page with a success or error 
+        flask.Response: Redirects to the items page with a success or error
                         message on POST; renders the checkout form on GET.
     """
     if request.method == 'POST':
@@ -630,8 +634,8 @@ def pending_items():
 
         # Pass the pending_items directly to the template
         return render_template(
-                'pending_items.html', 
-                pending_items=pending_items, 
+                'pending_items.html',
+                pending_items=pending_items,
                 names=names,
                 extracted_path=extracted_path
                 )
@@ -641,7 +645,7 @@ def pending_items():
         flash(f"Error fetching pending items: {str(e)}", 'error')
         return render_template(
                 'pending_items.html',
-                user_department=user_department, 
+                user_department=user_department,
                 user_role=user_role, pending_items=[]
                 )
 
@@ -694,7 +698,7 @@ def update_email():
     Update the user's email address.
 
     If the user is not authenticated, redirect to the login page.
-    If the update is successful, redirect to the profile page; 
+    If the update is successful, redirect to the profile page;
     otherwise, handle the failure.
 
     Returns:
@@ -704,7 +708,9 @@ def update_email():
         # Redirect to login if user is not authenticated
         return redirect(url_for('login'))
 
-    user_id = session['id']  # Update to use 'id'
+    # Get user ID from form submission or session
+    user_id = request.form.get('user_id') or session['id']
+    print('user_id: ', user_id)
     new_email = request.form.get('new_email')
     if new_email is None:
         return render_template('update_email.html', error='New email Required.')
@@ -728,7 +734,7 @@ def update_password():
     Update the user's password.
 
     If the user is not authenticated, redirect to the login page.
-    If the update is successful, redirect to the profile page; 
+    If the update is successful, redirect to the profile page;
     otherwise, handle the failure.
 
     Returns:
@@ -756,7 +762,7 @@ def update_password():
         print("Failed to update password.")
         # Handle the failure, maybe show an error message
 
-@app.route('/admin/view_users')
+@app.route('/admin/view_users', methods=['POST', 'GET'])
 @login_required
 @admin_required
 def view_users():
@@ -769,20 +775,72 @@ def view_users():
         user_name = session.get('name')
         extracted_path = session.get('extracted_path')
 
+        if request.method == 'GET':
+            # Fetch users only in the admin's department
+            users = db.get_all_users(department=admin_department)
+            print(users)
+            user_department = admin_department
 
-        # Fetch users only in the admin's department
-        users = db.get_all_users(department=admin_department)
-        print(users)
-        user_department = admin_department
+            if users:
+                response = make_response(render_template(
+                        'view_users.html',
+                        user_name=user_name,
+                        user_department=user_department,
+                        users=users, user_role=user_role,
+                        extracted_path=extracted_path
+                        ))
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
+                return response
 
-        if users:
-            return render_template(
-                    'view_users.html', 
-                    user_name=user_name, 
-                    user_department=user_department, 
-                    users=users, user_role=user_role,
-                    extracted_path=extracted_path
-                    )
+        elif request.method == 'POST':
+            user_id = request.form.get('user_id')
+            new_email = request.form.get('new_email')
+            new_password = request.form.get('new_password')
+            new_name = request.form.get('new_name')
+            print('user_id: ', user_id)
+            print('new email: ', new_email)
+            print('new password: ', new_password)
+            print('new_name: ', new_name)
+
+            if new_email:
+                # Call the update email method from your database class
+                success = db.update_user_email(user_id, new_email)
+                print('success response: ', success)
+
+            elif new_password:
+                # Call the update password method from your database class
+                success = db.update_user_password(user_id, new_password)
+
+            elif new_name:
+                # Call the update_user_name method from your UserHandler class
+                success = user_handler.update_user_name(user_id, new_name)
+                print("{new_name} updated successfully")
+
+            else:
+                flash("The form cannot be submitted empty.")
+
+
+
+            if success:
+                flash(
+                        f"{new_name} updated successfully." if new_name
+                        else f"{new_email} updated successfully." if new_email
+                        else "New password updated successfully." if new_password
+                        else "Some other update successful.", 'success'
+                        )
+                response = make_response(render_template('view_users.html',
+                                       user_department=admin_department,
+                                       user_role=user_role
+                                       ))
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
+                return response
+            else:
+                return "something went wrong."
+
         else:
             return "No users found."
     except Exception as e:
@@ -796,12 +854,12 @@ def forgot_password():
 
     For GET requests, render the forgot password form.
     For POST requests, check if the provided email exists in the database.
-    If the email exists, generate a temporary password, 
+    If the email exists, generate a temporary password,
     update the user's password,
     and send an email with the temporary password. Redirect to the login page.
 
     Returns:
-        render_template or redirect: Depending on the request type and 
+        render_template or redirect: Depending on the request type and
                                     the success of the operation.
     """
     if request.method == 'POST':
@@ -817,7 +875,7 @@ def forgot_password():
 
             # Update the user's password in the database with the temp pwd
             if db.update_user_password(user_data['id'], temporary_password):
-                # Send an email with the temporary password 
+                # Send an email with the temporary password
                 # using the existing send_email function
                 sender_email = 'info@remmittance.com'
                 subject = 'Temporary Password for Password Reset'
@@ -836,7 +894,7 @@ def forgot_password():
         else:
             flash("Email not found. Please try again.")
 
-    # For GET requests or unsuccessful POST requests, 
+    # For GET requests or unsuccessful POST requests,
     # render the forgot password form
     return render_template('forgot_password.html')
 
@@ -844,11 +902,11 @@ def forgot_password():
 @login_required
 def get_items_by_department():
     """
-    Fetch items based on the user's department and render the 
+    Fetch items based on the user's department and render the
     department_items.html template.
 
     Returns:
-        str: Rendered HTML template with the items or an error message 
+        str: Rendered HTML template with the items or an error message
             if the department is not available in the session.
     """
     # Retrieve department from the session
@@ -861,8 +919,8 @@ def get_items_by_department():
         items = db.get_items_by_department(user_department)
         print("Items:", items, user_department)
         return render_template(
-                'department_items.html', 
-                items=items, 
+                'department_items.html',
+                items=items,
                 user_department=user_department,
                 user_role=user_role,
                 db=db,
@@ -873,6 +931,7 @@ def get_items_by_department():
         return "Department information not found in the session."
 @app.route('/checkout_items')
 @login_required
+@any_role_required(['admin', 'approver'])
 def checkout_items():
     """
     Display checkout items for the logged-in user's department.
@@ -897,11 +956,11 @@ def checkout_items():
             user_name = db.get_user_name_by_id(initiator_id)
             print(f'initiator_id: {initiator_id}, user_name: {user_name}')
             initiator_names.append(user_name)
-  
+
         return render_template(
-                'checkout_items.html', 
-                user_role=user_role, 
-                user_department=user_department, 
+                'checkout_items.html',
+                user_role=user_role,
+                user_department=user_department,
                 checkout_items=checkout_items,
                 initiator_names=initiator_names,
                 extracted_path=extracted_path
@@ -911,8 +970,7 @@ def checkout_items():
         return "Department information not found in the session."
 
 @app.route('/change_checkout_status', methods=['POST'])
-@login_required
-@approver_required
+@any_role_required(['admin', 'approver'])
 def change_checkout_status():
     """Approve a checkout.
     Description:

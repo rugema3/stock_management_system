@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Items added weekly</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 </head>
 <body>
-    <h1>Items Expiring in7 Days</h1>
-    <form action="/expiring_soon" method="post">
-        
-        <button type="submit">Search</button>
-    </form>
+	 {% include 'sidebar.html' %}
 
-    <h2>Added Items</h2>
+    <h1>Items Expiring in 7 Days</h1>
     <table>
         <thead>
             <tr>
@@ -22,26 +20,24 @@
                 <th>Category</th>
                 <th>Quantity</th>
                 <th>Created At</th>
-                <th>Currency</th>
                 <th>Status</th>
-                <th>Maker ID</th>
+                <th>Added by</th>
                 <th>Description</th>
                 <th>Purchase Date</th>
                 <th>Expiration Date</th>
             </tr>
         </thead>
         <tbody>
-            {% if added_items %}
+            {% if expiring_items %}
                 {% for item in expiring_items %}
                     <tr>
                         <td>{{ item['item_name'] }}</td>
-                        <td>{{ item['price'] }}</td>
+                        <td>{{ item['price'] }} {{ item['currency'] }}</td>
                         <td>{{ item['category'] }}</td>
                         <td>{{ item['quantity'] }}</td>
                         <td>{{ item['created_at'] }}</td>
-                        <td>{{ item['currency'] }}</td>
                         <td>{{ item['status'] }}</td>
-                        <td>{{ item['maker_id'] }}</td>
+                        <td>{{ db.get_user_name_by_id(item['maker_id']) }}</td>
                         <td>{{ item['description'] }}</td>
                         <td>{{ item['purchase_date'] }}</td>
                         <td>{{ item['expiration_date'] }}</td>

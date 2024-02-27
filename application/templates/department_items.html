@@ -27,7 +27,7 @@
 		<th>Expiration </th>
                 <th>Status</th>
                 <th>Added By</th>
-		<!-- <th>Action</th> -->
+		<th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -42,8 +42,8 @@
 		    <td>{{ item[5] }}</td>
                     <td>{{ item[9] }}</td>
                     <td>{{ db.get_user_name_by_id(item[10]) }}</td>
-                    <!--<td>
-                        <!-- Add a checkout button for each item
+                    <td>
+		    <!-- Add a checkout button for each item -->
                         <form method="POST" action="/checkout">
                             <input type="hidden" name="item_name" value="{{ item[1] }}">
                             <label for="quantity">Quantity:</label>
@@ -51,7 +51,7 @@
                             <button type="submit">Checkout</button>
                         </form>
                     </td>
-			-->
+			
                 </tr>
             {% endfor %}
         </tbody>

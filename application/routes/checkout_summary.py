@@ -7,13 +7,13 @@ import base64
 from datetime import datetime, timedelta
 from collections import defaultdict
 
-approved_checkout_details_route = Blueprint('approved_checkout_details', __name__)
+checkout_summary_route = Blueprint('checkout_summary', __name__)
 
-@approved_checkout_details_route.route('/approved_checkout_details', methods=['GET', 'POST'])
+@checkout_summary_route.route('/checkout_summary', methods=['GET', 'POST'])
 @login_required
-def approved_checkout_details():
+def checkout_summary():
     """
-    Route to display the approved_checkouts details.
+    Route to display the checkout summary.
     """
     # Retrieve useful information from session.
     user_id = session.get('id')
@@ -38,44 +38,45 @@ def approved_checkout_details():
         approver_id = approver_name['approver_id']
         approver_names[approver_id] = db.get_user_name_by_id(approver_id)
 
-    # Scenario 1: Top 5 Most Checked Out Items (Bar Chart)
-    item_quantities = defaultdict(int)
-    for checkout in approved_checkouts:
-        item_quantities[checkout['item_name']] += checkout['quantity']
-
-    top_items = sorted(item_quantities.items(), key=lambda x: x[1], reverse=True)[:5]
-    item_names = [item[0] for item in top_items]
-    quantities = [item[1] for item in top_items]
-
-    plt.figure(figsize=(5, 3))
-    plt.bar(item_names, quantities, color='skyblue')
-    plt.xlabel('Item Names')
-    plt.ylabel('Quantity')
-    plt.title('Top 5 Most Checked Out Items')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    
-    # Save the plot to a BytesIO object
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
-
-    # Encode the image as base64 and convert to a string
-    summary1_url = base64.b64encode(img.getvalue()).decode()
-
     # Retrieve weekly checkout details
     checkouts_weekly = item_manager.get_weekly_checkouts(user_department)
+    print(checkouts_weekly)
 
     checkouts_by_week = defaultdict(list)
 
+    for checkout in checkouts_weekly:
+        week_period = checkout['week_period']
+        checkouts_by_week[week_period].append(checkout)
+
+    # Retrieve Monthly checkout details
+    checkouts_monthly = item_manager.get_monthly_checkouts(user_department)
+    print("Monthly checkouts: ", checkouts_monthly)
+
+    checkouts_by_month = defaultdict(list)
+    for checkout in checkouts_monthly:
+        month_period = checkout['month_period']
+        checkouts_by_month[month_period].append(checkout)
+
+    # Retrieve daily checkout details
+    checkouts_daily = item_manager.get_daily_checkouts(user_department)
+    print("Daily checkouts: ", checkouts_daily)
+
+    checkouts_by_date = defaultdict(list)
+
+    for checkout in checkouts_daily:
+        checkout_date = checkout['checkout_date']
+        checkouts_by_date[checkout_date].append(checkout)
+
+    
     return render_template(
-            'approved_checkout_details.html',
+            'checkout_summary.html',
             approved_checkouts=approved_checkouts,
             user_names=user_names,
             approver_names=approver_names,
             user_department=user_department,
             user_role=user_role,
             extracted_path=extracted_path,
-            summary1_url=summary1_url,
-            checkouts_by_week=checkouts_by_week
+            checkouts_by_week=checkouts_by_week,
+            checkouts_by_month=checkouts_by_month,
+            checkouts_by_date=checkouts_by_date
             )

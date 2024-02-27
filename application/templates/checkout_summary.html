@@ -7,46 +7,33 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='graphs.css') }}">
-
-
-
-
-    <title>Approved Checkout details</title>
+    <title>Checkout Summary</title>
 </head>
 <body class="selected-body">
 	{% include 'sidebar.html' %}
-    <h1>Checkout Summary</h1>
 
-    {% if approved_checkouts %}
-    <table border="1">
-        <tr>
-            <th>Checkout ID</th>
-            <th>Item Name</th>
-            <th>Quantity</th>
-            <th>INITIATED BY</th>
-	    <th>APPROVER</th>
-            <th>Approval Date</th>
-        </tr>
-        {% for approved in approved_checkouts %}
-        <tr>
-            <td>{{ approved['checkout_id'] }}</td>
-            <td>{{ approved['item_name'] }}</td>
-            <td>{{ approved['quantity'] }}</td>
-            <td>{{ user_names.get(approved['user_id'], 'Unknown') }}</td>
-	    <td>{{ approver_names.get(approved['approver_id']) }}</td>
-            <td>{{ approved['created_at'] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>No approved checkouts.</p>
-    {% endif %}
-    <div class="graph-container">
-	<img src="data:image/png;base64,{{ summary1_url }}" alt="User Stats Chart">
-	</div>
-	<br><br>
+	<h1>Daily Checkout Summary</h1>
+<table>
+    <tr>
+        <th>Checkout Date</th>
+        <th>Item Name</th>
+        <th>Total Quantity</th>
+    </tr>
+    {% for checkout_date, checkouts in checkouts_by_date.items() %}
+    {% set rowspan = checkouts|length %}
+    {% for checkout in checkouts %}
+    <tr>
+        {% if loop.first %}
+        <td rowspan="{{ rowspan }}">{{ checkout_date }}</td>
+        {% endif %}
+        <td>{{ checkout.item_name }}</td>
+        <td>{{ checkout.total_quantity }}</td>
+    </tr>
+    {% endfor %}
+    {% endfor %}
+</table>
 
-	<h1>Weekly Checkout Summary</h1>
+    <h1>Weekly Checkout Summary</h1>
     <table>
         <tr>
             <th>Week Period</th>
@@ -65,7 +52,29 @@
         </tr>
         {% endfor %}
         {% endfor %}
+    </table><br><br>
+
+    <h1>Monthly Checkout Summary</h1>
+    <table>
+        <tr>
+		<th>Month Period</th>
+            <th>Item Name</th>
+            <th>Total Quantity</th>
+        </tr>
+        {% for month_period, checkouts in checkouts_by_month.items() %}
+        {% set rowspan = checkouts|length %}
+        {% for checkout in checkouts %}
+        <tr>
+            {% if loop.first %}
+            <td rowspan="{{ rowspan }}">{{ month_period }}</td>
+            {% endif %}
+            <td>{{ checkout.item_name }}</td>
+            <td>{{ checkout.total_quantity }}</td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
     </table>
+
     {% if session.role == 'admin' %}
         <a href="/admin">Back to Admin Dashboard</a>
     {% elif session.role == 'user' %}
@@ -78,4 +87,3 @@
 
 </body>
 </html>
-
