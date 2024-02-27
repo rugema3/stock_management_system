@@ -32,15 +32,15 @@
             </tr>
             {% for item in department_items %}
                 <tr>
-                    <td>{{ item['item_name'] }}</td>
-                    <td>{{ item['price'] }}</td>
-                    <td>{{ item['quantity'] }}</td>
+			<td>{{ item[1] }}</td>
+                    <td>{{ item[2] }}</td>
+		    <td>{{ item[3] }}</td>
                     <td>{{ item['category'] }}</td>
                     <td>{{ item['currency'] }}</td>
                     <td>{{ item['created_at'] }}</td>
                     <td>
                         <form action="{{ url_for('add_damaged_items.add_damaged_items') }}" method="post">
-                            <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                            <input type="hidden" name="item_id" value="{{ item[0] }}">
                             <input type="text" name="damage_description" placeholder="Damage Description" required>
                             <input type="number" name="quantity_damaged" placeholder="Quantity Damaged" min="1" required>
                             <button type="submit">Add Damaged Item</button>
