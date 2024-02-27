@@ -31,6 +31,7 @@ from application.routes.search_items_by_date import search_items_by_date_route
 from application.routes.search_weekly_adds import search_weekly_adds_route
 from application.routes.expiring_soon import expiring_soon_route
 from application.routes.checkout_summary import checkout_summary_route
+from application.routes.add_damaged_items import add_damaged_items_route
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -72,6 +73,7 @@ app.register_blueprint(search_items_by_date_route)
 app.register_blueprint(search_weekly_adds_route)
 app.register_blueprint(expiring_soon_route)
 app.register_blueprint(checkout_summary_route)
+app.register_blueprint(add_damaged_items_route)
 
 # Create Instances of different classes.
 db = Database(db_config)
