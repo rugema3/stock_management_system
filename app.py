@@ -777,7 +777,7 @@ def view_users():
 
         if request.method == 'GET':
             # Fetch users only in the admin's department
-            users = db.get_all_users(department=admin_department)
+            users = db.get_all_users()
             print(users)
             user_department = admin_department
 

@@ -40,7 +40,6 @@ def checkout_summary():
 
     # Retrieve weekly checkout details
     checkouts_weekly = item_manager.get_weekly_checkouts(user_department)
-    print(checkouts_weekly)
 
     checkouts_by_week = defaultdict(list)
 
@@ -50,7 +49,6 @@ def checkout_summary():
 
     # Retrieve Monthly checkout details
     checkouts_monthly = item_manager.get_monthly_checkouts(user_department)
-    print("Monthly checkouts: ", checkouts_monthly)
 
     checkouts_by_month = defaultdict(list)
     for checkout in checkouts_monthly:
@@ -59,7 +57,6 @@ def checkout_summary():
 
     # Retrieve daily checkout details
     checkouts_daily = item_manager.get_daily_checkouts(user_department)
-    print("Daily checkouts: ", checkouts_daily)
 
     checkouts_by_date = defaultdict(list)
 

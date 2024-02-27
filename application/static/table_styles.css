@@ -2,6 +2,7 @@
 h1 {
 	margin-left:20%;
 	margin-top: 7%;
+	margin-bottom: 2%;
 }
 table {
   width: 82%; 
@@ -136,4 +137,9 @@ tr:nth-child(odd) {
 tr:nth-child(even) {
   background-color: #ffffff; /* or any other background color you prefer */
 }
+.summary-table {
+        width: 80%; /* Set the width of the div */
+        margin: 0 auto; /* Center the div horizontally */
+        padding: 20px; /* Add padding for spacing */
+    }
 
