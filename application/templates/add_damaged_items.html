@@ -26,18 +26,16 @@
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Category</th>
-                <th>Currency</th>
                 <th>Created At</th>
                 <th>Action</th>
             </tr>
             {% for item in department_items %}
                 <tr>
 			<td>{{ item[1] }}</td>
-                    <td>{{ item[2] }}</td>
-		    <td>{{ item[3] }}</td>
-                    <td>{{ item['category'] }}</td>
-                    <td>{{ item['currency'] }}</td>
-                    <td>{{ item['created_at'] }}</td>
+                    <td>{{ item[2] }} {{ item[8] }}</td>
+		    <td>{{ item[4] }}</td>
+                    <td>{{ item[3] }}</td>
+                    <td>{{ item[7] }}</td>
                     <td>
                         <form action="{{ url_for('add_damaged_items.add_damaged_items') }}" method="post">
                             <input type="hidden" name="item_id" value="{{ item[0] }}">
