@@ -417,6 +417,27 @@ class ItemManager:
         finally:
             cursor.close()
 
+    def update_item_quantity(self, item_id, new_quantity):
+        """
+        Update the quantity of an item in the database.
+
+        Args:
+            item_id (int): The ID of the item to update.
+            new_quantity (int): The new quantity of the item.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        try:
+            # Execute the SQL update query
+            sql_query = "UPDATE stock_items SET quantity = %s WHERE id = %s"
+            self.cursor.execute(sql_query, (new_quantity, item_id))
+            self.db_connection.commit()
+            return True
+        except Error as e:
+            print("Error updating item quantity:", e)
+            return False
+
     def add_damaged_item(self, item_id, damage_description, reported_by, quantity_damaged):
         """
         Add a damaged item to the 'damaged_items' table in the database.
