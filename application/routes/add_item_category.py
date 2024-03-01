@@ -17,7 +17,8 @@ def add_item_category():
         flash('Database instance not available!', 'error')
         return "Database Instance Not available."
 
-    # Retrieve the db instance
+    # Retrieve the instances to use in this route.
+    item_manager = current_app.item_manager
     db = current_app.db
 
     # Retrieve user info from session
@@ -31,20 +32,40 @@ def add_item_category():
 
     if request.method == 'POST':
         try:
-            # Get the new details from the form
-            category_name = request.form['category_name']
-            
-            # Check if the category name already exists in the list of retrieved categories
-            if category_name.lower() in [category.lower() for category in categories]:
-                flash(f'Category "{category_name}" already exists. Please add a Category not present in the database.', 'error')
-            else:
-                # Add category in the database.
-                success = db.add_item_category(category_name)
+            # Check if department_id is present in form data
+            if 'category_id' in request.form:
+                # Updating an existing department
+                category_id = int(request.form['category_id'])
+                new_category = request.form['new_category']
+                print("category_id: ", category_id)
+                print()
+                print("New category: ", new_category)
 
-            if success:
-                flash(f'{category_name} added successfully!', 'success')
+                # Update the department in the database.
+                success = item_manager.update_item_category(category_id, new_category)
+                print("Success before: ", success)
+                print()
+                if success:
+                    print("Inside the success block")
+                    flash(f'category "{new_category}" has been updated successfully!', 'success')
+                else:
+                    flash(f'Failed to update category "{new_category}". Please try again.', 'error')
+
             else:
-                flash(f'Failed to add {category_name}. Please try again.', 'error')
+                # Get the new details from the form
+                category_name = request.form['category_name']
+            
+                # Check if the category name already exists in the list of retrieved categories
+                if category_name.lower() in [category.lower() for category in categories]:
+                    flash(f'Category "{category_name}" already exists. Please add a Category not present in the database.', 'error')
+                else:
+                    # Add category in the database.
+                    success = db.add_item_category(category_name)
+
+                if success:
+                    flash(f'{category_name} added successfully!', 'success')
+                else:
+                    flash(f'Failed to add {category_name}. Please try again.', 'error')
 
         except Exception as e:
             flash(f'Error: {str(e)}', 'error')

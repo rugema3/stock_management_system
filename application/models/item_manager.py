@@ -465,6 +465,31 @@ class ItemManager:
         finally:
             cursor.close()
 
+    def update_item_category(self, category_id, new_category):
+        """
+        Update the name of the category in the database.
+
+        Args:
+            category_id (int): The ID of the category to be updated.
+            new_category (str): The new category name.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        try:
+            cursor = self.db_connection.cursor()
+            update_query = "UPDATE item_category SET category_name = %s WHERE category_id = %s"
+            cursor.execute(update_query, (new_category, category_id))
+            rows_affected = cursor.rowcount
+            self.db_connection.commit()
+            return rows_affected > 0
+        except mysql.connector.Error as err:
+            print(f"Error updating Category: {err}")
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+
 
 if __name__ == '__main__':
     db_config = {
