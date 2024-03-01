@@ -239,3 +239,29 @@ class UserHandler:
             if cursor:
                 cursor.close()
 
+    def update_user_role(self, role_id, new_role):
+        """
+        Update the name of the role in the database.
+
+        Args:
+            role_id (int): The ID of the role to be updated.
+            new_role (str): The new department name.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        try:
+            cursor = self.db_connection.cursor()
+            update_query = "UPDATE user_role SET role_name = %s WHERE role_id = %s"
+            cursor.execute(update_query, (new_role, role_id))
+            rows_affected = cursor.rowcount
+            self.db_connection.commit()
+            return rows_affected > 0
+        except mysql.connector.Error as err:
+            print(f"Error updating department: {err}")
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+
+
