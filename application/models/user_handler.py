@@ -213,3 +213,29 @@ class UserHandler:
         self.db_connection.commit()
         cursor.close()
         return rows_affected > 0
+
+    def update_user_department(self, department_id, new_department):
+        """
+        Update the name of the department in the database.
+
+        Args:
+            department_id (int): The ID of the department to be updated.
+            new_department (str): The new department name.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
+        try:
+            cursor = self.db_connection.cursor()
+            update_query = "UPDATE user_department SET department_name = %s WHERE department_id = %s"
+            cursor.execute(update_query, (new_department, department_id))
+            rows_affected = cursor.rowcount
+            self.db_connection.commit()
+            return rows_affected > 0
+        except mysql.connector.Error as err:
+            print(f"Error updating department: {err}")
+            return False
+        finally:
+            if cursor:
+                cursor.close()
+

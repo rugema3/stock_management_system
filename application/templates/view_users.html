@@ -28,19 +28,25 @@
                     <td>{{ user.role.upper() }}</td>
                     <td>{{ user.department.upper() }}</td>
                     <td>
-                        <!-- Update options dropdown -->
+                        <!-- Update Name form -->
                         <form action="/admin/view_users" method="POST">
                             <input type="hidden" name="user_id" value="{{ user.id }}">
-                            <select name="update_option" onchange="updateInputFields(this)">
-                                <option value="" disabled selected>Select an option</option>
-				    <option value="new_email">Update Email</option>
-                                <option value="new_password">Update Password</option>
-                                <option value="new_name">Update Name</option>
-                            </select>
-                            <input id="new_email" type="text" name="new_email" placeholder="New Email" style="display: none;">
-                            <input id="new_password" type="password" name="new_password" placeholder="New Password" style="display: none;">
-                            <input id="new_name" type="text" name="new_name" placeholder="New Name" style="display: none;">
-                            <button type="submit">Update</button>
+                            <input type="text" name="new_name" placeholder="New Name">
+                            <button type="submit">Update Name</button>
+                        </form>
+                        
+                        <!-- Update Email form -->
+                        <form action="/admin/view_users" method="POST">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <input type="text" name="new_email" placeholder="New Email">
+                            <button type="submit">Update Email</button>
+                        </form>
+                        
+                        <!-- Update Password form -->
+                        <form action="/admin/view_users" method="POST">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <input type="password" name="new_password" placeholder="New Password">
+                            <button type="submit">Update Password</button>
                         </form>
                     </td>
                 </tr>
@@ -51,20 +57,6 @@
     {% endif %}
 
     <p class="back-button"><a href="/admin">Back</a></p>
-
-    <script>
-    function updateInputFields(selectElement) {
-        var selectedOption = selectElement.options[selectElement.selectedIndex].value;
-        var inputFields = document.querySelectorAll('[id^="new_"]');
-        inputFields.forEach(function(inputField) {
-            inputField.style.display = "none"; // Hide all input fields
-        });
-        var selectedInputField = document.getElementById(selectedOption);
-        if (selectedInputField) {
-            selectedInputField.style.display = "block"; // Show selected input field
-        }
-    }
-</script>
 </body>
 </html>
 

@@ -345,7 +345,7 @@ class Database:
             query = "SELECT id, email, role, department, name FROM users WHERE department = %s"
             params = (department,)
         else:
-            query = "SELECT email, role, department, name FROM users"
+            query = "SELECT id, email, role, department, name FROM users"
             params = None
 
         cursor = self.db_connection.cursor(dictionary=True)
