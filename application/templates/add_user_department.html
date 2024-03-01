@@ -12,7 +12,16 @@
 </head>
 <body>
     {% include 'sidebar.html' %}
+ 
     <div class="container">
+	    {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-{{ messages[0].category }}">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
         <h2>Add Department</h2>
 	<br><br>
 	<p>Use this form to add a new department.</p>
@@ -20,23 +29,26 @@
                 <table  class="categories-table" border="1">
                 <tr>
                         <th>Available Departments</th>
+			<th>Action/Update Department</th>
                 </tr>
                 {% for department in departments %}
                 <tr>
-                        <td>{{ department.upper() }}</td>
+                        <td>
+				{{ department.upper() }}
+			</td>
+			<td>
+				<form method="post" action="{{ url_for('add_user_department.add_user_department') }}">
+                        <input type="hidden" name="department_id" value="{{ loop.index }}">
+                        <input type="text"class="form-control" name="new_department" placeholder="New Name" required>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+			</td>
                 </tr>
                 {% endfor %}
                 </table>
         </div>
 
         <div class="form-container">
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    <div class="alert alert-{{ messages[0].category }}">
-                        {{ messages[0] }}
-                    </div>
-                {% endif %}
-            {% endwith %}
             <form method="post" action="{{ url_for('add_user_department.add_user_department') }}">
                 <div class="mb-3">
                     <label for="department_name" class="form-label">Department:</label>
@@ -48,4 +60,3 @@
     </div>
 </body>
 </html>
-

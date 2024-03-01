@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
-from application.models.user_handler import UserHandler
 from decorators.admin_decorators import admin_required
 
 add_user_department_route = Blueprint('add_user_department', __name__)
@@ -8,10 +7,10 @@ add_user_department_route = Blueprint('add_user_department', __name__)
 @admin_required
 def add_user_department():
     """
-    Add the department of items in the db.
+    Add or modify departments in the db.
 
     Returns:
-        Flask.Response: Redirects to the add_item_department page.
+        Flask.Response: Redirects to the add_user_department page.
     """
     # Retrieve the required instances
     db = current_app.db
@@ -22,29 +21,46 @@ def add_user_department():
 
     # Retrieve departments from the database.
     departments = user_handler.get_user_department()
-    print('departments: ', departments)
 
     if request.method == 'POST':
         try:
-            # Get the new details from the form
-            department_name = request.form['department_name']
+            # Check if department_id is present in form data
+            if 'department_id' in request.form:
+                # Updating an existing department
+                department_id = int(request.form['department_id'])
+                new_department = request.form['new_department']
+                print("department_id: ", department_id)
+                print()
+                print("New Department: ", new_department)
 
-            # Check if the role name already exists in the list of retrieved roles
-            if department_name.lower() in [department.lower() for department in departments]:
-                flash(f'Department "{department_name}" already exists.Please add A department that is not in the Database', 'error')
+                # Update the department in the database.
+                success = user_handler.update_user_department(department_id, new_department)
+                print("Success before: ", success)
+                print()
+                if success:
+                    print("Inside the success block")
+                    flash(f'Department "{new_department}" has been updated successfully!', 'success')
+                else:
+                    flash(f'Failed to update department "{new_department}". Please try again.', 'error')
             else:
-                # Add category in the database.
-                success = user_handler.add_user_department(department_name)
+                # Adding a new department
+                department_name = request.form['department_name']
 
-            if success:
-                flash(f'{department_name} department has been added successfully!', 'success')
-            else:
-                flash(f'Failed to add {department_name} department. Please try again.', 'error')
+                # Check if the department already exists
+                if department_name.lower() in [department.lower() for department in departments]:
+                    flash(f'Department "{department_name}" already exists. Please add a department that is not in the database.', 'error')
+                else:
+                    # Add the department in the database.
+                    success = user_handler.add_user_department(department_name)
+                    if success:
+                        flash(f'Department "{department_name}" has been added successfully!', 'success')
+                    else:
+                        flash(f'Failed to add department "{department_name}". Please try again.', 'error')
 
         except Exception as e:
             flash(f'Error: {str(e)}', 'error')
 
-    # Render the template on GET http
+    # Render the template with the available departments
     return render_template(
             'add_user_department.html', 
             user_department=user_department, 
