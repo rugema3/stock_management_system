@@ -13,6 +13,9 @@ def expiring_soon():
     user_id = session.get('id')
     user_department = session.get('department')
     user_role = session.get('role')
+    user_name = session.get('name')
+    extracted_path = session.get('extracted_path')
+
 
     # Retrieve information from form or any other logic for expiring items
     if request.method == 'GET':
@@ -29,7 +32,9 @@ def expiring_soon():
             expiring_items=expiring_items,
             user_department=user_department,
             user_role=user_role,
-            db=db
+            db=db,
+            user_name=user_name,
+            extracted_path=extracted_path
         )
     else:
         return render_template('expiring_soon.html')

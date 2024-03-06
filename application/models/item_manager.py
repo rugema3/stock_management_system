@@ -460,6 +460,7 @@ class ItemManager:
             cursor.execute(sql_query, (item_id, damage_description, reported_by, quantity_damaged))
             self.db_connection.commit()
             print("Damaged item added successfully!")
+            return True
         except Error as e:
             print("Error while adding damaged item:", e)
         finally:
@@ -490,6 +491,50 @@ class ItemManager:
             if cursor:
                 cursor.close()
 
+    def get_damaged_items(self):
+        """Retrieve items that have been damaged.
+
+        Returns:
+            list: A list of dictionaries showing expired items.
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+
+        try:
+            # Retrieve added items for the department within the specified date range
+            query = """
+                SELECT * FROM damaged_items;
+            """
+            cursor.execute(query,)
+            damaged_items = cursor.fetchall()
+
+            return damaged_items
+        except Exception as e:
+            # Handle exceptions (e.g., database errors)
+            print("An error occurred:", e)
+            return []
+    
+    def get_item_name_by_id(self, item_id):
+        """
+        Retrieve the name of a item based on the Item ID.
+
+        Args:
+            item_id (int): The ID of the item.
+
+        Returns:
+            str: The name of the item.
+        """
+        query = "SELECT item_name FROM stock_items WHERE id = %s"
+        params = (item_id,)
+
+        cursor = self.db_connection.cursor()
+        cursor.execute(query, params)
+        item_name = cursor.fetchone()
+        cursor.close()
+
+        return item_name[0] if item_name else None
+
+
+
 
 if __name__ == '__main__':
     db_config = {
@@ -500,5 +545,5 @@ if __name__ == '__main__':
             }
 
     item = ItemManager(db_config)
-    weekly_items = item.get_monthly_checkouts('it')
+    weekly_items = item.get_damaged_items()
     print(weekly_items)

@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Items added weekly</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+
 </head>
 <body>
+	{% include 'sidebar.html' %}
     <h1>Search Items Added in Last 7 Days</h1>
     <form action="/search_weekly_adds" method="post">
         

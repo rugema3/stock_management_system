@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
+    <title>Damaged Items</title>
+</head>
+<body>
+	{% include 'sidebar.html' %}
+
+    <h1>Damaged Items</h1>
+
+    {% if damaged_items %}
+        <table border="1">
+            <tr>
+                <th>Item Name</th>
+                <th>Description</th>
+                <th>Report Date</th>
+		<th>Reported By</th>
+                <th>Damaged Quantity</th>
+            </tr>
+            {% for item in damaged_items %}
+                <tr>
+                    <td>{{ item_manager.get_item_name_by_id(item['item_id']) }}</td>
+                    <td>{{ item['damage_description'] }} </td>
+                    <td>{{ item['date_reported'] }}</td>
+                    <td>{{ db.get_user_name_by_id(item['reported_by']) }}</td>
+                    <td>{{ item['quantity_damaged'] }}</td>
+                    
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No Damaged items found.</p>
+    {% endif %}
+
+</body>
+</html>

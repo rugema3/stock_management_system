@@ -16,7 +16,7 @@ sys.path.append('/home/rugema3/stock_management_system/application')
 from models.item_manager import ItemManager
 from decouple import config
 import os
-from models.send_email import send_email
+from models.send_email2 import send_email
 from models.database_manager import Database
 
 db_config = {
@@ -39,6 +39,7 @@ def send_reminders():
     """
     # Retrrive expring items.
     expiring = item_manager.get_expiring_soon('it')
+    print("expires: ", expiring)
 
     # Retrieve users from the database.
     users = db.get_all_users('it')
@@ -123,15 +124,22 @@ def send_reminders():
         </body>
         </html>
         """
-        company_email = "info@remmittance.com"
+        sender_email = "info@remmittance.com"
+        usermail = "rugema61@gmail.com"
 
-        # Retrieve email api_key.
-        email_api_key = os.getenv('email_api')
+        # Retrieve important email configuration details.
+        smtp_port = os.getenv('smtp_port')
+        smtp_server = os.getenv('smtp_server')
+        password = os.getenv('email_password')
         
         # Check if there are items expiring. Don's send email when empty.
         if len(expiring) > 0:
             # Sending email
-            send_email(email_api_key, company_email, user_email, subject, message)
+            #send_email(sender_email, user_email, password, smtp_server, smtp_port, subject, message)
+            pass
+
+        else :
+            send_email(sender_email, usermail, password, smtp_server, smtp_port, subject, message)
 
 if __name__ == '__main__':
     print(send_reminders())

@@ -142,4 +142,19 @@ tr:nth-child(even) {
         margin: 0 auto; /* Center the div horizontally */
         padding: 20px; /* Add padding for spacing */
     }
-
+.flash-messages {
+            background-color: #45a049;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+	    margin-left: 20%
+}
+        .flash-messages.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .flash-messages.success {
+            background-color: #d4edda;
+            color: #155724;
+        }

@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
-    <title>Add Damaged Items</title>
+     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
+    <title>Report Damaged Items</title>
 </head>
 <body>
-    <h1>Add Damaged Items</h1>
+	{% include 'sidebar.html' %}
+
+    <h1>Report Damaged Items</h1>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -31,14 +36,15 @@
             </tr>
             {% for item in department_items %}
                 <tr>
-			<td>{{ item[1] }}</td>
+                    <td>{{ item[1] }}</td>
                     <td>{{ item[2] }} {{ item[8] }}</td>
-		    <td>{{ item[4] }}</td>
+                    <td>{{ item[4] }}</td>
                     <td>{{ item[3] }}</td>
                     <td>{{ item[7] }}</td>
                     <td>
                         <form action="{{ url_for('add_damaged_items.add_damaged_items') }}" method="post">
                             <input type="hidden" name="item_id" value="{{ item[0] }}">
+			    <input type="hidden" name="item_name" value="{{ item[1] }}">
                             <input type="text" name="damage_description" placeholder="Damage Description" required>
                             <input type="number" name="quantity_damaged" placeholder="Quantity Damaged" min="1" required>
                             <button type="submit">Add Damaged Item</button>
@@ -48,7 +54,7 @@
             {% endfor %}
         </table>
     {% else %}
-        <p>No department_items items found.</p>
+        <p>No department items found.</p>
     {% endif %}
 
 </body>

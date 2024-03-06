@@ -13,6 +13,8 @@ def search_weekly_adds():
     user_id = session.get('id')
     user_department = session.get('department')
     user_role = session.get('role')
+    user_name = session.get('name')
+    extracted_path = session.get('extracted_path')
 
     # Retrieve information from form.
     if request.method == 'POST':
@@ -27,7 +29,15 @@ def search_weekly_adds():
                 'search_weekly_adds.html',
                 added_items=added_items,
                 user_department=user_department,
-                user_role=user_role
+                user_role=user_role,
+                user_name=user_name,
+                extracted_path=extracted_path
                 )
     else:
-        return render_template('search_weekly_adds.html')
+        return render_template(
+                'search_weekly_adds.html',
+                user_department=user_department,
+                user_role=user_role,
+                user_name=user_name,
+                extracted_path=extracted_path
+                )

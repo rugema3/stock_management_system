@@ -32,6 +32,7 @@ from application.routes.search_weekly_adds import search_weekly_adds_route
 from application.routes.expiring_soon import expiring_soon_route
 from application.routes.checkout_summary import checkout_summary_route
 from application.routes.add_damaged_items import add_damaged_items_route
+from application.routes.get_damaged_items import get_damaged_items_route
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -74,6 +75,8 @@ app.register_blueprint(search_weekly_adds_route)
 app.register_blueprint(expiring_soon_route)
 app.register_blueprint(checkout_summary_route)
 app.register_blueprint(add_damaged_items_route)
+app.register_blueprint(get_damaged_items_route)
+
 
 # Create Instances of different classes.
 db = Database(db_config)
@@ -633,13 +636,17 @@ def pending_items():
             print(f'maker_id: {maker_id}, user_name: {user_name}')
             names.append(user_name)
             print(names)
+        user_name = session.get('name')
 
         # Pass the pending_items directly to the template
         return render_template(
                 'pending_items.html',
                 pending_items=pending_items,
                 names=names,
-                extracted_path=extracted_path
+                extracted_path=extracted_path,
+                user_role=user_role,
+                user_department=user_department,
+                user_name=user_name
                 )
 
     except Exception as e:
@@ -709,24 +716,38 @@ def update_email():
     if 'id' not in session:
         # Redirect to login if user is not authenticated
         return redirect(url_for('login'))
+    user_name = session.get('name')
+    user_department = session.get('department')
+    user_role = session.get('role')
+    extracted_path = session.get('extracted_path')
 
     # Get user ID from form submission or session
     user_id = request.form.get('user_id') or session['id']
     print('user_id: ', user_id)
     new_email = request.form.get('new_email')
     if new_email is None:
-        return render_template('update_email.html', error='New email Required.')
+        return render_template(
+                'update_email.html', 
+                error='New email Required.',
+                user_role=user_role,
+                user_department=user_department,
+                extracted_path=extracted_path
+                )
     # Call the update email method from your database class
     success = db.update_user_email(user_id, new_email)
 
     if success:
         flash("Email updated successfully.", 'success')
         # Redirect to a success page or back to the profile page
-        return redirect(url_for('home'))
     else:
         flash("Failed to update email.", 'error')
         # Handle the failure, maybe show an error message to the user
-        return render_template('update_email.html')  # Render the form again
+        return render_template(
+                'update_email.html',
+                user_role=user_role,
+                user_department=user_department,
+                extracted_path=extracted_path
+                )
 
 
 @app.route('/update_password', methods=['GET', 'POST'])
@@ -944,6 +965,7 @@ def checkout_items():
     user_department = session.get('department')
     user_role = session.get('role')
     extracted_path = session.get('extracted_path')
+    user_name1 = session.get('name')
 
     if user_department:
         checkout_items = db.get_checkout_items_by_department(user_department)
@@ -965,7 +987,8 @@ def checkout_items():
                 user_department=user_department,
                 checkout_items=checkout_items,
                 initiator_names=initiator_names,
-                extracted_path=extracted_path
+                extracted_path=extracted_path,
+                user_name=user_name1
                 )
     else:
         # Handle the case when the department is not available in the session
