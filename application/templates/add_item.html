@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Items</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='register_style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
+</head>
+<body class="selected-body">
+    {% include 'sidebar.html' %}    
+
+    <div class="form-container">    
+        <h1>Add items</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{  message|safe }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/add_item" method="POST" id="add-items-form">    
+            <div id="items-container">
+                <div class="item">
+                    <label for="item_name">Item Name:</label>
+                    <input type="text" name="item_name"><br><br>
+
+                    <label for="price">Price:</label>
+                    <input type="text" name="price"><br><br>
+
+                    <label for="category">Category:</label>
+                    <select name="category">
+                        {% for category in categories %}
+                            <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select><br><br>
+
+                    <label for="quantity">Quantity:</label>
+                    <input type="text" name="quantity" value="0"><br><br>
+                    
+                    <label for="description">Description:</label>
+                    <input type="text" name="description"><br><br>
+
+                    <label for="purchase_date">Purchase Date:</label>
+                    <input type="date" name="purchase_date"><br><br>
+
+                    <label for="expiration_date">Expiration Date:</label>
+                    <input type="date" name="expiration_date"><br><br>
+                </div>
+            </div>
+
+            <button type="button" id="add-item-button">Add Another Item</button><br><br>
+
+            <input type="submit" class="button" value="Add">
+        </form>
+    </div>
+
+    <script>
+    $(document).ready(function() {
+        $('#add-item-button').click(function() {
+            // Clone the first item
+            var newItem = $('#items-container .item').first().clone();
+
+            // Clear the values of the cloned input fields
+            newItem.find('input[type="text"], input[type="date"]').val('');
+
+            // Append the cloned item to the items container
+            $('#items-container').append(newItem);
+        });
+    });
+</script>
+
+</body>
+</html>
+

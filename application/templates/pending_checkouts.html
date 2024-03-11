@@ -1,0 +1,91 @@
+i<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Include DataTables CSS (you can use CDN or local file) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+    <!-- Include jQuery (required by DataTables) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Include DataTables JavaScript (you can use CDN or local file) -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <!-- Include jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Include SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+    <title>Pending Checkouts</title>
+</head>
+<body>
+	{% include 'sidebar.html' %}
+
+    <h1>Pending Checkouts</h1>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
+
+    {% if pending_checkouts %}
+    <table border="1" id="pending-items-table" class="display">
+        <tr>
+            <th>Checkout ID</th>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>User ID</th>
+            <th>Created At</th>
+            <th>Actions</th>  <!-- Added Actions column -->
+        </tr>
+        {% for checkout in pending_checkouts %}
+        <tr>
+            <td>{{ checkout['checkout_id'] }}</td>
+            <td>{{ checkout['item_name'] }}</td>
+            <td>{{ checkout['quantity'] }}</td>
+            <td>{{ checkout['user_id'] }}</td>
+            <td>{{ checkout['created_at'] }}</td>
+            <td>
+                <form action="{{ url_for('change_checkout_status', checkout_id=checkout['checkout_id']) }}" method="post">
+                    <input type="hidden" name="checkout_id" value="{{ checkout['checkout_id'] }}">
+                    <select name="status">
+                        <option value="approved">Approve</option>
+                        <option value="rejected">Reject</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No pending checkouts.</p>
+    {% endif %}
+
+    <!-- Initialize DataTable -->
+<script>
+    $(document).ready(function() {
+        $('#pending-items-table').DataTable();
+    });
+
+     // Export to PDF function
+    function exportToPDF() {
+        // Create new jsPDF instance
+        const doc = new jsPDF();
+
+        // Auto-table plugin for jsPDF
+        doc.autoTable({ html: '#pending-items-table' });
+
+        // Save the PDF with a filename
+        doc.save('pending_items.pdf');
+    }
+
+    // Export to Excel function
+    function exportToExcel() {
+        var table = document.getElementById('pending-items-table');
+        var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+        XLSX.writeFile(wb, 'pending_items.xlsx');
+    }
+</script>
+
+</body>
+</html>

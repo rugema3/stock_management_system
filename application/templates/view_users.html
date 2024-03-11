@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>View Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='table_styles.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+</head>
+<body class="selected-body">
+    {% include 'sidebar.html' %}
+    
+    <h1>All Users:</h1><br>
+
+    {% if users %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role.upper() }}</td>
+                    <td>{{ user.department.upper() }}</td>
+                    <td>
+                        <!-- Update Name form -->
+                        <form action="/admin/view_users" method="POST">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <input type="text" name="new_name" placeholder="New Name">
+                            <button type="submit">Update Name</button>
+                        </form>
+                        
+                        <!-- Update Email form -->
+                        <form action="/admin/view_users" method="POST">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <input type="text" name="new_email" placeholder="New Email">
+                            <button type="submit">Update Email</button>
+                        </form>
+                        
+                        <!-- Update Password form -->
+                        <form action="/admin/view_users" method="POST">
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <input type="password" name="new_password" placeholder="New Password">
+                            <button type="submit">Update Password</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No users found.</p>
+    {% endif %}
+
+    <p class="back-button"><a href="/admin">Back</a></p>
+</body>
+</html>
+

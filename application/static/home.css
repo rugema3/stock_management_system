@@ -1,0 +1,42 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #006400;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align to the far left */
+    width: 100%; /* Ensure full width */
+}
+
+h2 {
+    border-bottom: 2px solid #000; /* Change color as needed */
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Set list items to be displayed vertically */
+}
+
+li {
+    margin: 10px 0;
+}
+
+a {
+    text-decoration: none;
+    color: #000; /* Change color as needed */
+    display: flex;
+    align-items: center;
+}
+
+i {
+    margin-right: 10px;
+}
+

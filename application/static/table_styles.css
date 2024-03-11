@@ -1,0 +1,183 @@
+
+body {
+	margin-left: 13%;
+}
+h1 {
+	margin-left:20%;
+	margin-top: 7%;
+	margin-bottom: 2%;
+}
+table {
+  width: 82%; 
+    border-collapse: collapse; 
+    background-color: #fff; 
+    border: 1px solid #ccc; 
+    border-radius: 5px;
+    margin-bottom: 5%;
+    margin-top: 2%;
+}
+.display table {
+  width: 50%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 5%;
+    margin-top: 2%;
+}
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* CSS for Buttons */
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px; /* Add margin between buttons */
+  margin-left: 20%;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+
+/* CSS for Approval Comment Input */
+input[type="text"] {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+  margin-right: 5px; /* Add margin between input and button */
+}
+
+/* CSS for Back to Dashboard Link */
+a {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 4px;
+}
+
+a:hover {
+  background-color: #0056b3;
+}
+/* Style the dropdown */
+select {
+    padding: 6px;
+    font-size: 14px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; /* Add border radius for rounded corners */
+    background-color: #fff; /* Set background color */
+    color: #333; /* Set text color */
+}
+
+/* Style the dropdown arrow */
+select::-ms-expand {
+    display: none; /* Hide default arrow in IE */
+}
+
+select::-webkit-dropdown-arrow {
+    display: none; /* Hide default arrow in Chrome/Safari */
+    }
+
+.date-search-form {
+    /* Add your styles for the form container here */
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-left: 20%;
+}
+
+.date-search-form label {
+    /* Add your styles for labels here */
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.date-search-form input[type="date"] {
+    /* Add your styles for date inputs here */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+}
+
+.date-search-form button {
+    /* Add your styles for the search button here */
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.date-search-form button:hover {
+    background-color: #0056b3;
+}
+.custom-heading {
+    color: #333;
+    font-size: 24px;
+    margin-left:20%;
+    margin-top: 5%;
+    margin-bottom: 2%;
+}
+td, th {
+  padding: 10px;
+  border: 3px solid #999;
+  text-align: justify;
+  font-size: 10px;
+}
+/* Set background color for odd rows */
+tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+/* Set background color for even rows */
+tr:nth-child(even) {
+  background-color: #ffffff; /* or any other background color you prefer */
+}
+.summary-table {
+        width: 80%; /* Set the width of the div */
+        margin: 0 auto; /* Center the div horizontally */
+        padding: 20px; /* Add padding for spacing */
+    }
+.flash-messages {
+            background-color: #45a049;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+	    margin-left: 20%
+}
+        .flash-messages.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .flash-messages.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+.display th {
+	background-color: #3498db; /* Example color: change to your desired color */
+    color: white; /* Set text color to white for better contrast */
+    text-align: left;
+    padding: 8px;
+    }
+.export
+{
+	margin-left:80%;
+	margin-bottom: 2%;
+}
+

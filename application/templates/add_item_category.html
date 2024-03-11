@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item Category</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='add_user_role.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='availables.css') }}">
+
+</head>
+<body>
+    {% include 'sidebar.html' %}
+    <div class="container">
+	    {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-{{ messages[0].category }}">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+        <h2>Add Item Category</h2>
+	<br><br>
+	<p>Use this form to add item categories.</p>
+	<p>You can confirm available categories before adding a new category.</p>
+	<div class="availables-table">
+		<table  class="categories-table" border="1">
+		<tr>
+			<th>Available Categories</th>
+			<th>Action/Update Category</th>
+
+		</tr>
+		{% for category in categories %}
+		<tr>
+			<td>{{ category }}</td>
+			<td>
+                                <form method="post" action="{{ url_for('add_item_category.add_item_category') }}">
+                        <input type="hidden" name="category_id" value="{{ loop.index }}">
+                        <input type="text"class="form-control" name="new_category" placeholder="New Category Name" required>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                        </td>
+
+		</tr>
+		{% endfor %}
+		</table>
+	</div>
+
+	<div class="form-container">
+            <form method="post" action="{{ url_for('add_item_category.add_item_category') }}">
+                <div class="mb-3">
+                    <label for="category_name" class="form-label">Category:</label>
+                    <input type="text" class="form-control" id="category_name" name="category_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Category</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

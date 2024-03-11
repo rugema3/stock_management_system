@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='email.css') }}">
+
+
+    <title>Update Email</title>
+</head>
+<body>
+	{% include 'sidebar.html' %}
+    <h1>Update Email</h1>
+
+    <form method="POST" action="{{ url_for('update_email') }}">
+	    <input type="hidden" name="user_id" value="{{ user_id }}">
+        <label for="new_email">New Email:</label>
+        <input type="email" id="new_email" name="new_email" required><br>
+
+        <input type="submit" class="button" value="Update Email">
+    </form>
+</body>
+</html>

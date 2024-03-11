@@ -1,0 +1,51 @@
+{% extends 'index1.html' %}
+
+{% block content %}
+    <h1>Register</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{  message|safe }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/register">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <label for="department">Department:</label>
+        <select id="department" name="department">
+            <option value="kitchen">Kitchen</option>
+            <option value="it">IT</option>
+            <option value="hr">People and Culture</option>
+            <option value="finance">Finance</option>
+            <option value="communication">Communication</option>
+            <option value="administration">Administration</option>
+            <option value="repayment">Repayment</option>
+            <option value="application">Application</option>
+            <option value="pei">PEI</option>
+            <option value="ceo">CEO Office</option>
+        </select><br><br>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+            <option value="approver">Approver</option>
+        </select><br><br>
+
+        <input type="submit" class="button" value="Register">
+    </form>
+
+    <p>Back to Dashboard <a href="/admin">Click Here</a></p>
+{% endblock %}
+

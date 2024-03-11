@@ -1,0 +1,54 @@
+/* admin_nav_style.css */
+
+/* Style for the navigation bar */
+.navbar {
+    background-color: #eee;
+    padding: 10px;
+}
+
+.navbar ul {
+    list-style-type: none;
+}
+
+.navbar li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+}
+/* Style for the logout icon and link */
+.logout-icon {
+    margin-top: 10px;
+}
+
+.logout-icon a {
+    text-decoration: none;
+    color: #333;
+}
+
+.logout-icon i {
+    margin-right: 5px;
+}
+.dashboard-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.dashboard-widget {
+    flex: 1 0 calc(33.33% - 20px); /* Adjust the width as needed */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    border-radius: 60px; /* Border radius for a circular appearance */
+     overflow: hidden; /* Ensure content doesn't overflow rounded corners */
+      transition: background-color 0.3s; /* Smooth background color transition on hover */
+}
+
+.dashboard-widget:hover {
+    background-color: #e0e0e0; /* Adjust hover background color */
+}

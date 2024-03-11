@@ -1,0 +1,36 @@
+.availables-table {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 70%;
+    margin-right: 30%;
+    margin-bottom: 5%;
+}
+
+.availables-table th, .availables-table td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.availables-table th {
+    background-color: #f2f2f2;
+}
+.categories-table {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 70%; /* Set the width to 100% to make the table fill the container */
+}
+
+.categories-table th, .categories-table td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.categories-table th {
+    background-color: #f2f2f2;
+}
+
+.categories-table td {
+	color: orange;
+}

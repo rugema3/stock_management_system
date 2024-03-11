@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User Department</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='add_user_role.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='availables.css') }}">
+
+</head>
+<body>
+    {% include 'sidebar.html' %}
+ 
+    <div class="container">
+	    {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-{{ messages[0].category }}">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+        <h2>Add Department</h2>
+	<br><br>
+	<p>Use this form to add a new department.</p>
+	 <div class="availables-table">
+                <table  class="categories-table" border="1">
+                <tr>
+                        <th>Available Departments</th>
+			<th>Action/Update Department</th>
+                </tr>
+                {% for department in departments %}
+                <tr>
+                        <td>
+				{{ department.upper() }}
+			</td>
+			<td>
+				<form method="post" action="{{ url_for('add_user_department.add_user_department') }}">
+                        <input type="hidden" name="department_id" value="{{ loop.index }}">
+                        <input type="text"class="form-control" name="new_department" placeholder="New Name" required>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+			</td>
+                </tr>
+                {% endfor %}
+                </table>
+        </div>
+
+        <div class="form-container">
+            <form method="post" action="{{ url_for('add_user_department.add_user_department') }}">
+                <div class="mb-3">
+                    <label for="department_name" class="form-label">Department:</label>
+                    <input type="text" class="form-control" id="department_name" name="department_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Department</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

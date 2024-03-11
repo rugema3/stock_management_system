@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Months Added Items</title>
+    <!-- Include DataTables CSS (you can use CDN or local file) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+    <!-- Include jQuery (required by DataTables) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Include DataTables JavaScript (you can use CDN or local file) -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+
+    <!-- Include SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+
+</head>
+<body>
+	{% include 'sidebar.html' %}
+
+	<h1>Items added in {{ user_department.upper() }} Department for current Months </h1>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
+
+    <table id="pending-items-table" class="display">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Created At</th>
+                <th>Status</th>
+                <th>Added By</th>
+                <th>Descriptiont</th>
+		<th>Purchase Date</td>
+		<th>Expiration Date</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in added_items %}
+                <tr>
+                    <td>{{ item['item_name'] }}</td>
+		    <td>{{ item['price'] }} {{ item['currency'] }}</td>
+                    <td>{{ item['category'] }}</td>
+                    <td>{{ item['quantity'] }}</td>
+                    <td>{{ item['created_at'] }}</td>
+                    <td>{{ item['status'] }}</td>
+                    <td>{{ db.get_user_name_by_id(item['maker_id']) }}</td>
+                    <td>{{ item['description'] }}</td>
+		    <td>{{ item['purchase_date'] }} </td>
+		    <td>{{ item['expiration_date'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+<!-- Initialize DataTable -->
+<script>
+    $(document).ready(function() {
+        $('#pending-items-table').DataTable();
+    });
+
+     
+    // Export to Excel function
+    function exportToExcel() {
+        var table = document.getElementById('pending-items-table');
+        var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+        XLSX.writeFile(wb, 'monthly_items.xlsx');
+    }
+</script>
+</html>
+
