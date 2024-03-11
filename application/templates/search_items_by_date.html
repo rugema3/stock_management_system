@@ -37,6 +37,7 @@
 
 
 <h2 class="custom-heading">Added Items from {{ start_date }} to {{ end_date }}</h2>
+<button class="export" onclick="exportToExcel()">Export to Excel</button>
     <table id="pending-items-table" class="display">
         <thead>
             <tr>
@@ -86,7 +87,7 @@
     function exportToExcel() {
         var table = document.getElementById('pending-items-table');
         var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
-        XLSX.writeFile(wb, 'pending_items.xlsx');
+        XLSX.writeFile(wb, 'items_by_date.xlsx');
     }
 </script>
 
