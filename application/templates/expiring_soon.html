@@ -23,6 +23,8 @@
 	 {% include 'sidebar.html' %}
 
     <h1>Items Expiring in 7 Days</h1>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
+
     <table id="pending-items-table" class="display">
         <thead>
             <tr>
@@ -74,7 +76,7 @@
     function exportToExcel() {
         var table = document.getElementById('pending-items-table');
         var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
-        XLSX.writeFile(wb, 'pending_items.xlsx');
+        XLSX.writeFile(wb, 'Expiring_items.xlsx');
     }
 </script>
 </html>
