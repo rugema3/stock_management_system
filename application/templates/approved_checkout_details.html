@@ -27,6 +27,7 @@
 <body class="selected-body">
     {% include 'sidebar.html' %}
     <h1>Checkout Summary</h1>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
 
     {% if approved_checkouts %}
     <table id="pending-items-table" class="display">
@@ -79,7 +80,7 @@
         function exportToExcel() {
             var table = document.getElementById('pending-items-table');
             var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
-            XLSX.writeFile(wb, 'pending_items.xlsx');
+            XLSX.writeFile(wb, 'checkout_summary.xlsx');
         }
     </script>
 </body>
