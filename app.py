@@ -326,45 +326,52 @@ def admin():
         flash(f"Error in admin route: {str(e)}", 'error')
         return redirect('/login')
 
-
 @app.route('/add_item', methods=['POST', 'GET'])
 @login_required
 def add_item():
     """Add item in the database."""
     if request.method == 'POST':
         print("Form Data:", request.form)
-        item_name = request.form['item_name']
-        price = float(request.form['price'])
-        category = request.form['category']
-        quantity = int(request.form['quantity'])
-        description = request.form['description']
-        purchase_date = request.form['purchase_date']
-        if not purchase_date:
-            purchase_date = None
-        print(purchase_date)
-        expiration_date = request.form['expiration_date']
-        #Check if expiration_date is provided and set a default value.
-        if not expiration_date:
-            expiration_date = None
+        form_data = request.form
+        
+        # Iterate over the form data and insert each item into the database
+        for i in range(len(form_data.getlist('item_name'))):
+            item_name = form_data.getlist('item_name')[i]
+            print('item_name: ', item_name)
+            price = float(form_data.getlist('price')[i])
+            print('price: ', price)
+            category = form_data.getlist('category')[i]
+            print('category: ', category)
+            quantity = int(form_data.getlist('quantity')[i])
+            print('quantity: ', quantity)
+            description = form_data.getlist('description')[i]
+            print('description: ', description)
+            purchase_date = form_data.getlist('purchase_date')[i] if form_data.getlist('purchase_date')[i] else None
+            expiration_date = form_data.getlist('expiration_date')[i] if form_data.getlist('expiration_date')[i] else None
+            print("expiration: ", expiration_date)
+            print()
+            print()
 
-        # Create a StockItem object with the UUID generated
-        stock_item = StockItem(item_name, price, category, quantity)
+            # Create a StockItem object with the provided details
+            stock_item = StockItem(item_name, price, category, quantity)
 
-        # Get the current user's ID and department from the session
-        maker_id = session.get('id')
-        department = session.get('department')
+            # Get the current user's ID from the session
+            maker_id = session.get('id')
 
-        # Insert the new item into the database using the Database class
-        db.insert_item(
-                stock_item,
-                maker_id=maker_id,
-                description=description,
-                purchase_date=purchase_date,
-                expiration_date=expiration_date
-                )
-
-        # Flash a success message
-        flash(f'The Item <b>"{item_name}"</b> has been added successfully!', 'success')
+            # Insert the new item into the database using the Database class
+            sucess = db.insert_item(
+                    stock_item, 
+                    maker_id=maker_id, 
+                    description=description, 
+                    purchase_date=purchase_date, 
+                    expiration_date=expiration_date
+                    )
+            print("sucess: ", sucess)
+            # Check if the item has been added successfully.
+            if sucess == True:
+                flash(f'The item {item_name} has been added successfully!', 'success')
+            else:
+                flash("Something went wrong and the item has not been added.")
 
     # Fetch the updated stock items from the database
     stock_items = db.get_all_items()
@@ -378,8 +385,14 @@ def add_item():
     # retrieve the profile pic path from session.
     extracted_path = session.get('extracted_path')
 
-    return render_template('add_item.html', extracted_path=extracted_path, stock_items=stock_items, user_department=user_department, user_role=user_role, categories=categories)
-
+    return render_template(
+            'add_item.html', 
+            extracted_path=extracted_path, 
+            stock_items=stock_items, 
+            user_department=user_department, 
+            user_role=user_role, 
+            categories=categories
+            )
 
 @app.route('/items')
 @login_required

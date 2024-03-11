@@ -40,6 +40,7 @@ class Database:
 
         """
         cursor = self.db_connection.cursor(dictionary=True)
+        success = False
 
         if maker_id is not None:
             # Fetch the department information based on the maker_id
@@ -65,9 +66,12 @@ class Database:
                     description, 
                     purchase_date, 
                     expiration_date))
+                success = True
 
         self.db_connection.commit()
         cursor.close()
+
+        return success
 
 
 

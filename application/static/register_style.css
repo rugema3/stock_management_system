@@ -1,7 +1,7 @@
 /* static/register_style.css */
 
 h1 {
-	margin-top: 5%;
+	margin-top: 10%;
 	margin-bottom: 5%;
 }
 /* Center-align the registration form */
@@ -10,6 +10,8 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin-top: 5%;
+    margin-bottom: 10%;
      
 }
 
@@ -82,9 +84,11 @@ body {
 /* Style for flashed messages */
 .alert {
     padding: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 2%;
+    margin-top: 2%;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 12px;
 }
 
 /* Success message style */
@@ -99,4 +103,4 @@ body {
     color: #721c24;
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
-}
+    }
