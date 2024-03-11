@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include DataTables CSS (you can use CDN or local file) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+    <!-- Include jQuery (required by DataTables) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Include DataTables JavaScript (you can use CDN or local file) -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <!-- Include jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Include SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
@@ -36,12 +52,16 @@
 
     <div id="daily-summary" class="summary-table">
 	<h1>Daily Consumption Summary</h1>
-	<table>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
+	<table id="pending-items-table" class="display">
+        <thead>
     <tr>
         <th>Checkout Date</th>
         <th>Item Name</th>
         <th>Total Quantity Consumed</th>
     </tr>
+    </thead>
+    <tbody>
     {% for checkout_date, checkouts in checkouts_by_date.items() %}
     {% set rowspan = checkouts|length %}
     {% for checkout in checkouts %}
@@ -54,17 +74,22 @@
     </tr>
     {% endfor %}
     {% endfor %}
+    </tbody>
 	</table>
     </div>
 
 	<div id="weekly-summary" class="summary-table" style="display: none;">
     <h1>Weekly Consumption Summary</h1>
-    <table>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
+    <table id="pending-items-table" class="display">
+        <thead>
         <tr>
             <th>Week Period</th>
             <th>Item Name</th>
             <th>Total Quantity Consumed</th>
         </tr>
+        </thead>
+        <tbody>
         {% for week_period, checkouts in checkouts_by_week.items() %}
         {% set rowspan = checkouts|length %}
         {% for checkout in checkouts %}
@@ -77,17 +102,22 @@
         </tr>
         {% endfor %}
         {% endfor %}
+        </tbody>
     </table><br><br>
 	</div>
 
 	<div id="monthly-summary" class="summary-table" style="display: none;">
     <h1>Monthly Consumption Summary</h1>
-    <table>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
+    <table id="pending-items-table" class="display">
+        <thead>
         <tr>
 		<th>Month Period</th>
             <th>Item Name</th>
             <th>Total Quantity Consumed</th>
         </tr>
+        </thead>
+        <tbody>
         {% for month_period, checkouts in checkouts_by_month.items() %}
         {% set rowspan = checkouts|length %}
         {% for checkout in checkouts %}
@@ -100,7 +130,33 @@
         </tr>
         {% endfor %}
         {% endfor %}
+        </tbody>
     </table>
+    <!-- Initialize DataTable -->
+<script>
+    $(document).ready(function() {
+        $('#pending-items-table').DataTable();
+    });
+
+     // Export to PDF function
+    function exportToPDF() {
+        // Create new jsPDF instance
+        const doc = new jsPDF();
+
+        // Auto-table plugin for jsPDF
+        doc.autoTable({ html: '#pending-items-table' });
+
+        // Save the PDF with a filename
+        doc.save('department_items.pdf');
+    }
+
+    // Export to Excel function
+    function exportToExcel() {
+        var table = document.getElementById('pending-items-table');
+        var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+        XLSX.writeFile(wb, 'department_items.xlsx');
+    }
+</script>
 	</div>
 </body>
 </html>
