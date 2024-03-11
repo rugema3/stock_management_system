@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Damaged Items</title>
      <!-- Include DataTables CSS (you can use CDN or local file) -->
      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
 
@@ -22,12 +23,13 @@
      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
-    <title>Report Damaged Items</title>
+
 </head>
 <body>
 	{% include 'sidebar.html' %}
 
     <h1>Report Damaged Items</h1>
+    <button class="export" onclick="exportToExcel()">Export to Excel</button>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
