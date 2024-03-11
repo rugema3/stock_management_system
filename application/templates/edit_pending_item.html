@@ -19,9 +19,12 @@
 
     <!-- Include SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <title>Edit Pending Item</title>
 </head>
 <body>
+    {% include 'sidebar.html' %}
     <h1>Pending Items</h1>
 
     {% with messages = get_flashed_messages() %}
