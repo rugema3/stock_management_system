@@ -59,7 +59,7 @@
     function exportToExcel() {
         var table = document.getElementById('pending-items-table');
         var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
-        XLSX.writeFile(wb, 'department_items.xlsx');
+        XLSX.writeFile(wb, 'checkout_summary.xlsx');
     }
 </script>
   </head>
@@ -106,7 +106,7 @@
 	<div id="weekly-summary" class="summary-table" style="display: none;">
     <h1>Weekly Consumption Summary</h1>
     <button class="export" onclick="exportToExcel()">Export to Excel</button>
-    <table id="pending-items-table" class="display">
+    <table >
         <thead>
         <tr>
             <th>Week Period</th>
@@ -134,7 +134,7 @@
 	<div id="monthly-summary" class="summary-table" style="display: none;">
     <h1>Monthly Consumption Summary</h1>
     <button class="export" onclick="exportToExcel()">Export to Excel</button>
-    <table id="pending-items-table" class="display">
+    <table>
         <thead>
         <tr>
 		<th>Month Period</th>
