@@ -37,6 +37,31 @@
             selectedTable.style.display = 'table';
         }
     </script>
+       <!-- Initialize DataTable -->
+<script>
+    $(document).ready(function() {
+        $('#pending-items-table').DataTable();
+    });
+
+     // Export to PDF function
+    function exportToPDF() {
+        // Create new jsPDF instance
+        const doc = new jsPDF();
+
+        // Auto-table plugin for jsPDF
+        doc.autoTable({ html: '#pending-items-table' });
+
+        // Save the PDF with a filename
+        doc.save('department_items.pdf');
+    }
+
+    // Export to Excel function
+    function exportToExcel() {
+        var table = document.getElementById('pending-items-table');
+        var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+        XLSX.writeFile(wb, 'department_items.xlsx');
+    }
+</script>
   </head>
 <body class="selected-body">
 	{% include 'sidebar.html' %}
@@ -132,31 +157,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <!-- Initialize DataTable -->
-<script>
-    $(document).ready(function() {
-        $('#pending-items-table').DataTable();
-    });
-
-     // Export to PDF function
-    function exportToPDF() {
-        // Create new jsPDF instance
-        const doc = new jsPDF();
-
-        // Auto-table plugin for jsPDF
-        doc.autoTable({ html: '#pending-items-table' });
-
-        // Save the PDF with a filename
-        doc.save('department_items.pdf');
-    }
-
-    // Export to Excel function
-    function exportToExcel() {
-        var table = document.getElementById('pending-items-table');
-        var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
-        XLSX.writeFile(wb, 'department_items.xlsx');
-    }
-</script>
+ 
 	</div>
 </body>
 </html>
