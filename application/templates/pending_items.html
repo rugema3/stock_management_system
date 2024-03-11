@@ -14,9 +14,6 @@
     <!-- Include DataTables JavaScript (you can use CDN or local file) -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
-    <!-- Include jsPDF for PDF export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <!-- Include SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
@@ -83,18 +80,7 @@
         $('#pending-items-table').DataTable();
     });
 
-     // Export to PDF function
-    function exportToPDF() {
-        // Create new jsPDF instance
-        const doc = new jsPDF();
-
-        // Auto-table plugin for jsPDF
-        doc.autoTable({ html: '#pending-items-table' });
-
-        // Save the PDF with a filename
-        doc.save('pending_items.pdf');
-    }
-
+     
     // Export to Excel function
     function exportToExcel() {
         var table = document.getElementById('pending-items-table');
