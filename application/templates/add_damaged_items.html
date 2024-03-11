@@ -29,8 +29,7 @@
 	{% include 'sidebar.html' %}
 
     <h1>Report Damaged Items</h1>
-    <button class="export" onclick="exportToExcel()">Export to Excel</button>
-
+    
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="flash-messages">

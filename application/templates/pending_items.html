@@ -21,7 +21,6 @@
     <!-- Include SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
 
-    <!-- Your other CSS and JavaScript files -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -77,19 +76,6 @@
 {% else %}
 <p>No pending items.</p>
 {% endif %}
-
-{% if session.role == 'admin' %}
-    <a href="/admin">Back to Admin Dashboard</a>
-{% elif session.role == 'user' %}
-    <a href="/home">Back to User Dashboard</a>
-{% elif session.role == 'approver' %}
-    <a href="/approver">Back to Dashboard</a>
-{% else %}
-    <a href="/">Back to Home</a>
-{% endif %}
-
-<!-- Export buttons -->
-<button onclick="exportToExcel()">Export to Excel</button>
 
 <!-- Initialize DataTable -->
 <script>
