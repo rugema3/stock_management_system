@@ -27,6 +27,7 @@
     <!-- Additional CSS for the notification panel -->
     <style>
         .notification-panel {
+            display: none; /* Initially hidden */
             position: fixed;
             top: 10px;
 	    margin-top:5%;
@@ -63,15 +64,47 @@
     <h1>{{ user_department.upper() }} Department Items</h1>
     <button class="export" onclick="exportToExcel()">Export to Excel</button>
 
+    <!-- Bell icon to indicate notifications -->
+    <div class="notify-icon">
+        <span class="las la-bell" id="notification-icon" style="cursor: pointer;"></span>
+        <span class="notify">3</span> <!-- Display the number of notifications here -->
+    </div>
+
     <!-- Notification panel -->
-    <div class="notification-panel">
+    <div class="notification-panel" id="notification-panel">
         <h3>Notifications</h3>
         {% for notification in notifications %}
             <div class="notification-item">
                 <strong>{{ notification.message }}</strong><br>
                 <small>{{ notification.created_at }}</small>
-	    </div>
-	    {%endfor %}
+            </div>
+        {% endfor %}
     </div>
+
+    <!-- Your existing JavaScript for DataTables and export functions -->
+
+    <!-- JavaScript for handling notification panel -->
+    <script>
+        // Function to show notification panel
+        function showNotificationPanel() {
+            var panel = document.getElementById('notification-panel');
+            panel.style.display = 'block';
+        }
+
+        // Attach click event listener to notification icon
+        document.getElementById('notification-icon').addEventListener('click', function() {
+            showNotificationPanel();
+        });
+
+        // Close notification panel when clicking outside of it
+        window.addEventListener('click', function(event) {
+            var panel = document.getElementById('notification-panel');
+            var icon = document.getElementById('notification-icon');
+            if (event.target !== panel && event.target !== icon) {
+                panel.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
+
