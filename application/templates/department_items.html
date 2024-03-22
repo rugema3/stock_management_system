@@ -28,6 +28,13 @@
 </head>
 <body>
 	{% include 'sidebar.html' %}
+	 {% with messages = get_flashed_messages() %}
+                {% if messages %}
+		<div class="alert alert-{{ messages[0].category }}" style="background-color: #ffeeba; color: #856404; border-color: #ffeeba;">
+                        {{ messages[0] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
 	<h1>{{ user_department.upper() }} Department Items</h1>
     <button class="export" onclick="exportToExcel()">Export to Excel</button>

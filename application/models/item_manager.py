@@ -460,6 +460,15 @@ class ItemManager:
             cursor.execute(sql_query, (item_id, damage_description, reported_by, quantity_damaged))
             self.db_connection.commit()
             print("Damaged item added successfully!")
+
+            # Create a notification for the reported damage
+            message = f"Item with ID {item_id} reported as damaged. Description: {damage_description}"
+            action_type = "damaged"
+            try:
+                self.create_notification(reported_by, message, action_type)
+            except Error as e:
+                print("Error while creating a notification.", e)
+
             return True
         except Error as e:
             print("Error while adding damaged item:", e)
@@ -533,7 +542,82 @@ class ItemManager:
 
         return item_name[0] if item_name else None
 
+    def create_notification(self, user_id, message, action_type):
+        """
+        Create a notification for a user.
 
+        Args:
+            user_id (int): The ID of the user for whom the notification is created.
+            message (str): The notification message.
+            action_type (str): The type of action that triggered the notification.
+
+        Returns:
+            bool: True if the notification was successfully created, False otherwise.
+        """
+        cursor = self.db_connection.cursor(dictionary=True)
+        try:
+            # Insert notification into the database
+            query = "INSERT INTO notifications (user_id, message, action_type) VALUES (%s, %s, %s)"
+            params = (user_id, message, action_type)
+            cursor.execute(query, params)
+
+            # Commit the transaction
+            self.db_connection.commit()
+
+            return True
+
+        except mysql.connector.Error as err:
+            print(f"Error creating notification: {err}")
+            return False
+
+        finally:
+            # Close the cursor
+            cursor.close()
+
+    def get_unread_notifications(self):
+        """
+        Retrieve unread notifications for the currently logged-in user.
+
+        Returns:
+            list: A list of dictionaries representing unread notifications.
+                  Each dictionary contains 'id', 'message', 'action_type', 'created_at', and 'read_status' keys.
+        """
+        try:
+            cursor = self.db_connection.cursor(dictionary=True)
+            # Query to retrieve unread notifications
+            sql_query = """SELECT id, message, action_type, created_at, read_status
+                           FROM notifications
+                           WHERE read_status = 0
+                           ORDER BY created_at DESC"""
+            cursor.execute(sql_query)
+            unread_notifications = cursor.fetchall()
+            return unread_notifications
+        except Error as e:
+            print(f"Error retrieving unread notifications: {e}")
+            return []
+
+    def mark_notification_as_read(self, notification_id):
+        """
+        Mark a notification as read.
+
+        Args:
+            notification_id (int): The ID of the notification to mark as read.
+
+        Returns:
+            bool: True if the notification was successfully marked as read, False otherwise.
+        """
+        try:
+            cursor = self.db_connection.cursor()
+            # Update the read_status of the notification to 1 (read)
+            sql_query = """UPDATE notifications
+                           SET read_status = 1
+                           WHERE id = %s"""
+            cursor.execute(sql_query, (notification_id,))
+            self.db_connection.commit()
+            return True
+        except Error as e:
+            print(f"Error marking notification as read: {e}")
+            return False
 
 
 if __name__ == '__main__':
