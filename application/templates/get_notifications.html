@@ -50,11 +50,11 @@
         <tbody>
             {% for notification in notifications %}
                 <tr>
-                    <td>{{ notification[1] }}</td>
-		    <td>{{ notification[2] }}</td>
-                    <td>{{ notification[3] }}</td>
-                    <td>{{ notification[4] }}</td>
-                    <td>{{ notification[5] }}</td>
+                    <td>{{ notification.user_id }}</td>
+		    <td>{{ notification.message }}</td>
+                    <td>{{ notification.action_type }}</td>
+                    <td>{{ notification.created_at }}</td>
+                  
 		    
                 </tr>
             {% endfor %}

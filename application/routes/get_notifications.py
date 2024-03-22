@@ -23,10 +23,11 @@ def get_notifications():
 
     try:
         # Fetch notifications
-        notifications = item_manager.get_notifications()
+        notifications = item_manager.get_unread_notifications()
+        print("Notifications: ", notifications)
         
         return render_template(
-            'get_items.html', 
+            'get_notifications.html', 
             user_role=user_role,
             user_department=user_department,
             user_name=user_name,

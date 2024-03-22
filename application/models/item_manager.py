@@ -586,7 +586,7 @@ class ItemManager:
         try:
             cursor = self.db_connection.cursor(dictionary=True)
             # Query to retrieve unread notifications
-            sql_query = """SELECT id, message, action_type, created_at, read_status
+            sql_query = """SELECT id, user_id, message, action_type, created_at, read_status
                            FROM notifications
                            WHERE read_status = 0
                            ORDER BY created_at DESC"""
