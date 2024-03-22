@@ -457,7 +457,8 @@ class ItemManager:
             sql_query = """INSERT INTO damaged_items (item_id, damage_description, reported_by, quantity_damaged)
                         VALUES (%s, %s, %s, %s)
                         """
-            cursor.execute(sql_query, (item_id, damage_description, reported_by, quantity_damaged))
+            response = cursor.execute(sql_query, (item_id, damage_description, reported_by, quantity_damaged))
+            print("Response from execute: ", response)
             self.db_connection.commit()
             print("Damaged item added successfully!")
 
