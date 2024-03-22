@@ -1,5 +1,3 @@
-<!-- department_items.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,66 +23,55 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='table_styles.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    
+    <!-- Additional CSS for the notification panel -->
+    <style>
+        .notification-panel {
+            position: fixed;
+            top: 10px;
+	    margin-top:5%;
+            right: 10px;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .notification-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+    </style>
 </head>
 <body>
-	{% include 'sidebar.html' %}
-	 {% with messages = get_flashed_messages() %}
-                {% if messages %}
-		<div class="alert alert-{{ messages[0].category }}" style="background-color: #ffeeba; color: #856404; border-color: #ffeeba;">
-                        {{ messages[0] }}
-                    </div>
-                {% endif %}
-            {% endwith %}
+    {% include 'sidebar.html' %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-{{ messages[0].category }}" style="background-color: #ffeeba; color: #856404; border-color: #ffeeba;">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-	<h1>{{ user_department.upper() }} Department Items</h1>
+    <h1>{{ user_department.upper() }} Department Items</h1>
     <button class="export" onclick="exportToExcel()">Export to Excel</button>
 
-    <table id="pending-items-table" class="display">
-        <thead>
-            <tr>
-                <th>User Id</th>
-                <th>Message</th>
-                <th>Action Type</th>
-                <th>Created At</th>
-		        </thead>
-        <tbody>
-            {% for notification in notifications %}
-                <tr>
-                    <td>{{ notification.user_id }}</td>
-		    <td>{{ notification.message }}</td>
-                    <td>{{ notification.action_type }}</td>
-                    <td>{{ notification.created_at }}</td>
-                  
-		    
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-<!-- Initialize DataTable -->
-<script>
-    $(document).ready(function() {
-        $('#pending-items-table').DataTable();
-    });
-
-     // Export to PDF function
-    function exportToPDF() {
-        // Create new jsPDF instance
-        const doc = new jsPDF();
-
-        // Auto-table plugin for jsPDF
-        doc.autoTable({ html: '#pending-items-table' });
-
-        // Save the PDF with a filename
-        doc.save('department_items.pdf');
-    }
-
-    // Export to Excel function
-    function exportToExcel() {
-        var table = document.getElementById('pending-items-table');
-        var wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
-        XLSX.writeFile(wb, 'department_items.xlsx');
-    }
-</script>
+    <!-- Notification panel -->
+    <div class="notification-panel">
+        <h3>Notifications</h3>
+        {% for notification in notifications %}
+            <div class="notification-item">
+                <strong>{{ notification.message }}</strong><br>
+                <small>{{ notification.created_at }}</small>
+	    </div>
+	    {%endfor %}
+    </div>
 </body>
 </html>
-
