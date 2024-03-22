@@ -629,5 +629,5 @@ if __name__ == '__main__':
             }
 
     item = ItemManager(db_config)
-    weekly_items = item.get_damaged_items()
+    weekly_items = item.get_unread_notifications()
     print(weekly_items)
