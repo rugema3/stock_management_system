@@ -6,6 +6,34 @@
     <title>{{ user_role.upper() }} Dashboard | Keyframe Effects</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <style>
+    .notifications {
+        display: none;
+        position: absolute;
+        top: 40px; /* Adjust as needed */
+        right: 10px; /* Adjust as needed */
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 40px; /* Increase padding for bigger size */
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow effect */
+        max-height: 300px; /* Increase maximum height */
+        overflow-y: auto; /* Add vertical scrollbar if content exceeds maximum height */
+    }
+
+    .notification-item {
+        margin-bottom: 15px; /* Increase margin between notification items */
+    }
+
+    .notification-item strong {
+        font-size: 10px; /* Increase font size for notification message */
+    }
+
+    .notification-item small {
+        font-size: 8px; /* Increase font size for timestamp */
+    }
+</style>
+
 </head>
 <body>
    <input type="checkbox" id="menu-toggle">
@@ -163,6 +191,13 @@
                              </a>
                       </li>
 		      <li>
+                              <a href="{{ url_for('vend_airtime.vend_airtime') }}">
+                                     <span class="las la-sitemap"></span>
+                                     <small>Send Airtime</small>
+                             </a>
+                      </li>
+
+		      <li>
                               <a href="{{ url_for('add_user_role.add_user_role') }}">
                                      <span class="las la-user-tie"></span>
                                      <small>Add User Role</small>
@@ -201,12 +236,18 @@
                         <span class="notify">4</span>
                     </div>
                     
-                    <div class="notify-icon">
+                    <div class="notify-icon" id="notification-icon">
                         <span class="las la-bell"></span>
-			<a href="{{ url_for('get_notifications.get_notifications') }}">
                         <span class="notify">3</span>
-                    </div>
-                    
+                        <div class="notifications" id="notifications">
+                        {% for notification in notifications %}
+                        <div class="notification-item">
+                        <strong>{{ notification.message }}</strong><br>
+                        <small>{{ notification.created_at }}</small>
+                         </div>
+                        {% endfor %}
+                        </div>
+                        </div>               
                     <div class="user">
                         <div class="bg-img" style="background-image: url(static/static/img/1.jpeg)"></div>
                         <a href="/logout">
@@ -369,5 +410,27 @@
         </main>
         
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var notifyIcon = document.getElementById('notification-icon');
+        var notifications = document.getElementById('notifications');
+
+        // Hide notifications initially
+        notifications.style.display = 'none';
+
+        notifyIcon.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevents the click event from bubbling up
+            notifications.style.display = (notifications.style.display === 'none') ? 'block' : 'none';
+        });
+
+        // Close notifications when clicked outside
+        document.addEventListener('click', function(event) {
+            if (!notifications.contains(event.target) && event.target !== notifyIcon) {
+                notifications.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

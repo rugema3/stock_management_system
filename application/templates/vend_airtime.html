@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vend Airtime</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='airtime.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"et number
+
+
+</head>
+<body>
+	{% include 'sidebar.html' %}
+    <div class="main">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+	<div class="ambassadors">
+		<h1>Ambassadors</h1>
+		<table>
+			<tr>
+				<th>name</th>
+				<th>Phone</th>
+				<th>PEI</th>
+				<th>Airtime</th>
+			</tr>
+			 {% for ambassador in ambassadors %}
+			<tr>
+			
+
+				<td>{{ ambassador[1] }}</td>
+				<td>{{ ambassador[2] }}</td>
+				<td>{{ ambassador[3] }}</td>
+				<td>{{ ambassador[4] }}</td>
+				
+			</tr>
+			 {% endfor %}
+
+		</table>
+		<form method="POST">
+
+            <label for="yes">Do you want to send airtime?:</label>
+            <select id="selection" name="selection">
+                     <option value="yes">yes</option>
+		     <option value="no">no</option>
+               
+        </select><br><br>
+        <input type="submit" value="submit">
+                </form>
+
+	</div>
+	<div class="airtime_vend">
+		<h2>Vend Airtime</h2>
+
+        <form method="POST">
+            <label for="customer_account_number">Customer Account Number:</label><br>
+            <input type="text" id="customer_account_number" name="customer_account_number"><br><br>
+            
+            <label for="local_currency">Local Currency (Amount):</label><br>
+            <input type="text" id="local_currency" name="local_currency"><br><br>
+
+            <input type="submit" value="Submit">
+        </form>
+	</div>
+	<div class="pei">
+		<h1>Available PEIs </h1>
+		<table  class="categories-table" border="1">
+                <tr>
+                        <th>PEI</th>
+		</tr>
+                {% for key, value in pei.items() %}
+                <tr>
+                        <td>{{ value }}</td>
+		</tr>
+		{% endfor %}
+		</table>
+	<div class="airtime_vend">
+		<form method='POST'>
+			<label for="pei_name">PEI Name:</label><br>
+			<input type="text" id="pei_name" name="pei_name"><br><br>
+			<input type="submit" value="submit">
+		</form>
+	</div>
+	<div class="airtime_vend">
+		<h1>Add Member</h1>
+		<form method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" required><br>
+
+            <label for="amount">amount:</label>
+            <input type="number" id="amount" name="amount" required><br>
+
+            <label for="pei_name">PEI Name:</label>
+            <select id="pei_name" name="pei_name">
+                {% for key, value in pei.items() %}
+                <option value="{{ value }}">{{ value.upper() }}</option>
+                {% endfor %}
+        </select><br><br>
+	<input type="submit" value="submit">
+		</form>
+
+
+    </div>
+</body>
+</html>

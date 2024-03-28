@@ -34,6 +34,8 @@ from application.routes.checkout_summary import checkout_summary_route
 from application.routes.add_damaged_items import add_damaged_items_route
 from application.routes.get_damaged_items import get_damaged_items_route
 from application.routes.get_notifications import get_notifications_route
+from application.routes.vend_airtime import vend_airtime_route
+from application.models.airtime import ServiceVendor
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -44,7 +46,10 @@ from collections import defaultdict
 app = Flask(__name__, template_folder='application/templates',  static_folder='application/static')
 
 stock_manager = StockManager()
-#user_manager = UserManager()
+
+base_url = os.getenv("AIRTIME_BASE_URL")
+api_key = os.getenv("api_key")
+api_secret = os.getenv("api_secret")
 
 # Retrieve database configuration from environment variables
 db_config = {
@@ -78,18 +83,21 @@ app.register_blueprint(checkout_summary_route)
 app.register_blueprint(add_damaged_items_route)
 app.register_blueprint(get_damaged_items_route)
 app.register_blueprint(get_notifications_route)
-
+app.register_blueprint(vend_airtime_route)
 
 # Create Instances of different classes.
 db = Database(db_config)
 user_manager = UserManager(db_config)
 user_handler = UserHandler(db_config)
 item_manager = ItemManager(db_config)
+airtime = ServiceVendor(base_url, api_key=api_key, api_secret=api_secret)
+
 
 # Add different instances to the current_app object
 app.user_handler = user_handler
 app.item_manager = item_manager
 app.db = db
+app.airtime = airtime
 
 @app.route('/')
 def index():
@@ -296,6 +304,9 @@ def admin():
             # Encode the image as base64 and convert to a string
             added_items_url = base64.b64encode(img.getvalue()).decode()
 
+            notifications = item_manager.get_unread_notifications()
+            print("Notifications: ", notifications)
+
 
 
         else:
@@ -321,7 +332,8 @@ def admin():
                 user_role=user_role,
                 user_department=user_department,
                 user_name=user_name,
-                checkout_items=checkout_items
+                checkout_items=checkout_items,
+                notifications=notifications
                 )
 
     except Exception as e:

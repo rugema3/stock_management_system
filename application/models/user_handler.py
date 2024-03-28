@@ -264,4 +264,110 @@ class UserHandler:
             if cursor:
                 cursor.close()
 
+    
+    def add_ambassador(self, name, phone, pei, amount):
+        """
+        Add ambassadors to the database along with the amount of airtime
+        they receive on a monthly basis.
 
+        Args:
+            name (str): The name of the ambassador.
+            phone (str): The phone number of the ambassador.
+            pei (str): The PEI to which the ambassador belongs.
+            amount (int): The amount they are supposed to receive on a monthly basis.
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            # Use parameterized query to prevent SQL injection
+            query = "INSERT INTO ambassadors (name, phone, pei, amount) VALUES (%s, %s, %s, %s)"
+            values = (name, phone, pei, amount)
+
+            cursor.execute(query, values)
+
+            # Commit the transaction
+            self.db_connection.commit()
+
+            print(f"Ambassador {name} added successfully!")
+            return True
+
+        except mysql.connector.Error as err:
+            print(f"Error adding ambassador: {err}")
+            return False
+
+    def add_pei(self, pei_name):
+        """
+        Add PEI name in the database.
+
+        Args:
+            pei_name (str): The name of the pei
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            # Use parameterized query to prevent SQL injection
+            query = "INSERT INTO pei (pei_name) VALUES (%s)"
+            values = (pei_name,)
+
+            cursor.execute(query, values)
+
+            # Commit the transaction
+            self.db_connection.commit()
+
+            print(f"Ambassador {pei_name} added successfully!")
+            return True
+
+        except mysql.connector.Error as err:
+            print(f"Error adding ambassador: {err}")
+            return False
+
+    def get_all_pei(self, dictionary=True):
+        """
+        Retrieve all PEI IDs and names from the database.
+
+        Args:
+            dictionary (bool): If True, return a dictionary where keys are pei_id and values are pei_name.
+                           If False, return a list of tuples containing (pei_id, pei_name).
+
+        Returns:
+            dict or list: If dictionary=True, return a dictionary, otherwise return a list of tuples.
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            # Execute the SELECT query
+            query = "SELECT pei_id, pei_name FROM pei"
+            cursor.execute(query)
+
+            # Fetch all rows
+            rows = cursor.fetchall()
+
+            if dictionary:
+                # Construct a dictionary with pei_id as keys and pei_name as values
+                pei_dict = {row[0]: row[1] for row in rows}
+                return pei_dict
+            else:
+                # Return the list of tuples containing (pei_id, pei_name)
+                return rows
+
+        except mysql.connector.Error as err:
+            print(f"Error retrieving PEI IDs and names: {err}")
+            return None
+
+    def get_all_ambassadors(self, dictionary=True):
+        """
+        Retrieve all ambassadors from the database.
+
+        Returns:
+            list of tuple: A list containing tuples of (id, name, phone, pei, amount).
+        """
+        cursor = self.db_connection.cursor()
+        try:
+            # Execute the SELECT query
+            query = "SELECT id, name, phone, pei, amount FROM ambassadors"
+            cursor.execute(query)
+
+            # Fetch all rows
+            rows = cursor.fetchall()
+            return rows
+
+        except mysql.connector.Error as err:
+            print(f"Error retrieving ambassadors: {err}")
+            return None

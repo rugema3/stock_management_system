@@ -1,0 +1,19 @@
+.main {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 15%;
+    margin-top: 5%;
+    h1, h2 {
+	    margin-bottom: 3%;
+    }
+}
+
+.ambassadors,
+.airtime_vend,
+.pei {
+    flex: 1 1 20%; /* Adjust the width as needed */
+    margin: 5px; /* Adjust margin between divs */
+    margin-top: 6%;
+    margin-left: 5%;
+    margin-bottom:5%;
+}
